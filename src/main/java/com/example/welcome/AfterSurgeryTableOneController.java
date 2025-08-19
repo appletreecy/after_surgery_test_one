@@ -103,7 +103,7 @@ public class AfterSurgeryTableOneController {
         AfterSurgeryTableOne record = afterSurgeryTableOneRepository.findById(id)
                 .orElseThrow(() -> new IllegalArgumentException("Invalid ID: " + id));
 
-        System.out.println("Loaded date:.. " + record.getDate()); // 🔍 Check if null
+        System.out.println("Loaded date:... " + record.getDate()); // 🔍 Check if null
         model.addAttribute("afterSurgeryTableOne", record);
         return "editAfterSurgeryTableOne";
     }
