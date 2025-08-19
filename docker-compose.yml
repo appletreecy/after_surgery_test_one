@@ -2,7 +2,8 @@ version: '3.8'
 
 services:
   mysql:
-    image: mysql:8
+    image: mysql:8.1
+    platform: linux/amd64   # <- force x86_64 (use linux/arm64 if you’re on ARM)
     container_name: mysql-db
     restart: always
     ports:

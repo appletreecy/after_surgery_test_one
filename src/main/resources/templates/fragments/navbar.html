@@ -97,6 +97,17 @@
                   </li>
               </ul>
           </li>
+          <li class="nav-item dropdown" sec:authorize="isAuthenticated()">
+              <a class="nav-link dropdown-toggle" href="#" id="tableBulkUploadDropdown" role="button"
+                 data-bs-toggle="dropdown" aria-expanded="false">
+                  batch add table
+              </a>
+              <ul class="dropdown-menu" aria-labelledby="tableDropdown">
+                  <li>
+                      <a class="dropdown-item" th:href="@{/afterSurgeryTableOne/upload}">batch add table one</a>
+                  </li>
+              </ul>
+          </li>
             <li class="nav-item">
               <a class="nav-link" th:href="@{/login}">登陆</a>
             </li>
