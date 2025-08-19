@@ -1,0 +1,260 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head>
+  <meta charset="UTF-8">
+  <title>Student Dashboard</title>
+
+  <!-- Bootstrap 5 CSS -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+
+  <!-- Chart.js (optional) -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+
+<style>
+  @media (min-width: 1400px) {
+    .px-xxl-20 {
+      padding-left: 50rem;
+      padding-right: 50rem;
+    }
+  }
+</style>
+
+<div th:replace="fragments/navbar :: navbar"></div>
+
+
+<div class="table-responsive mb-4">
+  <table id="afterSurgeryTableOne" class="table table-bordered table-striped table-hover text-center align-middle">
+    <thead class="table-light">
+    <tr>
+      <th>序号</th>
+      <th>日期</th>
+      <th>关节不良数</th>
+      <th>运动不良数</th>
+      <th>创伤不良数</th>
+      <th>足踝不良数</th>
+      <th>小儿不良数</th>
+      <th>脊柱不良数</th>
+      <th>手外不良数</th>
+      <th>产科</th>
+      <th>妇科</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr th:each="rec : ${tableThreeRecords}">
+      <td th:text="${rec.id}"></td>
+      <td th:text="${rec.date}" style="white-space: nowrap;"></td>
+      <td th:text="${rec.numOfJointComplicationCount}"></td>
+      <td th:text="${rec.numOfMotorDysfunctionCount}"></td>
+      <td th:text="${rec.numOfTraumaComplicationCount}"></td>
+      <td th:text="${rec.numOfAnkleComplicationCount}"></td>
+      <td th:text="${rec.numOfPediatricAdverseEventCount}"></td>
+      <td th:text="${rec.numOfSpinalComplicationCount}"></td>
+      <td th:text="${rec.numOfHandSurgeryComplicationCount}"></td>
+      <td th:text="${rec.numOfObstetricAdverseEventCount}"></td>
+      <td th:text="${rec.numOfGynecologicalAdverseEventCount}"></td>
+      <td>
+        <a th:href="@{/afterSurgery/edit/{id}(id=${rec.id})}" class="btn btn-sm btn-outline-primary">
+          Edit
+        </a>
+      </td>
+    </tr>
+    </tbody>
+  </table>
+</div>
+
+<div>
+  <table id="afterSurgeryTableOneSummary" class="table table-bordered table-striped table-hover text-center align-middle">
+    <thead class="table-light">
+    <tr>
+      <th>关节不良总数</th>
+      <th>运动不良数</th>
+      <th>创伤不良总数</th>
+      <th>足踝不良总数</th>
+      <th>小儿不良总数</th>
+      <th>脊柱不良总数</th>
+      <th>手外不良数</th>
+    </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td id="totalNumOfJointComplicationCount" th:text="${totalNumOfJointComplicationCount}">0</td>
+        <td id="totalNumOfMotorDysfunctionCount" th:text="${totalNumOfMotorDysfunctionCount}">0</td>
+        <td id="totalNumOfTraumaComplicationCount" th:text="${totalNumOfTraumaComplicationCount}">0</td>
+        <td id="totalNumOfAnkleComplicationCount" th:text="${totalNumOfAnkleComplicationCount}">0</td>
+        <td id="totalNumOfPediatricAdverseEventCount" th:text="${totalNumOfPediatricAdverseEventCount}">0</td>
+        <td id="totalNumOfSpinalComplicationCount" th:text="${totalNumOfSpinalComplicationCount}">0</td>
+        <td id="totalNumOfHandSurgeryComplicationCount" th:text="${totalNumOfHandSurgeryComplicationCount}">0</td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+
+<div>
+  <table id="afterSurgeryTableOneSummaryProportion" class="table table-bordered table-striped table-hover text-center align-middle">
+    <thead class="table-light">
+    <tr>
+      <th>关节不良占比</th>
+      <th>运动不良占比</th>
+      <th>创伤不良占比</th>
+      <th>足踝不良占比</th>
+      <th>小儿不良占比</th>
+      <th>脊柱不良占比</th>
+      <th>手外不良占比</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr>
+      <td id="proportionOfJointComplicationCount" th:text="${proportionOfJointComplicationCount != null ? #numbers.formatDecimal(proportionOfJointComplicationCount * 100, 1, 2) + '%' : 'N/A'}">0</td>
+      <td id="proportionOfMotorDysfunctionCount" th:text="${proportionOfMotorDysfunctionCount != null ? #numbers.formatDecimal(proportionOfMotorDysfunctionCount * 100, 1, 2) + '%' : 'N/A'}">0</td>
+      <td id="proportionOfTraumaComplicationCount" th:text="${proportionOfTraumaComplicationCount != null ? #numbers.formatDecimal(proportionOfTraumaComplicationCount * 100, 1, 2) + '%' : 'N/A'}">0</td>
+      <td id="proportionOfAnkleComplicationCount" th:text="${proportionOfAnkleComplicationCount != null ? #numbers.formatDecimal(proportionOfAnkleComplicationCount * 100, 1, 2) + '%' : 'N/A'}">0</td>
+      <td id="proportionOfPediatricAdverseEventCount" th:text="${proportionOfPediatricAdverseEventCount != null ? #numbers.formatDecimal(proportionOfPediatricAdverseEventCount * 100, 1, 2) + '%' : 'N/A'}">0</td>
+      <td id="proportionOfSpinalComplicationCount" th:text="${proportionOfSpinalComplicationCount != null ? #numbers.formatDecimal(proportionOfSpinalComplicationCount * 100, 1, 2) + '%' : 'N/A'}">0</td>
+      <td id="proportionOfHandSurgeryComplicationCount" th:text="${proportionOfHandSurgeryComplicationCount != null ? #numbers.formatDecimal(proportionOfHandSurgeryComplicationCount * 100, 1, 2) + '%' : 'N/A'}">0</td>
+    </tbody>
+  </table>
+</div>
+
+<div class="container-fluid mb-4">
+  <div class="row g-3">
+    <div class="col-12 col-md-4">
+      <div class="card h-100">
+        <div class="card-body d-flex flex-column align-items-center">
+          <h6 class="card-title">关节不良数占比</h6>
+          <div style="width:220px;height:220px"><canvas id="pieJointComplicationCount"></canvas></div>
+          <div class="mt-2 small text-muted" id="pieJointComplicationCountText"></div>
+        </div>
+      </div>
+    </div>
+    <div class="col-12 col-md-4">
+      <div class="card h-100">
+        <div class="card-body d-flex flex-column align-items-center">
+          <h6 class="card-title">运动不良数占比</h6>
+          <div style="width:220px;height:220px"><canvas id="pieMotorDysfunctionCount"></canvas></div>
+          <div class="mt-2 small text-muted" id="pieMotorDysfunctionCountText"></div>
+        </div>
+      </div>
+    </div>
+    <div class="col-12 col-md-4">
+      <div class="card h-100">
+        <div class="card-body d-flex flex-column align-items-center">
+          <h6 class="card-title">创伤不良数占比</h6>
+          <div style="width:220px;height:220px"><canvas id="pieTraumaComplicationCount"></canvas></div>
+          <div class="mt-2 small text-muted" id="pieTraumaComplicationCountText"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="container-fluid mb-4">
+  <div class="row g-3">
+    <div class="col-12 col-md-4">
+      <div class="card h-100">
+        <div class="card-body d-flex flex-column align-items-center">
+          <h6 class="card-title">足踝不良数占比</h6>
+          <div style="width:220px;height:220px"><canvas id="pieAnkleComplicationCount"></canvas></div>
+          <div class="mt-2 small text-muted" id="pieAnkleComplicationCountText"></div>
+        </div>
+      </div>
+    </div>
+    <div class="col-12 col-md-4">
+      <div class="card h-100">
+        <div class="card-body d-flex flex-column align-items-center">
+          <h6 class="card-title">小儿不良数占比</h6>
+          <div style="width:220px;height:220px"><canvas id="piePediatricAdverseEventCount"></canvas></div>
+          <div class="mt-2 small text-muted" id="piePediatricAdverseEventCountText"></div>
+        </div>
+      </div>
+    </div>
+    <div class="col-12 col-md-4">
+      <div class="card h-100">
+        <div class="card-body d-flex flex-column align-items-center">
+          <h6 class="card-title">脊柱不良数占比</h6>
+          <div style="width:220px;height:220px"><canvas id="pieSpinalComplicationCount"></canvas></div>
+          <div class="mt-2 small text-muted" id="pieSpinalComplicationCountText"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="container-fluid mb-4">
+  <div class="row g-3">
+    <div class="col-12 col-md-4">
+      <div class="card h-100">
+        <div class="card-body d-flex flex-column align-items-center">
+          <h6 class="card-title">手外不良数占比</h6>
+          <div style="width:220px;height:220px"><canvas id="pieHandSurgeryComplicationCount"></canvas></div>
+          <div class="mt-2 small text-muted" id="pieHandSurgeryComplicationCountText"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script th:inline="javascript">
+  // proportions from the server (fractions 0..1)
+  const pJointComplicationCountRaw = /*[[${proportionOfJointComplicationCount}]]*/ null;
+  const pMotorDysfunctionCountRaw    = /*[[${proportionOfMotorDysfunctionCount}]]*/ null;
+  const pTraumaComplicationCountRaw       = /*[[${proportionOfTraumaComplicationCount}]]*/ null;
+
+  const pAnkleComplicationCountRaw = /*[[${proportionOfAnkleComplicationCount}]]*/ null;
+  const pPediatricAdverseEventCountRaw    = /*[[${proportionOfPediatricAdverseEventCount}]]*/ null;
+  const pSpinalComplicationCountRaw       = /*[[${proportionOfSpinalComplicationCount}]]*/ null;
+
+  const pHandSurgeryComplicationCountRaw       = /*[[${proportionOfHandSurgeryComplicationCount}]]*/ null;
+
+  const toNum = v => (v == null || v === '' || isNaN(v)) ? 0 : Number(v);
+  const clamp01 = n => Math.min(Math.max(n, 0), 1);
+  const fracToPct = f => Math.round(clamp01(toNum(f)) * 10000) / 100; // 2dp
+
+  function makePie(canvasId, labelId, pct, colors) {
+    const ctx = document.getElementById(canvasId);
+    if (!ctx) return;
+
+    const value = pct;                   // 0..100
+    const remainder = Math.max(0, 100 - value);
+
+    new Chart(ctx, {
+      type: 'pie',
+      data: {
+        labels: ['占比', '其余'],
+        datasets: [{
+          data: [value, remainder],
+          backgroundColor: colors || ['#4e79a7', '#e0e0e0'],
+          borderWidth: 0
+        }]
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: {
+          legend: { position: 'bottom' },
+          tooltip: {
+            callbacks: { label: (c) => `${c.label}: ${c.parsed}%` }
+          }
+        }
+      }
+    });
+
+    const lbl = document.getElementById(labelId);
+    if (lbl) lbl.textContent = `占比：${value.toFixed(2)}%`;
+  }
+
+  makePie('pieJointComplicationCount', 'pieJointComplicationCountText', fracToPct(pJointComplicationCountRaw), ['#4e79a7', '#e0e0e0']);
+  makePie('pieMotorDysfunctionCount',   'pieMotorDysfunctionCountText',   fracToPct(pMotorDysfunctionCountRaw),    ['#f28e2b', '#e0e0e0']);
+  makePie('pieTraumaComplicationCount','pieTraumaComplicationCountText',fracToPct(pTraumaComplicationCountRaw),       ['#59a14f', '#e0e0e0']);
+
+  makePie('pieAnkleComplicationCount', 'pieAnkleComplicationCountText', fracToPct(pAnkleComplicationCountRaw), ['#4e79a7', '#e0e0e0']);
+  makePie('piePediatricAdverseEventCount',   'piePediatricAdverseEventCountText',   fracToPct(pPediatricAdverseEventCountRaw),    ['#f28e2b', '#e0e0e0']);
+  makePie('pieSpinalComplicationCount','pieSpinalComplicationCountText',fracToPct(pSpinalComplicationCountRaw),       ['#59a14f', '#e0e0e0']);
+
+  makePie('pieHandSurgeryComplicationCount', 'pieHandSurgeryComplicationCountText', fracToPct(pHandSurgeryComplicationCountRaw), ['#4e79a7', '#e0e0e0']);
+</script>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

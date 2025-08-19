@@ -1,0 +1,232 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head>
+  <meta charset="UTF-8">
+  <title>Student Dashboard</title>
+
+  <!-- Bootstrap 5 CSS -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+
+  <!-- Chart.js (optional) -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+
+<style>
+  @media (min-width: 1400px) {
+    .px-xxl-20 {
+      padding-left: 50rem;
+      padding-right: 50rem;
+    }
+  }
+</style>
+
+<div th:replace="fragments/navbar :: navbar"></div>
+
+
+<div class="table-responsive mb-4">
+  <table id="afterSurgeryTableOne" class="table table-bordered table-striped table-hover text-center align-middle">
+    <thead class="table-light">
+    <tr>
+      <th>序号</th>
+      <th>日期</th>
+      <th>配方一</th>
+      <th>配方二</th>
+      <th>配方三</th>
+      <th>配方四</th>
+      <th>配方五</th>
+      <th>配方六</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr th:each="rec : ${tableFourRecords}">
+      <td th:text="${rec.id}"></td>
+      <td th:text="${rec.date}" style="white-space: nowrap;"></td>
+      <td th:text="${rec.numOfFormulationOne}"></td>
+      <td th:text="${rec.numOfFormulationTwo}"></td>
+      <td th:text="${rec.numOfFormulationThree}"></td>
+      <td th:text="${rec.numOfFormulationFour}"></td>
+      <td th:text="${rec.numOfFormulationFive}"></td>
+      <td th:text="${rec.numOfFormulationSix}"></td>
+      <td>
+        <a th:href="@{/afterSurgery/edit/{id}(id=${rec.id})}" class="btn btn-sm btn-outline-primary">
+          Edit
+        </a>
+      </td>
+    </tr>
+    </tbody>
+  </table>
+</div>
+
+<div>
+  <table id="afterSurgeryTableOneSummary" class="table table-bordered table-striped table-hover text-center align-middle">
+    <thead class="table-light">
+    <tr>
+      <th>配方一</th>
+      <th>配方二</th>
+      <th>配方三</th>
+      <th>配方四</th>
+      <th>配方五</th>
+      <th>配方六</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr>
+      <td id="totalNumOfFormulationOne" th:text="${totalNumOfFormulationOne}">0</td>
+      <td id="totalNumOfFormulationTwo" th:text="${totalNumOfFormulationTwo}">0</td>
+      <td id="totalNumOfFormulationThree" th:text="${totalNumOfFormulationThree}">0</td>
+      <td id="totalNumOfFormulationFour" th:text="${totalNumOfFormulationFour}">0</td>
+      <td id="totalNumOfFormulationFive" th:text="${totalNumOfFormulationFive}">0</td>
+      <td id="totalNumOfFormulationSix" th:text="${totalNumOfFormulationSix}">0</td>
+    </tr>
+    </tbody>
+  </table>
+</div>
+
+<div>
+  <table id="afterSurgeryTableOneSummaryProportion" class="table table-bordered table-striped table-hover text-center align-middle">
+    <thead class="table-light">
+    <tr>
+      <th>配方一占比</th>
+      <th>配方二占比</th>
+      <th>配方三占比</th>
+      <th>配方四占比</th>
+      <th>配方五占比</th>
+      <th>配方六占比</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr>
+      <td id="proportionOfFormulationOne" th:text="${proportionOfFormulationOne != null ? #numbers.formatDecimal(proportionOfFormulationOne * 100, 1, 2) + '%' : 'N/A'}">0</td>
+      <td id="proportionOfFormulationTwo" th:text="${proportionOfFormulationTwo != null ? #numbers.formatDecimal(proportionOfFormulationTwo * 100, 1, 2) + '%' : 'N/A'}">0</td>
+      <td id="proportionOfFormulationThree" th:text="${proportionOfFormulationThree != null ? #numbers.formatDecimal(proportionOfFormulationThree * 100, 1, 2) + '%' : 'N/A'}">0</td>
+      <td id="proportionOfFormulationFour" th:text="${proportionOfFormulationFour != null ? #numbers.formatDecimal(proportionOfFormulationFour * 100, 1, 2) + '%' : 'N/A'}">0</td>
+      <td id="proportionOfFormulationFive" th:text="${proportionOfFormulationFive != null ? #numbers.formatDecimal(proportionOfFormulationFive * 100, 1, 2) + '%' : 'N/A'}">0</td>
+      <td id="proportionOfFormulationSix" th:text="${proportionOfFormulationSix != null ? #numbers.formatDecimal(proportionOfFormulationSix * 100, 1, 2) + '%' : 'N/A'}">0</td>
+    </tbody>
+  </table>
+</div>
+
+<div class="container-fluid mb-4">
+  <div class="row g-3">
+    <div class="col-12 col-md-4">
+      <div class="card h-100">
+        <div class="card-body d-flex flex-column align-items-center">
+          <h6 class="card-title">配方一占比</h6>
+          <div style="width:220px;height:220px"><canvas id="pieFormulationOne"></canvas></div>
+          <div class="mt-2 small text-muted" id="pieFormulationOneText"></div>
+        </div>
+      </div>
+    </div>
+    <div class="col-12 col-md-4">
+      <div class="card h-100">
+        <div class="card-body d-flex flex-column align-items-center">
+          <h6 class="card-title">配方二占比</h6>
+          <div style="width:220px;height:220px"><canvas id="pieFormulationTwo"></canvas></div>
+          <div class="mt-2 small text-muted" id="pieFormulationTwoText"></div>
+        </div>
+      </div>
+    </div>
+    <div class="col-12 col-md-4">
+      <div class="card h-100">
+        <div class="card-body d-flex flex-column align-items-center">
+          <h6 class="card-title">配方三占比</h6>
+          <div style="width:220px;height:220px"><canvas id="pieFormulationThree"></canvas></div>
+          <div class="mt-2 small text-muted" id="pieFormulationThreeText"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="container-fluid mb-4">
+  <div class="row g-3">
+    <div class="col-12 col-md-4">
+      <div class="card h-100">
+        <div class="card-body d-flex flex-column align-items-center">
+          <h6 class="card-title">配方四占比</h6>
+          <div style="width:220px;height:220px"><canvas id="pieFormulationFour"></canvas></div>
+          <div class="mt-2 small text-muted" id="pieFormulationFourText"></div>
+        </div>
+      </div>
+    </div>
+    <div class="col-12 col-md-4">
+      <div class="card h-100">
+        <div class="card-body d-flex flex-column align-items-center">
+          <h6 class="card-title">配方五占比</h6>
+          <div style="width:220px;height:220px"><canvas id="pieFormulationFive"></canvas></div>
+          <div class="mt-2 small text-muted" id="pieFormulationFiveText"></div>
+        </div>
+      </div>
+    </div>
+    <div class="col-12 col-md-4">
+      <div class="card h-100">
+        <div class="card-body d-flex flex-column align-items-center">
+          <h6 class="card-title">配方六占比</h6>
+          <div style="width:220px;height:220px"><canvas id="pieFormulationSix"></canvas></div>
+          <div class="mt-2 small text-muted" id="pieFormulationSixText"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script th:inline="javascript">
+  // proportions from the server (fractions 0..1)
+  const pFormulationOneRaw = /*[[${proportionOfFormulationOne}]]*/ null;
+  const pFormulationTwoRaw    = /*[[${proportionOfFormulationTwo}]]*/ null;
+  const pFormulationThreeRaw       = /*[[${proportionOfFormulationThree}]]*/ null;
+
+  const pFormulationFourRaw = /*[[${proportionOfFormulationFour}]]*/ null;
+  const pFormulationFiveRaw    = /*[[${proportionOfFormulationFive}]]*/ null;
+  const pFormulationSixRaw       = /*[[${proportionOfFormulationSix}]]*/ null;
+
+  const toNum = v => (v == null || v === '' || isNaN(v)) ? 0 : Number(v);
+  const clamp01 = n => Math.min(Math.max(n, 0), 1);
+  const fracToPct = f => Math.round(clamp01(toNum(f)) * 10000) / 100; // 2dp
+
+  function makePie(canvasId, labelId, pct, colors) {
+    const ctx = document.getElementById(canvasId);
+    if (!ctx) return;
+
+    const value = pct;                   // 0..100
+    const remainder = Math.max(0, 100 - value);
+
+    new Chart(ctx, {
+      type: 'pie',
+      data: {
+        labels: ['占比', '其余'],
+        datasets: [{
+          data: [value, remainder],
+          backgroundColor: colors || ['#4e79a7', '#e0e0e0'],
+          borderWidth: 0
+        }]
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: {
+          legend: { position: 'bottom' },
+          tooltip: {
+            callbacks: { label: (c) => `${c.label}: ${c.parsed}%` }
+          }
+        }
+      }
+    });
+
+    const lbl = document.getElementById(labelId);
+    if (lbl) lbl.textContent = `占比：${value.toFixed(2)}%`;
+  }
+
+  makePie('pieFormulationOne', 'pieFormulationOneText', fracToPct(pFormulationOneRaw), ['#4e79a7', '#e0e0e0']);
+  makePie('pieFormulationTwo',   'pieFormulationTwoText',   fracToPct(pFormulationTwoRaw),    ['#f28e2b', '#e0e0e0']);
+  makePie('pieFormulationThree','pieFormulationThreeText',fracToPct(pFormulationThreeRaw),       ['#59a14f', '#e0e0e0']);
+
+  makePie('pieFormulationFour', 'pieFormulationFourText', fracToPct(pFormulationFourRaw), ['#4e79a7', '#e0e0e0']);
+  makePie('pieFormulationFive',   'pieFormulationFiveText',   fracToPct(pFormulationFiveRaw),    ['#f28e2b', '#e0e0e0']);
+  makePie('pieFormulationSix','pieFormulationSixText',fracToPct(pFormulationSixRaw),       ['#59a14f', '#e0e0e0']);
+</script>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

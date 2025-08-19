@@ -1,0 +1,112 @@
+// AfterSurgeryTableOne
+insert into afterSurgeryTableOne(date, numOfPostoperativeVisits, numOfPostoperativeAnalgesiaCases, numOfAdverseReactionCases, numOfInadequateAnalgesia)
+values('2025-08-01',64,44,8,3);
+insert into afterSurgeryTableOne(date, numOfPostoperativeVisits, numOfPostoperativeAnalgesiaCases, numOfAdverseReactionCases, numOfInadequateAnalgesia)
+values('2025-08-04',69,38,2,0);
+insert into afterSurgeryTableOne(date, numOfPostoperativeVisits, numOfPostoperativeAnalgesiaCases, numOfAdverseReactionCases, numOfInadequateAnalgesia)
+values('2025-08-05',47,23,4,0);
+insert into afterSurgeryTableOne(date, numOfPostoperativeVisits, numOfPostoperativeAnalgesiaCases, numOfAdverseReactionCases, numOfInadequateAnalgesia)
+values('2025-08-06',58,38,4,0);
+insert into afterSurgeryTableOne(date, numOfPostoperativeVisits, numOfPostoperativeAnalgesiaCases, numOfAdverseReactionCases, numOfInadequateAnalgesia)
+values('2025-08-07',70,40,10,2);
+insert into afterSurgeryTableOne(date, numOfPostoperativeVisits, numOfPostoperativeAnalgesiaCases, numOfAdverseReactionCases, numOfInadequateAnalgesia)
+values('2025-08-08',64,50,5,3);
+insert into afterSurgeryTableOne(date, numOfPostoperativeVisits, numOfPostoperativeAnalgesiaCases, numOfAdverseReactionCases, numOfInadequateAnalgesia)
+values('2025-08-11',70,46,7,0);
+insert into afterSurgeryTableOne(date, numOfPostoperativeVisits, numOfPostoperativeAnalgesiaCases, numOfAdverseReactionCases, numOfInadequateAnalgesia)
+values('2025-08-12',69,48,21,9);
+
+
+// AfterSurgeryTableTwo
+insert into afterSurgeryTableTwo (date, numOfNauseaAndVomiting,numOfDizziness,numOfNauseaAndVomitingAndDizziness,numOfItching,numOfAllergicRash
+,numOfProlongedAnestheticRecovery,numOfPunctureSiteAbnormality,numOfAbdominalDistension,numOfEndotrachealIntubationDiscomfort,
+numOfEpigastricPain,numOfDelirium,numOfChestDiscomfort,numOfTourniquetReaction,numOfOther,otherComments)
+values('2025-08-01',2,1,1,1,0,1,0,0,0,1,0,0,0,0,'');
+insert into afterSurgeryTableTwo (date, numOfNauseaAndVomiting,numOfDizziness,numOfNauseaAndVomitingAndDizziness,numOfItching,numOfAllergicRash
+,numOfProlongedAnestheticRecovery,numOfPunctureSiteAbnormality,numOfAbdominalDistension,numOfEndotrachealIntubationDiscomfort,
+numOfEpigastricPain,numOfDelirium,numOfChestDiscomfort,numOfTourniquetReaction,numOfOther,otherComments)
+values('2025-08-04',1,0,0,0,0,1,0,0,0,0,0,0,0,0,'');
+insert into afterSurgeryTableTwo (date, numOfNauseaAndVomiting,numOfDizziness,numOfNauseaAndVomitingAndDizziness,numOfItching,numOfAllergicRash
+,numOfProlongedAnestheticRecovery,numOfPunctureSiteAbnormality,numOfAbdominalDistension,numOfEndotrachealIntubationDiscomfort,
+numOfEpigastricPain,numOfDelirium,numOfChestDiscomfort,numOfTourniquetReaction,numOfOther,otherComments)
+values('2025-08-05',0,0,1,0,0,1,0,0,2,0,0,0,0,0,'');
+insert into afterSurgeryTableTwo (date, numOfNauseaAndVomiting,numOfDizziness,numOfNauseaAndVomitingAndDizziness,numOfItching,numOfAllergicRash
+,numOfProlongedAnestheticRecovery,numOfPunctureSiteAbnormality,numOfAbdominalDistension,numOfEndotrachealIntubationDiscomfort,
+numOfEpigastricPain,numOfDelirium,numOfChestDiscomfort,numOfTourniquetReaction,numOfOther,otherComments)
+values('2025-08-06',1,0,0,1,0,0,0,0,2,0,0,0,0,0,'');
+insert into afterSurgeryTableTwo (date, numOfNauseaAndVomiting,numOfDizziness,numOfNauseaAndVomitingAndDizziness,numOfItching,numOfAllergicRash
+,numOfProlongedAnestheticRecovery,numOfPunctureSiteAbnormality,numOfAbdominalDistension,numOfEndotrachealIntubationDiscomfort,
+numOfEpigastricPain,numOfDelirium,numOfChestDiscomfort,numOfTourniquetReaction,numOfOther,otherComments)
+values('2025-08-07',0,5,1,1,0,1,0,2,0,0,0,0,0,0,'');
+insert into afterSurgeryTableTwo (date, numOfNauseaAndVomiting,numOfDizziness,numOfNauseaAndVomitingAndDizziness,numOfItching,numOfAllergicRash
+,numOfProlongedAnestheticRecovery,numOfPunctureSiteAbnormality,numOfAbdominalDistension,numOfEndotrachealIntubationDiscomfort,
+numOfEpigastricPain,numOfDelirium,numOfChestDiscomfort,numOfTourniquetReaction,numOfOther,otherComments)
+values('2025-08-08',1,0,1,1,0,0,0,0,1,0,0,0,0,1,'焦虑轻度');
+insert into afterSurgeryTableTwo (date, numOfNauseaAndVomiting,numOfDizziness,numOfNauseaAndVomitingAndDizziness,numOfItching,numOfAllergicRash
+,numOfProlongedAnestheticRecovery,numOfPunctureSiteAbnormality,numOfAbdominalDistension,numOfEndotrachealIntubationDiscomfort,
+numOfEpigastricPain,numOfDelirium,numOfChestDiscomfort,numOfTourniquetReaction,numOfOther,otherComments)
+values('2025-08-11',0,3,1,0,0,0,1,1,1,0,0,0,0,0,'');
+insert into afterSurgeryTableTwo (date, numOfNauseaAndVomiting,numOfDizziness,numOfNauseaAndVomitingAndDizziness,numOfItching,numOfAllergicRash
+,numOfProlongedAnestheticRecovery,numOfPunctureSiteAbnormality,numOfAbdominalDistension,numOfEndotrachealIntubationDiscomfort,
+numOfEpigastricPain,numOfDelirium,numOfChestDiscomfort,numOfTourniquetReaction,numOfOther,otherComments)
+values('2025-08-12',1,0,0,0,0,1,0,0,0,1,0,0,0,0,'');
+
+// AfterSurgeryTableThree
+insert into afterSurgeryTableThree (date, numOfJointComplicationCount , numOfMotorDysfunctionCount, numOfTraumaComplicationCount, numOfAnkleComplicationCount,
+numOfPediatricAdverseEventCount, numOfSpinalComplicationCount, numOfHandSurgeryComplicationCount, numOfObstetricAdverseEventCount,
+numOfGynecologicalAdverseEventCount )
+values('2025-08-01',4,0,0,1,0,2,0,0,0);
+insert into afterSurgeryTableThree (date, numOfJointComplicationCount , numOfMotorDysfunctionCount, numOfTraumaComplicationCount, numOfAnkleComplicationCount,
+numOfPediatricAdverseEventCount, numOfSpinalComplicationCount, numOfHandSurgeryComplicationCount, numOfObstetricAdverseEventCount,
+numOfGynecologicalAdverseEventCount )
+values('2025-08-04',1,0,1,0,0,0,0,0,0);
+insert into afterSurgeryTableThree (date, numOfJointComplicationCount , numOfMotorDysfunctionCount, numOfTraumaComplicationCount, numOfAnkleComplicationCount,
+numOfPediatricAdverseEventCount, numOfSpinalComplicationCount, numOfHandSurgeryComplicationCount, numOfObstetricAdverseEventCount,
+numOfGynecologicalAdverseEventCount )
+values('2025-08-05',0,0,0,1,0,3,0,0,0);
+insert into afterSurgeryTableThree (date, numOfJointComplicationCount , numOfMotorDysfunctionCount, numOfTraumaComplicationCount, numOfAnkleComplicationCount,
+numOfPediatricAdverseEventCount, numOfSpinalComplicationCount, numOfHandSurgeryComplicationCount, numOfObstetricAdverseEventCount,
+numOfGynecologicalAdverseEventCount )
+values('2025-08-06',1,0,1,1,0,1,0,0,0);
+insert into afterSurgeryTableThree (date, numOfJointComplicationCount , numOfMotorDysfunctionCount, numOfTraumaComplicationCount, numOfAnkleComplicationCount,
+numOfPediatricAdverseEventCount, numOfSpinalComplicationCount, numOfHandSurgeryComplicationCount, numOfObstetricAdverseEventCount,
+numOfGynecologicalAdverseEventCount )
+values('2025-08-07',2,3,1,0,0,0,0,4,0);
+insert into afterSurgeryTableThree (date, numOfJointComplicationCount , numOfMotorDysfunctionCount, numOfTraumaComplicationCount, numOfAnkleComplicationCount,
+numOfPediatricAdverseEventCount, numOfSpinalComplicationCount, numOfHandSurgeryComplicationCount, numOfObstetricAdverseEventCount,
+numOfGynecologicalAdverseEventCount )
+values('2025-08-08',4,0,0,0,0,1,0,0,0);
+insert into afterSurgeryTableThree (date, numOfJointComplicationCount , numOfMotorDysfunctionCount, numOfTraumaComplicationCount, numOfAnkleComplicationCount,
+numOfPediatricAdverseEventCount, numOfSpinalComplicationCount, numOfHandSurgeryComplicationCount, numOfObstetricAdverseEventCount,
+numOfGynecologicalAdverseEventCount )
+values('2025-08-11',3,2,0,0,0,0,0,2,0);
+insert into afterSurgeryTableThree (date, numOfJointComplicationCount , numOfMotorDysfunctionCount, numOfTraumaComplicationCount, numOfAnkleComplicationCount,
+numOfPediatricAdverseEventCount, numOfSpinalComplicationCount, numOfHandSurgeryComplicationCount, numOfObstetricAdverseEventCount,
+numOfGynecologicalAdverseEventCount )
+values('2025-08-12',1,4,2,3,0,4,7,0,0);
+
+// AfterSurgeryTableFour
+insert into afterSurgeryTableFour (date, numOfFormulationOne , numOfFormulationTwo, numOfFormulationThree, numOfFormulationFour,
+numOfFormulationFive, numOfFormulationSix)
+values('2025-08-01', 0,5,3,0,0,0);
+insert into afterSurgeryTableFour (date, numOfFormulationOne , numOfFormulationTwo, numOfFormulationThree, numOfFormulationFour,
+numOfFormulationFive, numOfFormulationSix)
+values('2025-08-04', 0,2,0,0,0,0);
+insert into afterSurgeryTableFour (date, numOfFormulationOne , numOfFormulationTwo, numOfFormulationThree, numOfFormulationFour,
+numOfFormulationFive, numOfFormulationSix)
+values('2025-08-05', 0,2,2,0,0,0);
+insert into afterSurgeryTableFour (date, numOfFormulationOne , numOfFormulationTwo, numOfFormulationThree, numOfFormulationFour,
+numOfFormulationFive, numOfFormulationSix)
+values('2025-08-06', 0,2,3,0,0,0);
+insert into afterSurgeryTableFour (date, numOfFormulationOne , numOfFormulationTwo, numOfFormulationThree, numOfFormulationFour,
+numOfFormulationFive, numOfFormulationSix)
+values('2025-08-07', 4,4,2,0,0,0);
+insert into afterSurgeryTableFour (date, numOfFormulationOne , numOfFormulationTwo, numOfFormulationThree, numOfFormulationFour,
+numOfFormulationFive, numOfFormulationSix)
+values('2025-08-08', 0,4,1,0,0,0);
+insert into afterSurgeryTableFour (date, numOfFormulationOne , numOfFormulationTwo, numOfFormulationThree, numOfFormulationFour,
+numOfFormulationFive, numOfFormulationSix)
+values('2025-08-11', 2,3,2,0,0,0);
+insert into afterSurgeryTableFour (date, numOfFormulationOne , numOfFormulationTwo, numOfFormulationThree, numOfFormulationFour,
+numOfFormulationFive, numOfFormulationSix)
+values('2025-08-12', 0,19,2,0,0,0);

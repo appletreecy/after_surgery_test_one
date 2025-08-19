@@ -1,0 +1,380 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head>
+  <meta charset="UTF-8">
+  <title>Student Dashboard</title>
+
+  <!-- Bootstrap 5 CSS -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+
+  <!-- Chart.js (optional) -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+
+<style>
+  @media (min-width: 1400px) {
+    .px-xxl-20 {
+      padding-left: 50rem;
+      padding-right: 50rem;
+    }
+  }
+</style>
+
+<div th:replace="fragments/navbar :: navbar"></div>
+
+
+  <div class="table-responsive mb-4">
+    <table id="afterSurgeryTableOne" class="table table-bordered table-striped table-hover text-center align-middle">
+      <thead class="table-light">
+      <tr>
+        <th>序号</th>
+        <th>日期</th>
+        <th>恶心呕吐</th>
+        <th>头晕</th>
+        <th>恶心呕吐头晕</th>
+        <th>皮肤瘙痒</th>
+        <th>过敏性皮疹</th>
+        <th>麻醉恢复迟滞</th>
+        <th>穿刺部位异常</th>
+        <th>腹胀</th>
+        <th>气插不适</th>
+        <th>胃脘痛</th>
+        <th>瞻望</th>
+        <th>心胸不适</th>
+        <th>止血带反应</th>
+        <th>其他</th>
+        <th>其他备注</th>
+      </tr>
+      </thead>
+      <tbody>
+      <tr th:each="rec : ${tableTwoRecords}">
+        <td th:text="${rec.id}"></td>
+        <td th:text="${rec.date}" style="white-space: nowrap;"></td>
+        <td th:text="${rec.numOfNauseaAndVomiting}"></td>
+        <td th:text="${rec.numOfDizziness}"></td>
+        <td th:text="${rec.numOfNauseaAndVomitingAndDizziness}"></td>
+        <td th:text="${rec.numOfItching}"></td>
+        <td th:text="${rec.numOfAllergicRash}"></td>
+        <td th:text="${rec.numOfProlongedAnestheticRecovery}"></td>
+        <td th:text="${rec.numOfPunctureSiteAbnormality}"></td>
+        <td th:text="${rec.numOfAbdominalDistension}"></td>
+        <td th:text="${rec.numOfEndotrachealIntubationDiscomfort}"></td>
+        <td th:text="${rec.numOfEpigastricPain}"></td>
+        <td th:text="${rec.numOfDelirium}"></td>
+        <td th:text="${rec.numOfChestDiscomfort}"></td>
+        <td th:text="${rec.numOfTourniquetReaction}"></td>
+        <td th:text="${rec.numOfOther}"></td>
+        <td th:text="${rec.otherComments}"></td>
+        <td>
+          <a th:href="@{/afterSurgery/edit/{id}(id=${rec.id})}" class="btn btn-sm btn-outline-primary">
+            Edit
+          </a>
+        </td>
+      </tr>
+      </tbody>
+    </table>
+
+  </div>
+
+  <div>
+    <table id="afterSurgeryTableOneSummary" class="table table-bordered table-striped table-hover text-center align-middle">
+      <thead class="table-light">
+      <tr>
+        <th>恶心呕吐总数</th>
+        <th>头晕总数</th>
+        <th>恶心呕吐头晕总数</th>
+        <th>过敏性皮疹总数</th>
+        <th>麻醉恢复迟滞总数</th>
+        <th>穿刺部位异常总数</th>
+        <th>腹胀总数</th>
+        <th>气插不适总数</th>
+        <th>胃脘痛总数</th>
+        <th>瞻望总数</th>
+        <th>心胸不适总数</th>
+        <th>止血带反应总数</th>
+        <th>其他总数</th>
+
+      </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td id="totalNauseaAndVomiting" th:text="${totalNauseaAndVomiting}">0</td>
+          <td id="totalDizziness" th:text="${totalDizziness}">0</td>
+          <td id="totalNauseaAndVomitingAndDizziness" th:text="${totalNauseaAndVomitingAndDizziness}">0</td>
+          <td id="totalAllergicRash" th:text="${totalAllergicRash}">0</td>
+          <td id="totalProlongedAnestheticRecovery" th:text="${totalProlongedAnestheticRecovery}">0</td>
+          <td id="totalPunctureSiteAbnormality" th:text="${totalPunctureSiteAbnormality}">0</td>
+          <td id="totalAbdominalDistension" th:text="${totalAbdominalDistension}">0</td>
+          <td id="totalEndotrachealIntubationDiscomfort" th:text="${totalEndotrachealIntubationDiscomfort}">0</td>
+          <td id="totalEpigastricPain" th:text="${totalEpigastricPain}">0</td>
+          <td id="totalDelirium" th:text="${totalDelirium}">0</td>
+          <td id="totalChestDiscomfort" th:text="${totalChestDiscomfort}">0</td>
+          <td id="totalTourniquetReaction" th:text="${totalTourniquetReaction}">0</td>
+          <td id="totalOther" th:text="${totalOther}">0</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div>
+    <table id="afterSurgeryTableOneSummaryProportion" class="table table-bordered table-striped table-hover text-center align-middle">
+      <thead class="table-light">
+      <tr>
+        <th>恶心呕吐占比</th>
+        <th>头晕占比</th>
+        <th>恶心呕吐头晕占比</th>
+        <th>过敏性皮疹占比</th>
+        <th>麻醉恢复迟滞占比</th>
+        <th>穿刺部位异常占比</th>
+        <th>腹胀占比</th>
+        <th>气插不适占比</th>
+        <th>胃脘痛总占比</th>
+        <th>瞻望占比</th>
+        <th>心胸不适占比</th>
+        <th>止血带反应占比</th>
+        <th>其他占比</th>
+      </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td id="proportionOfNauseaAndVomiting" th:text="${proportionOfNauseaAndVomiting != null ? #numbers.formatDecimal(proportionOfNauseaAndVomiting * 100, 1, 2) + '%' : 'N/A'}">0</td>
+          <td id="proportionOfDizziness" th:text="${proportionOfDizziness != null ? #numbers.formatDecimal(proportionOfDizziness * 100, 1, 2) + '%' : 'N/A'}">0</td>
+          <td id="proportionOfNauseaAndVomitingAndDizziness" th:text="${proportionOfNauseaAndVomitingAndDizziness != null ? #numbers.formatDecimal(proportionOfNauseaAndVomitingAndDizziness * 100, 1, 2) + '%' : 'N/A'}">0</td>
+          <td id="proportionOfAllergicRash" th:text="${proportionOfAllergicRash != null ? #numbers.formatDecimal(proportionOfAllergicRash * 100, 1, 2) + '%' : 'N/A'}">0</td>
+          <td id="proportionOfProlongedAnestheticRecovery" th:text="${proportionOfProlongedAnestheticRecovery != null ? #numbers.formatDecimal(proportionOfProlongedAnestheticRecovery * 100, 1, 2) + '%' : 'N/A'}">0</td>
+          <td id="proportionOfPunctureSiteAbnormality" th:text="${proportionOfPunctureSiteAbnormality != null ? #numbers.formatDecimal(proportionOfPunctureSiteAbnormality * 100, 1, 2) + '%' : 'N/A'}">0</td>
+          <td id="proportionOfAbdominalDistension" th:text="${proportionOfAbdominalDistension != null ? #numbers.formatDecimal(proportionOfAbdominalDistension * 100, 1, 2) + '%' : 'N/A'}">0</td>
+          <td id="proportionOfEndotrachealIntubationDiscomfort" th:text="${proportionOfEndotrachealIntubationDiscomfort != null ? #numbers.formatDecimal(proportionOfEndotrachealIntubationDiscomfort * 100, 1, 2) + '%' : 'N/A'}">0</td>
+          <td id="proportionOfEpigastricPain" th:text="${proportionOfEpigastricPain != null ? #numbers.formatDecimal(proportionOfEpigastricPain * 100, 1, 2) + '%' : 'N/A'}">0</td>
+          <td id="proportionOfDelirium" th:text="${proportionOfDelirium != null ? #numbers.formatDecimal(proportionOfDelirium * 100, 1, 2) + '%' : 'N/A'}">0</td>
+          <td id="proportionOfChestDiscomfort" th:text="${proportionOfChestDiscomfort != null ? #numbers.formatDecimal(proportionOfChestDiscomfort * 100, 1, 2) + '%' : 'N/A'}">0</td>
+          <td id="proportionOfTourniquetReaction" th:text="${proportionOfTourniquetReaction != null ? #numbers.formatDecimal(proportionOfTourniquetReaction * 100, 1, 2) + '%' : 'N/A'}">0</td>
+          <td id="proportionOfOther" th:text="${proportionOfOther != null ? #numbers.formatDecimal(proportionOfOther * 100, 1, 2) + '%' : 'N/A'}">0</td>
+      </tbody>
+    </table>
+  </div>
+
+<!--  First Three Chart-->
+  <div class="container-fluid mb-4">
+    <div class="row g-3">
+      <div class="col-12 col-md-4">
+        <div class="card h-100">
+          <div class="card-body d-flex flex-column align-items-center">
+            <h6 class="card-title">恶心呕吐占比</h6>
+            <div style="width:220px;height:220px"><canvas id="pieNauseaAndVomiting"></canvas></div>
+            <div class="mt-2 small text-muted" id="pieNauseaAndVomitingText"></div>
+          </div>
+        </div>
+      </div>
+      <div class="col-12 col-md-4">
+        <div class="card h-100">
+          <div class="card-body d-flex flex-column align-items-center">
+            <h6 class="card-title">头晕占比</h6>
+            <div style="width:220px;height:220px"><canvas id="pieDizziness"></canvas></div>
+            <div class="mt-2 small text-muted" id="pieDizzinessText"></div>
+          </div>
+        </div>
+      </div>
+      <div class="col-12 col-md-4">
+        <div class="card h-100">
+          <div class="card-body d-flex flex-column align-items-center">
+            <h6 class="card-title">恶心呕吐头晕占比</h6>
+            <div style="width:220px;height:220px"><canvas id="pieNauseaAndVomitingAndDizziness"></canvas></div>
+            <div class="mt-2 small text-muted" id="pieNauseaAndVomitingAndDizzinessText"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+<div class="container-fluid mb-4">
+  <div class="row g-3">
+    <div class="col-12 col-md-4">
+      <div class="card h-100">
+        <div class="card-body d-flex flex-column align-items-center">
+          <h6 class="card-title">过敏性皮疹占比</h6>
+          <div style="width:220px;height:220px"><canvas id="pieAllergicRash"></canvas></div>
+          <div class="mt-2 small text-muted" id="pieAllergicRashText"></div>
+        </div>
+      </div>
+    </div>
+    <div class="col-12 col-md-4">
+      <div class="card h-100">
+        <div class="card-body d-flex flex-column align-items-center">
+          <h6 class="card-title">气插不适占比</h6>
+          <div style="width:220px;height:220px"><canvas id="pieEndotrachealIntubationDiscomfort"></canvas></div>
+          <div class="mt-2 small text-muted" id="pieEndotrachealIntubationDiscomfortText"></div>
+        </div>
+      </div>
+    </div>
+    <div class="col-12 col-md-4">
+      <div class="card h-100">
+        <div class="card-body d-flex flex-column align-items-center">
+          <h6 class="card-title">穿刺部位异常占比</h6>
+          <div style="width:220px;height:220px"><canvas id="piePunctureSiteAbnormality"></canvas></div>
+          <div class="mt-2 small text-muted" id="piePunctureSiteAbnormalityText"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="container-fluid mb-4">
+  <div class="row g-3">
+    <div class="col-12 col-md-4">
+      <div class="card h-100">
+        <div class="card-body d-flex flex-column align-items-center">
+          <h6 class="card-title">腹胀占比</h6>
+          <div style="width:220px;height:220px"><canvas id="pieAbdominalDistension"></canvas></div>
+          <div class="mt-2 small text-muted" id="pieAbdominalDistensionText"></div>
+        </div>
+      </div>
+    </div>
+    <div class="col-12 col-md-4">
+      <div class="card h-100">
+        <div class="card-body d-flex flex-column align-items-center">
+          <h6 class="card-title">麻醉恢复迟滞占比</h6>
+          <div style="width:220px;height:220px"><canvas id="pieProlongedAnestheticRecovery"></canvas></div>
+          <div class="mt-2 small text-muted" id="pieProlongedAnestheticRecoveryText"></div>
+        </div>
+      </div>
+    </div>
+    <div class="col-12 col-md-4">
+      <div class="card h-100">
+        <div class="card-body d-flex flex-column align-items-center">
+          <h6 class="card-title">胃脘痛总占比</h6>
+          <div style="width:220px;height:220px"><canvas id="pieEpigastricPain"></canvas></div>
+          <div class="mt-2 small text-muted" id="pieEpigastricPainText"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="container-fluid mb-4">
+  <div class="row g-3">
+    <div class="col-12 col-md-4">
+      <div class="card h-100">
+        <div class="card-body d-flex flex-column align-items-center">
+          <h6 class="card-title">瞻望占比</h6>
+          <div style="width:220px;height:220px"><canvas id="pieDelirium"></canvas></div>
+          <div class="mt-2 small text-muted" id="pieDeliriumText"></div>
+        </div>
+      </div>
+    </div>
+    <div class="col-12 col-md-4">
+      <div class="card h-100">
+        <div class="card-body d-flex flex-column align-items-center">
+          <h6 class="card-title">心胸不适占比</h6>
+          <div style="width:220px;height:220px"><canvas id="pieChestDiscomfort"></canvas></div>
+          <div class="mt-2 small text-muted" id="pieChestDiscomfortText"></div>
+        </div>
+      </div>
+    </div>
+    <div class="col-12 col-md-4">
+      <div class="card h-100">
+        <div class="card-body d-flex flex-column align-items-center">
+          <h6 class="card-title">止血带反应占比</h6>
+          <div style="width:220px;height:220px"><canvas id="pieTourniquetReaction"></canvas></div>
+          <div class="mt-2 small text-muted" id="pieTourniquetReactionText"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="container-fluid mb-4">
+  <div class="row g-3">
+    <div class="col-12 col-md-4">
+      <div class="card h-100">
+        <div class="card-body d-flex flex-column align-items-center">
+          <h6 class="card-title">其他占比</h6>
+          <div style="width:220px;height:220px"><canvas id="pieOther"></canvas></div>
+          <div class="mt-2 small text-muted" id="pieOtherText"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script th:inline="javascript">
+  // proportions from the server (fractions 0..1)
+  const pNauseaAndVomitingRaw = /*[[${proportionOfNauseaAndVomiting}]]*/ null;
+  const pDizzinessRaw    = /*[[${proportionOfDizziness}]]*/ null;
+  const pNauseaAndVomitingAndDizzinessRaw       = /*[[${proportionOfNauseaAndVomitingAndDizziness}]]*/ null;
+
+  const pAllergicRashRaw       = /*[[${proportionOfAllergicRash}]]*/ null;
+  const pProlongedAnestheticRecoveryRaw       = /*[[${proportionOfProlongedAnestheticRecovery}]]*/ null;
+  const pPunctureSiteAbnormalityRaw       = /*[[${proportionOfPunctureSiteAbnormality}]]*/ null;
+
+  const pAbdominalDistensionRaw       = /*[[${proportionOfAbdominalDistension}]]*/ null;
+  const pEndotrachealIntubationDiscomfortRaw       = /*[[${proportionOfEndotrachealIntubationDiscomfort}]]*/ null;
+  const pEpigastricPainRaw       = /*[[${proportionOfEpigastricPain}]]*/ null;
+
+  const pDeliriumRaw       = /*[[${proportionOfDelirium}]]*/ null;
+  const pChestDiscomfortRaw       = /*[[${proportionOfChestDiscomfort}]]*/ null;
+  const pTourniquetReactionRaw       = /*[[${proportionOfTourniquetReaction}]]*/ null;
+
+  const pOtherRaw       = /*[[${proportionOfOther}]]*/ null;
+
+
+  const toNum = v => (v == null || v === '' || isNaN(v)) ? 0 : Number(v);
+  const clamp01 = n => Math.min(Math.max(n, 0), 1);
+  const fracToPct = f => Math.round(clamp01(toNum(f)) * 10000) / 100; // 2dp
+
+  function makePie(canvasId, labelId, pct, colors) {
+    const ctx = document.getElementById(canvasId);
+    if (!ctx) return;
+
+    const value = pct;                   // 0..100
+    const remainder = Math.max(0, 100 - value);
+
+    new Chart(ctx, {
+      type: 'pie',
+      data: {
+        labels: ['占比', '其余'],
+        datasets: [{
+          data: [value, remainder],
+          backgroundColor: colors || ['#4e79a7', '#e0e0e0'],
+          borderWidth: 0
+        }]
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: {
+          legend: { position: 'bottom' },
+          tooltip: {
+            callbacks: { label: (c) => `${c.label}: ${c.parsed}%` }
+          }
+        }
+      }
+    });
+
+    const lbl = document.getElementById(labelId);
+    if (lbl) lbl.textContent = `占比：${value.toFixed(2)}%`;
+  }
+
+  makePie('pieNauseaAndVomiting', 'pieNauseaAndVomitingText', fracToPct(pNauseaAndVomitingRaw), ['#4e79a7', '#e0e0e0']);
+  makePie('pieDizziness',   'pieDizzinessText',   fracToPct(pDizzinessRaw),    ['#f28e2b', '#e0e0e0']);
+  makePie('pieNauseaAndVomitingAndDizziness','pieNauseaAndVomitingAndDizzinessText',fracToPct(pNauseaAndVomitingAndDizzinessRaw),       ['#59a14f', '#e0e0e0']);
+
+  makePie('pieAllergicRash', 'pieAllergicRashText', fracToPct(pAllergicRashRaw), ['#4e79a7', '#e0e0e0']);
+  makePie('pieProlongedAnestheticRecovery', 'pieProlongedAnestheticRecoveryText', fracToPct(pProlongedAnestheticRecoveryRaw), ['#f28e2b', '#e0e0e0']);
+  makePie('piePunctureSiteAbnormality', 'piePunctureSiteAbnormalityText', fracToPct(pPunctureSiteAbnormalityRaw), ['#59a14f', '#e0e0e0']);
+
+  makePie('pieAbdominalDistension', 'pieAbdominalDistensionText', fracToPct(pAbdominalDistensionRaw), ['#4e79a7', '#e0e0e0']);
+  makePie('pieEndotrachealIntubationDiscomfort', 'pieEndotrachealIntubationDiscomfortText', fracToPct(pEndotrachealIntubationDiscomfortRaw), ['#f28e2b', '#e0e0e0']);
+  makePie('pieEpigastricPain', 'pieEpigastricPainText', fracToPct(pEpigastricPainRaw), ['#59a14f', '#e0e0e0']);
+
+  makePie('pieDelirium', 'pieDeliriumText', fracToPct(pDeliriumRaw), ['#4e79a7', '#e0e0e0']);
+  makePie('pieChestDiscomfort', 'pieChestDiscomfortText', fracToPct(pChestDiscomfortRaw), ['#f28e2b', '#e0e0e0']);
+  makePie('pieTourniquetReaction', 'pieTourniquetReactionText', fracToPct(pTourniquetReactionRaw), ['#59a14f', '#e0e0e0']);
+
+   makePie('pieOther', 'pieOtherText', fracToPct(pOtherRaw), ['#59a14f', '#e0e0e0']);
+</script>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

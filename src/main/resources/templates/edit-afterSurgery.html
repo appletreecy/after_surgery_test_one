@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <title>Edit After Surgery Record</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body class="bg-light">
+
+<style>
+  @media (min-width: 1400px) {
+      .px-xxl-20 {
+          padding-left: 50rem;
+          padding-right: 50rem;
+      }
+  }
+</style>
+
+<div class="container-fluid px-2 px-md-5 px-lg-6 px-xxl-20">
+  <nav class="navbar navbar-expand-lg navbar-dark bg-primary mb-4">
+    <div class="container-fluid">
+      <a class="navbar-brand" href="/">After Surgery Dashboard</a>
+      <button class="navbar-toggler" type="button" data-bs-toggle="collapse"
+              data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false"
+              aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="collapse navbar-collapse" id="navbarNav">
+        <ul class="navbar-nav ms-auto">
+          <li class="nav-item"><a class="nav-link" th:href="@{/}">Dashboard</a></li>
+          <li class="nav-item"><a class="nav-link" th:href="@{/afterSurgery/add}">Add Record</a></li>
+          <li class="nav-item"><a class="nav-link" th:href="@{/afterSurgery/editone}">Edit Record</a></li>
+          <li class="nav-item"><a class="nav-link" th:href="@{/afterSurgery/delete}">Delete Record</a></li>
+        </ul>
+      </div>
+    </div>
+  </nav>
+
+  <h2 class="mb-4 text-center text-primary">Edit After Surgery Record</h2>
+
+  <form method="post" th:action="@{/afterSurgery/edit}" th:object="${afterSurgery}" class="row g-3 bg-white p-4 shadow rounded">
+    <input type="hidden" th:field="*{id}" />
+
+    <!-- General Info -->
+    <h4 class="text-secondary mt-4">General Information</h4>
+    <div class="col-md-4">
+      <label class="form-label">Date</label>
+      <input type="date"
+             name="date"
+             class="form-control"
+             th:value="${afterSurgery.date != null ? #temporals.format(afterSurgery.date, 'yyyy-MM-dd') : ''}"
+             required />
+
+    </div>
+
+    <!-- Post-op and Reaction Data -->
+    <h4 class="text-secondary mt-4">Postoperative & Reaction Data</h4>
+    <div class="col-md-4"><label class="form-label">Post-op Visits</label><input type="number" th:field="*{numOfPostoperativeVisits}" class="form-control" /></div>
+    <div class="col-md-4"><label class="form-label">Analgesia Cases</label><input type="number" th:field="*{numOfPostoperativeAnalgesiaCases}" class="form-control" /></div>
+    <div class="col-md-4"><label class="form-label">Adverse Reactions</label><input type="number" th:field="*{numOfAdverseReactionCases}" class="form-control" /></div>
+
+    <div class="col-md-4"><label class="form-label">Nausea & Vomiting</label><input type="number" th:field="*{nauseaAndVomiting}" class="form-control" /></div>
+    <div class="col-md-4"><label class="form-label">Dizziness</label><input type="number" th:field="*{dizziness}" class="form-control" /></div>
+    <div class="col-md-4"><label class="form-label">Nausea+Vomiting+Dizziness</label><input type="number" th:field="*{nauseaVomitingDizziness}" class="form-control" /></div>
+
+    <!-- Symptoms -->
+    <h4 class="text-secondary mt-4">Symptoms & Observations</h4>
+    <div class="col-md-4"><label class="form-label">Skin Itching</label><input type="number" th:field="*{skinItching}" class="form-control" /></div>
+    <div class="col-md-4"><label class="form-label">Allergic Rash</label><input type="number" th:field="*{allergicRash}" class="form-control" /></div>
+    <div class="col-md-4"><label class="form-label">Delayed Recovery</label><input type="number" th:field="*{delayedRecoveryFromAnesthesia}" class="form-control" /></div>
+    <div class="col-md-4"><label class="form-label">Puncture Site Abnormality</label><input type="number" th:field="*{abnormalityAtThePunctureSite}" class="form-control" /></div>
+    <div class="col-md-4"><label class="form-label">Bloating</label><input type="number" th:field="*{bloating}" class="form-control" /></div>
+    <div class="col-md-8"><label class="form-label">Other Conditions</label><input type="text" th:field="*{otherConditions}" class="form-control" /></div>
+
+    <!-- Critical Follow-ups -->
+    <h4 class="text-secondary mt-4">Critical Patient Follow-ups</h4>
+    <div class="col-md-4"><label class="form-label">Critically Ill Follow-ups</label><input type="number" th:field="*{numberOfFollowupVisitsForCriticallyIIIPatients}" class="form-control" /></div>
+    <div class="col-md-4"><label class="form-label">Poor Analgesic Effect</label><input type="number" th:field="*{poorAnalgesicEffect}" class="form-control" /></div>
+    <div class="col-md-4"><label class="form-label">Total Critically Ill Patients</label><input type="number" th:field="*{totalNumberOfCriticallyIIIPatientsVisited}" class="form-control" /></div>
+
+    <!-- Complications -->
+    <h4 class="text-secondary mt-4">Complications</h4>
+    <div class="col-md-4"><label class="form-label">Joint Complications</label><input type="number" th:field="*{numberOfJointComplications}" class="form-control" /></div>
+    <div class="col-md-4"><label class="form-label">Motor Dysfunction</label><input type="number" th:field="*{numberOfMotorDysfunctionClass}" class="form-control" /></div>
+    <div class="col-md-4"><label class="form-label">Wound Complications</label><input type="number" th:field="*{numberOfWoundComplications}" class="form-control" /></div>
+    <div class="col-md-4"><label class="form-label">Foot & Ankle Complications</label><input type="number" th:field="*{numberOfFootAndAnkleComplications}" class="form-control" /></div>
+    <div class="col-md-4"><label class="form-label">Pediatric Adverse Events</label><input type="number" th:field="*{numberOfPediatricAdverseEvents}" class="form-control" /></div>
+    <div class="col-md-4"><label class="form-label">Spinal Complications</label><input type="number" th:field="*{numberOfSpinalComplications}" class="form-control" /></div>
+    <div class="col-md-4"><label class="form-label">Hand Surgery Complications</label><input type="number" th:field="*{numberOfHandSurgeryComplications}" class="form-control" /></div>
+
+    <!-- Formulas -->
+    <h4 class="text-secondary mt-4">Formulas</h4>
+    <div class="col-md-4"><label class="form-label">Formula One</label><input type="number" th:field="*{formulaOne}" class="form-control" /></div>
+    <div class="col-md-4"><label class="form-label">Formula Two</label><input type="number" th:field="*{formulaTwo}" class="form-control" /></div>
+    <div class="col-md-4"><label class="form-label">Formula Three</label><input type="number" th:field="*{formulaThree}" class="form-control" /></div>
+    <div class="col-md-4"><label class="form-label">Formula Four</label><input type="number" th:field="*{formulaFour}" class="form-control" /></div>
+    <div class="col-md-4"><label class="form-label">Formula Five</label><input type="number" th:field="*{formulaFive}" class="form-control" /></div>
+
+    <!-- Submit Buttons -->
+    <div class="col-12 mt-4">
+      <button type="submit" class="btn btn-warning">Update</button>
+      <a href="/" class="btn btn-secondary ms-2">Cancel</a>
+    </div>
+  </form>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
