@@ -1,0 +1,85 @@
+name: Build & Deploy to Linode
+
+on:
+  push:
+    branches: [ "main" ]
+  workflow_dispatch: {}
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Temurin JDK 21
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'temurin'
+          java-version: '21'
+          cache: 'maven'
+
+      - name: Build with Maven
+        run: mvn -B -DskipTests package
+
+      - name: Archive artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: app
+          path: target/*.jar
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    env:
+      APP_NAME: ${{ secrets.APP_NAME || 'myapp' }}
+      REMOTE_DIR: /opt/myapp
+    steps:
+      - name: Download artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: app
+          path: appdist
+
+      - name: Pick jar name
+        id: jar
+        run: |
+          JAR=$(ls appdist/*.jar | head -n1)
+          echo "jar=$JAR" >> $GITHUB_OUTPUT
+
+      - name: Start ssh-agent
+        uses: webfactory/ssh-agent@v0.9.0
+        with:
+          ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY }}
+
+      - name: Add Linode host key to known_hosts
+        run: |
+          mkdir -p ~/.ssh
+          ssh-keyscan -H "${{ secrets.LINODE_HOST }}" >> ~/.ssh/known_hosts
+
+      - name: Create release dir on server
+        run: |
+          TS=$(date +%Y%m%d%H%M%S)
+          echo "ts=$TS" >> $GITHUB_ENV
+          ssh ${{ secrets.LINODE_SSH_USER }}@${{ secrets.LINODE_HOST }} "mkdir -p $REMOTE_DIR/releases/$TS"
+
+      - name: Upload jar with rsync
+        run: |
+          rsync -avz --progress "${{ steps.jar.outputs.jar }}" \
+            "${{ secrets.LINODE_SSH_USER }}@${{ secrets.LINODE_HOST }}:$REMOTE_DIR/releases/${{ env.ts }}/app.jar"
+
+      - name: Switch symlink and restart service
+        run: |
+          ssh ${{ secrets.LINODE_SSH_USER }}@${{ secrets.LINODE_HOST }} <<'EOSSH'
+          set -euo pipefail
+          APP_NAME="${APP_NAME:-myapp}"
+          REMOTE_DIR="/opt/myapp"
+          TS="${{ env.ts }}"
+
+          ls -1dt $REMOTE_DIR/releases/* | tail -n +6 | xargs -r rm -rf
+          ln -sfn "$REMOTE_DIR/releases/$TS" "$REMOTE_DIR/current"
+          mkdir -p "$REMOTE_DIR/shared/logs"
+
+          sudo systemctl restart "$APP_NAME"
+          sudo systemctl status "$APP_NAME" --no-pager -l || true
+          EOSSH
