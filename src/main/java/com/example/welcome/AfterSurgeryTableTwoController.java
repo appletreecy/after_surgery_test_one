@@ -11,6 +11,16 @@ import com.example.welcome.repository.AfterSurgeryTableOneRepository;
 
 import java.util.List;
 
+import org.springframework.web.multipart.MultipartFile;
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
+import java.io.IOException;
+import java.time.DateTimeException;
+import java.time.LocalDate;
+import java.util.ArrayList;
+
+import static java.lang.Integer.parseInt;
+
 @Controller
 @RequestMapping("afterSurgeryTableTwo")
 public class AfterSurgeryTableTwoController {
@@ -211,6 +221,59 @@ public class AfterSurgeryTableTwoController {
     public String updateAfterSurgery(@ModelAttribute AfterSurgeryTableTwo record) {
         afterSurgeryTableTwoRepository.save(record);
         return "redirect:/afterSurgeryTableTwo"; // Redirect to dashboard
+    }
+
+    // Add this to the controller
+    @GetMapping("/upload")
+    public String showUploadForm() {
+        return "uploadAfterSurgeryTableTwo";
+    }
+
+    @PostMapping("/upload")
+    public String handleFileUpload(@RequestParam("file") MultipartFile file, Model model) {
+        List<AfterSurgeryTableTwo> records = new ArrayList<>();
+        try (BufferedReader reader = new BufferedReader(new InputStreamReader(file.getInputStream()))) {
+            String line;
+            boolean isFirstLine = true;
+
+            while ((line = reader.readLine()) != null) {
+                if (isFirstLine) {
+                    isFirstLine = false; // skip header
+                    continue;
+                }
+                String[] fields = line.split(",");
+
+                AfterSurgeryTableTwo record = new AfterSurgeryTableTwo();
+                record.setDate(LocalDate.parse(fields[0].trim()));
+
+                record.setNumOfNauseaAndVomiting(parseInt(fields[1]));
+                record.setNumOfDizziness(parseInt(fields[2]));
+                record.setNumOfNauseaAndVomitingAndDizziness(parseInt(fields[3]));
+                record.setNumOfItching(parseInt(fields[4]));
+                record.setNumOfAllergicRash(parseInt(fields[5]));
+                record.setNumOfProlongedAnestheticRecovery(parseInt(fields[6]));
+                record.setNumOfPunctureSiteAbnormality(parseInt(fields[7]));
+                record.setNumOfAbdominalDistension(parseInt(fields[8]));
+                record.setNumOfEndotrachealIntubationDiscomfort(parseInt(fields[9]));
+                record.setNumOfEpigastricPain(parseInt(fields[10]));
+                record.setNumOfDelirium(parseInt(fields[11]));
+                record.setNumOfChestDiscomfort(parseInt(fields[12]));
+                record.setNumOfTourniquetReaction(parseInt(fields[13]));
+                record.setNumOfOther(parseInt(fields[14]));
+                record.setOtherComments(fields[15]);
+
+                records.add(record);
+            }
+
+            afterSurgeryTableTwoRepository.saveAll(records);
+            model.addAttribute("message", "Successfully uploaded " + records.size() + " records.");
+
+        } catch (IOException | NumberFormatException | DateTimeException e) {
+            model.addAttribute("message", "Failed to upload CSV: " + e.getMessage());
+            e.printStackTrace();
+        }
+
+        return "uploadAfterSurgeryTableTwo";
     }
 }
 
