@@ -8,8 +8,22 @@ import org.springframework.web.bind.annotation.*;
 
 import com.example.welcome.model.AfterSurgeryTableOne;
 import com.example.welcome.repository.AfterSurgeryTableOneRepository;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.time.DateTimeException;
+import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
+
+
+import org.springframework.transaction.annotation.Transactional;  // For @Transactional
+import java.util.HashSet;          // For HashSet
+import java.util.LinkedHashSet;    // For LinkedHashSet
+
 
 @Controller
 @RequestMapping("afterSurgeryTableThree")
@@ -168,6 +182,90 @@ public class AfterSurgeryTableThreeController {
         afterSurgeryTableThreeRepository.save(record);
         return "redirect:/afterSurgeryTableThree"; // Redirect to dashboard
     }
+
+    // Add this to the controller
+    @GetMapping("/upload")
+    public String showUploadForm() {
+        return "uploadAfterSurgeryTableThree";
+    }
+
+    @PostMapping("/upload")
+    @Transactional // so either everything valid saves, or nothing
+    public String handleFileUpload(@RequestParam("file") MultipartFile file, Model model) {
+        List<AfterSurgeryTableThree> rows = new ArrayList<>();
+        List<Integer> badColumnLines = new ArrayList<>();
+        Set<LocalDate> seenInFile = new HashSet<>();
+        Set<LocalDate> dupInFile = new LinkedHashSet<>();
+        int lineNo = 0;
+
+        try (BufferedReader reader = new BufferedReader(new InputStreamReader(file.getInputStream()))) {
+            String line;
+            while ((line = reader.readLine()) != null) {
+                lineNo++;
+                String trimmed = line.trim();
+                if (trimmed.isEmpty()) continue;
+                if (lineNo == 1 && trimmed.toLowerCase().startsWith("date,")) continue;
+
+                String[] f = trimmed.split(",", -1);
+                if (f.length != 10) {
+                    badColumnLines.add(lineNo);
+                    continue;
+                }
+
+                LocalDate date = LocalDate.parse(f[0].trim());
+                if (!seenInFile.add(date)) {
+                    dupInFile.add(date);
+                }
+
+                AfterSurgeryTableThree r = new AfterSurgeryTableThree();
+                r.setDate(date);
+                r.setNumOfJointComplicationCount(Integer.parseInt(f[1].trim()));
+                r.setNumOfMotorDysfunctionCount(Integer.parseInt(f[2].trim()));
+                r.setNumOfTraumaComplicationCount(Integer.parseInt(f[3].trim()));
+                r.setNumOfAnkleComplicationCount(Integer.parseInt(f[4].trim()));
+                r.setNumOfPediatricAdverseEventCount(Integer.parseInt(f[5].trim()));
+                r.setNumOfSpinalComplicationCount(Integer.parseInt(f[6].trim()));
+                r.setNumOfHandSurgeryComplicationCount(Integer.parseInt(f[7].trim()));
+                r.setNumOfObstetricAdverseEventCount(Integer.parseInt(f[8].trim()));
+                r.setNumOfGynecologicalAdverseEventCount(Integer.parseInt(f[9].trim()));
+
+                rows.add(r);
+            }
+        } catch (Exception e) {
+            model.addAttribute("message", "Failed to read CSV: " + e.getMessage());
+            return "uploadAfterSurgeryTableThree";
+        }
+
+        // Column count errors
+        if (!badColumnLines.isEmpty()) {
+            model.addAttribute("message",
+                    "Error: some lines are missing columns (need 10). Problem lines: " + badColumnLines);
+            return "uploadAfterSurgeryTableThree";
+        }
+
+        // Duplicates *within* the file
+        if (!dupInFile.isEmpty()) {
+            model.addAttribute("message",
+                    "Error: duplicate dates found in the file: " + dupInFile);
+            return "uploadAfterSurgeryTableThree";
+        }
+
+        // Conflicts with DB
+        Set<LocalDate> dates = rows.stream().map(AfterSurgeryTableThree::getDate).collect(java.util.stream.Collectors.toSet());
+        Set<LocalDate> exists = afterSurgeryTableThreeRepository.findExistingDates(dates);
+        if (!exists.isEmpty()) {
+            model.addAttribute("message",
+                    "Error: these dates already exist in the system: " + exists +
+                            ". Please remove them or switch to 'update existing' mode.");
+            return "uploadAfterSurgeryTableThree";
+        }
+
+        // All good → save
+        afterSurgeryTableThreeRepository.saveAll(rows);
+        model.addAttribute("message", "Successfully uploaded " + rows.size() + " records.");
+        return "uploadAfterSurgeryTableThree";
+    }
+
 
 }
 
