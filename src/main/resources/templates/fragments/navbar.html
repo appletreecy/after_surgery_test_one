@@ -100,11 +100,20 @@
           <li class="nav-item dropdown" sec:authorize="isAuthenticated()">
               <a class="nav-link dropdown-toggle" href="#" id="tableBulkUploadDropdown" role="button"
                  data-bs-toggle="dropdown" aria-expanded="false">
-                  batch add table
+                  批量添加入表
               </a>
               <ul class="dropdown-menu" aria-labelledby="tableDropdown">
                   <li>
-                      <a class="dropdown-item" th:href="@{/afterSurgeryTableOne/upload}">batch add table one</a>
+                      <a class="dropdown-item" th:href="@{/afterSurgeryTableOne/upload}">批量添加入表一</a>
+                  </li>
+                  <li>
+                      <a class="dropdown-item" th:href="@{/afterSurgeryTableOne/upload}">批量添加入表二</a>
+                  </li>
+                  <li>
+                      <a class="dropdown-item" th:href="@{/afterSurgeryTableOne/upload}">批量添加入表三</a>
+                  </li>
+                  <li>
+                      <a class="dropdown-item" th:href="@{/afterSurgeryTableOne/upload}">批量添加入表四</a>
                   </li>
               </ul>
           </li>
