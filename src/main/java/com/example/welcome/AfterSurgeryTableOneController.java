@@ -18,6 +18,15 @@ import java.util.List;
 
 import static java.lang.Integer.parseInt;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.*;
+
+import java.time.LocalDate;
+
 
 @Controller
 @RequestMapping("afterSurgeryTableOne")
@@ -26,50 +35,113 @@ public class AfterSurgeryTableOneController {
     @Autowired
     private AfterSurgeryTableOneRepository afterSurgeryTableOneRepository;
 
-    @GetMapping({"/", ""})
-    public String showTableOne(Model model) {
+//    @GetMapping({"/", ""})
+//    public String showTableOne(Model model) {
+//
+//        List<AfterSurgeryTableOne> records = afterSurgeryTableOneRepository.findAll();
+//        int totalVisits = records.stream()
+//                .filter(r -> r.getNumOfPostoperativeVisits() != null)
+//                .mapToInt(AfterSurgeryTableOne::getNumOfPostoperativeVisits)
+//                .sum();
+//
+//        int totalPostoperativeAnalgesia = records.stream()
+//                .filter(r -> r.getNumOfPostoperativeAnalgesiaCases() != null)
+//                .mapToInt(AfterSurgeryTableOne::getNumOfPostoperativeAnalgesiaCases)
+//                .sum();
+//
+//        int totalAdverseReactions = records.stream()
+//                .filter(r -> r.getNumOfAdverseReactionCases() != null)
+//                .mapToInt(AfterSurgeryTableOne::getNumOfAdverseReactionCases)
+//                .sum();
+//
+//        int totalInadequateAnalgesia = records.stream()
+//                .filter(r -> r.getNumOfInadequateAnalgesia() != null)
+//                .mapToInt(AfterSurgeryTableOne::getNumOfInadequateAnalgesia)
+//                .sum();
+//
+//        float proportionOfTotalPostoperativeAnalgesiaCases = (float) totalPostoperativeAnalgesia / totalVisits;
+//
+//        float proportionOfTotalAdverseReactions = (float) totalAdverseReactions / totalPostoperativeAnalgesia;
+//
+//        float proportionOfTotalInadequateAnalgesia = 1 - ((float) totalInadequateAnalgesia / totalPostoperativeAnalgesia);
+//
+//
+//        model.addAttribute("afterSurgeryTableOne", records);
+//        model.addAttribute("totalVisits", totalVisits);
+//        model.addAttribute("totalPostoperativeAnalgesia", totalPostoperativeAnalgesia);
+//        model.addAttribute("totalAdverseReactions", totalAdverseReactions);
+//        model.addAttribute("totalInadequateAnalgesia", totalInadequateAnalgesia);
+//
+//        model.addAttribute("proportionOfTotalPostoperativeAnalgesiaCases", proportionOfTotalPostoperativeAnalgesiaCases);
+//        model.addAttribute("proportionOfTotalAdverseReactions", proportionOfTotalAdverseReactions);
+//        model.addAttribute("proportionOfTotalInadequateAnalgesia", proportionOfTotalInadequateAnalgesia);
+//
+//
+//        return "afterSurgeryTableOne";
+//    }
 
-        List<AfterSurgeryTableOne> records = afterSurgeryTableOneRepository.findAll();
-        int totalVisits = records.stream()
-                .filter(r -> r.getNumOfPostoperativeVisits() != null)
-                .mapToInt(AfterSurgeryTableOne::getNumOfPostoperativeVisits)
-                .sum();
+    @GetMapping({"", "/"})
+    public String showTableOne(
+            @RequestParam(required = false) LocalDate startDate,
+            @RequestParam(required = false) LocalDate endDate,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "20") int size,
+            @RequestParam(defaultValue = "date") String sort,
+            @RequestParam(defaultValue = "DESC") Sort.Direction dir,
+            Model model
+    ) {
+        // Default to last 30 days (inclusive)
+        LocalDate today = LocalDate.now();
+        if (endDate == null) endDate = today;
+        if (startDate == null) startDate = endDate.minusDays(29);
 
-        int totalPostoperativeAnalgesia = records.stream()
-                .filter(r -> r.getNumOfPostoperativeAnalgesiaCases() != null)
-                .mapToInt(AfterSurgeryTableOne::getNumOfPostoperativeAnalgesiaCases)
-                .sum();
+        // Guard rails
+        if (startDate.isAfter(endDate)) {
+            model.addAttribute("error", "Start date must be on or before end date. Showing last 30 days.");
+            endDate = today;
+            startDate = endDate.minusDays(29);
+        }
 
-        int totalAdverseReactions = records.stream()
-                .filter(r -> r.getNumOfAdverseReactionCases() != null)
-                .mapToInt(AfterSurgeryTableOne::getNumOfAdverseReactionCases)
-                .sum();
+        PageRequest pr = PageRequest.of(page, size, Sort.by(dir, sort));
+        Page<AfterSurgeryTableOne> pageData =
+                afterSurgeryTableOneRepository.findByDateBetween(startDate, endDate, pr);
 
-        int totalInadequateAnalgesia = records.stream()
-                .filter(r -> r.getNumOfInadequateAnalgesia() != null)
-                .mapToInt(AfterSurgeryTableOne::getNumOfInadequateAnalgesia)
-                .sum();
+        TableOneTotals totals =
+                afterSurgeryTableOneRepository.computeTotalsInRange(startDate, endDate);
 
-        float proportionOfTotalPostoperativeAnalgesiaCases = (float) totalPostoperativeAnalgesia / totalVisits;
+        long totalVisits = totals.totalVisits();
+        long totalAnalgesia = totals.totalAnalgesia();
+        long totalAdverse = totals.totalAdverse();
+        long totalInadequate = totals.totalInadequate();
 
-        float proportionOfTotalAdverseReactions = (float) totalAdverseReactions / totalPostoperativeAnalgesia;
+        float proportionAnalgesia = (totalVisits == 0) ? 0f : (float) totalAnalgesia / totalVisits;
+        float proportionAdverse = (totalAnalgesia == 0) ? 0f : (float) totalAdverse / totalAnalgesia;
+        float proportionInadequate = (totalAnalgesia == 0) ? 0f : 1 - ((float) totalInadequate / totalAnalgesia);
 
-        float proportionOfTotalInadequateAnalgesia = 1 - ((float) totalInadequateAnalgesia / totalPostoperativeAnalgesia);
+        model.addAttribute("page", pageData);
+        model.addAttribute("content", pageData.getContent());
+        model.addAttribute("currentPage", pageData.getNumber());
+        model.addAttribute("totalPages", pageData.getTotalPages());
+        model.addAttribute("size", pageData.getSize());
+        model.addAttribute("sort", sort);
+        model.addAttribute("dir", dir.name());
 
+        model.addAttribute("startDate", startDate);
+        model.addAttribute("endDate", endDate);
 
-        model.addAttribute("afterSurgeryTableOne", records);
         model.addAttribute("totalVisits", totalVisits);
-        model.addAttribute("totalPostoperativeAnalgesia", totalPostoperativeAnalgesia);
-        model.addAttribute("totalAdverseReactions", totalAdverseReactions);
-        model.addAttribute("totalInadequateAnalgesia", totalInadequateAnalgesia);
+        model.addAttribute("totalPostoperativeAnalgesia", totalAnalgesia);
+        model.addAttribute("totalAdverseReactions", totalAdverse);
+        model.addAttribute("totalInadequateAnalgesia", totalInadequate);
 
-        model.addAttribute("proportionOfTotalPostoperativeAnalgesiaCases", proportionOfTotalPostoperativeAnalgesiaCases);
-        model.addAttribute("proportionOfTotalAdverseReactions", proportionOfTotalAdverseReactions);
-        model.addAttribute("proportionOfTotalInadequateAnalgesia", proportionOfTotalInadequateAnalgesia);
-
+        model.addAttribute("proportionOfTotalPostoperativeAnalgesiaCases", proportionAnalgesia);
+        model.addAttribute("proportionOfTotalAdverseReactions", proportionAdverse);
+        model.addAttribute("proportionOfTotalInadequateAnalgesia", proportionInadequate);
 
         return "afterSurgeryTableOne";
     }
+
+
 
     @GetMapping("/add")
     public String showAddForm(Model model) {
