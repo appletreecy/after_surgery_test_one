@@ -2,6 +2,9 @@ package com.example.welcome;
 import com.example.welcome.model.AfterSurgeryTableThree;
 import com.example.welcome.repository.AfterSurgeryTableThreeRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -33,81 +36,172 @@ public class AfterSurgeryTableThreeController {
     private AfterSurgeryTableThreeRepository afterSurgeryTableThreeRepository;
 
     @Autowired
-    private AfterSurgeryTableOneRepository afterSurgeryRepositoryTableOne;
-
-    @GetMapping({"/", ""})
-    public String showTableOne(Model model){
-
-        List<AfterSurgeryTableThree> tableThreeRecords = afterSurgeryTableThreeRepository.findAll();
-        int totalNumOfJointComplicationCount = tableThreeRecords.stream()
-                .filter(r -> r.getNumOfJointComplicationCount() != null)
-                .mapToInt(AfterSurgeryTableThree::getNumOfJointComplicationCount)
-                .sum();
-
-        int totalNumOfMotorDysfunctionCount = tableThreeRecords.stream()
-                .filter(r -> r.getNumOfMotorDysfunctionCount() != null)
-                .mapToInt(AfterSurgeryTableThree::getNumOfMotorDysfunctionCount)
-                .sum();
-
-        int totalNumOfTraumaComplicationCount = tableThreeRecords.stream()
-                .filter(r -> r.getNumOfTraumaComplicationCount() != null)
-                .mapToInt(AfterSurgeryTableThree::getNumOfTraumaComplicationCount)
-                .sum();
-
-        int totalNumOfAnkleComplicationCount = tableThreeRecords.stream()
-                .filter(r -> r.getNumOfAnkleComplicationCount() != null)
-                .mapToInt(AfterSurgeryTableThree::getNumOfAnkleComplicationCount)
-                .sum();
-
-        int totalNumOfPediatricAdverseEventCount = tableThreeRecords.stream()
-                .filter(r -> r.getNumOfPediatricAdverseEventCount() != null)
-                .mapToInt(AfterSurgeryTableThree::getNumOfPediatricAdverseEventCount)
-                .sum();
-
-        int totalNumOfSpinalComplicationCount = tableThreeRecords.stream()
-                .filter(r -> r.getNumOfSpinalComplicationCount() != null)
-                .mapToInt(AfterSurgeryTableThree::getNumOfSpinalComplicationCount)
-                .sum();
-
-        int totalNumOfHandSurgeryComplicationCount = tableThreeRecords.stream()
-                .filter(r -> r.getNumOfHandSurgeryComplicationCount() != null)
-                .mapToInt(AfterSurgeryTableThree::getNumOfHandSurgeryComplicationCount)
-                .sum();
-
-        int totalNumOfObstetricAdverseEventCount = tableThreeRecords.stream()
-                .filter(r -> r.getNumOfObstetricAdverseEventCount() != null)
-                .mapToInt(AfterSurgeryTableThree::getNumOfObstetricAdverseEventCount)
-                .sum();
-
-        int totalNumOfGynecologicalAdverseEventCount = tableThreeRecords.stream()
-                .filter(r -> r.getNumOfGynecologicalAdverseEventCount() != null)
-                .mapToInt(AfterSurgeryTableThree::getNumOfGynecologicalAdverseEventCount)
-                .sum();
-
-        List<AfterSurgeryTableOne> tableOneRecords = afterSurgeryRepositoryTableOne.findAll();
-
-        // TableOne
-        int totalAdverseReactions = tableOneRecords.stream()
-                .filter(r -> r.getNumOfAdverseReactionCases() != null)
-                .mapToInt(AfterSurgeryTableOne::getNumOfAdverseReactionCases)
-                .sum();
-
-        float proportionOfJointComplicationCount = (float) totalNumOfJointComplicationCount / totalAdverseReactions;
-
-        float proportionOfMotorDysfunctionCount = (float) totalNumOfMotorDysfunctionCount / totalAdverseReactions;
-
-        float proportionOfTraumaComplicationCount = (float) totalNumOfTraumaComplicationCount / totalAdverseReactions;
-
-        float proportionOfAnkleComplicationCount = (float) totalNumOfAnkleComplicationCount / totalAdverseReactions;
-
-        float proportionOfPediatricAdverseEventCount = (float) totalNumOfPediatricAdverseEventCount / totalAdverseReactions;
-
-        float proportionOfSpinalComplicationCount = (float) totalNumOfSpinalComplicationCount / totalAdverseReactions;
-
-        float proportionOfHandSurgeryComplicationCount = (float) totalNumOfHandSurgeryComplicationCount / totalAdverseReactions;
+    private AfterSurgeryTableOneRepository afterSurgeryTableOneRepository;
 
 
-        model.addAttribute("tableThreeRecords", tableThreeRecords);
+
+//    @GetMapping({"/", ""})
+//    public String showTableOne(Model model){
+//
+//        List<AfterSurgeryTableThree> tableThreeRecords = afterSurgeryTableThreeRepository.findAll();
+//        int totalNumOfJointComplicationCount = tableThreeRecords.stream()
+//                .filter(r -> r.getNumOfJointComplicationCount() != null)
+//                .mapToInt(AfterSurgeryTableThree::getNumOfJointComplicationCount)
+//                .sum();
+//
+//        int totalNumOfMotorDysfunctionCount = tableThreeRecords.stream()
+//                .filter(r -> r.getNumOfMotorDysfunctionCount() != null)
+//                .mapToInt(AfterSurgeryTableThree::getNumOfMotorDysfunctionCount)
+//                .sum();
+//
+//        int totalNumOfTraumaComplicationCount = tableThreeRecords.stream()
+//                .filter(r -> r.getNumOfTraumaComplicationCount() != null)
+//                .mapToInt(AfterSurgeryTableThree::getNumOfTraumaComplicationCount)
+//                .sum();
+//
+//        int totalNumOfAnkleComplicationCount = tableThreeRecords.stream()
+//                .filter(r -> r.getNumOfAnkleComplicationCount() != null)
+//                .mapToInt(AfterSurgeryTableThree::getNumOfAnkleComplicationCount)
+//                .sum();
+//
+//        int totalNumOfPediatricAdverseEventCount = tableThreeRecords.stream()
+//                .filter(r -> r.getNumOfPediatricAdverseEventCount() != null)
+//                .mapToInt(AfterSurgeryTableThree::getNumOfPediatricAdverseEventCount)
+//                .sum();
+//
+//        int totalNumOfSpinalComplicationCount = tableThreeRecords.stream()
+//                .filter(r -> r.getNumOfSpinalComplicationCount() != null)
+//                .mapToInt(AfterSurgeryTableThree::getNumOfSpinalComplicationCount)
+//                .sum();
+//
+//        int totalNumOfHandSurgeryComplicationCount = tableThreeRecords.stream()
+//                .filter(r -> r.getNumOfHandSurgeryComplicationCount() != null)
+//                .mapToInt(AfterSurgeryTableThree::getNumOfHandSurgeryComplicationCount)
+//                .sum();
+//
+//        int totalNumOfObstetricAdverseEventCount = tableThreeRecords.stream()
+//                .filter(r -> r.getNumOfObstetricAdverseEventCount() != null)
+//                .mapToInt(AfterSurgeryTableThree::getNumOfObstetricAdverseEventCount)
+//                .sum();
+//
+//        int totalNumOfGynecologicalAdverseEventCount = tableThreeRecords.stream()
+//                .filter(r -> r.getNumOfGynecologicalAdverseEventCount() != null)
+//                .mapToInt(AfterSurgeryTableThree::getNumOfGynecologicalAdverseEventCount)
+//                .sum();
+//
+//        List<AfterSurgeryTableOne> tableOneRecords = afterSurgeryRepositoryTableOne.findAll();
+//
+//        // TableOne
+//        int totalAdverseReactions = tableOneRecords.stream()
+//                .filter(r -> r.getNumOfAdverseReactionCases() != null)
+//                .mapToInt(AfterSurgeryTableOne::getNumOfAdverseReactionCases)
+//                .sum();
+//
+//        float proportionOfJointComplicationCount = (float) totalNumOfJointComplicationCount / totalAdverseReactions;
+//
+//        float proportionOfMotorDysfunctionCount = (float) totalNumOfMotorDysfunctionCount / totalAdverseReactions;
+//
+//        float proportionOfTraumaComplicationCount = (float) totalNumOfTraumaComplicationCount / totalAdverseReactions;
+//
+//        float proportionOfAnkleComplicationCount = (float) totalNumOfAnkleComplicationCount / totalAdverseReactions;
+//
+//        float proportionOfPediatricAdverseEventCount = (float) totalNumOfPediatricAdverseEventCount / totalAdverseReactions;
+//
+//        float proportionOfSpinalComplicationCount = (float) totalNumOfSpinalComplicationCount / totalAdverseReactions;
+//
+//        float proportionOfHandSurgeryComplicationCount = (float) totalNumOfHandSurgeryComplicationCount / totalAdverseReactions;
+//
+//
+//        model.addAttribute("tableThreeRecords", tableThreeRecords);
+//
+//        model.addAttribute("totalNumOfJointComplicationCount", totalNumOfJointComplicationCount);
+//        model.addAttribute("totalNumOfMotorDysfunctionCount", totalNumOfMotorDysfunctionCount);
+//        model.addAttribute("totalNumOfTraumaComplicationCount", totalNumOfTraumaComplicationCount);
+//        model.addAttribute("totalNumOfAnkleComplicationCount", totalNumOfAnkleComplicationCount);
+//        model.addAttribute("totalNumOfPediatricAdverseEventCount", totalNumOfPediatricAdverseEventCount);
+//        model.addAttribute("totalNumOfSpinalComplicationCount", totalNumOfSpinalComplicationCount);
+//        model.addAttribute("totalNumOfHandSurgeryComplicationCount", totalNumOfHandSurgeryComplicationCount);
+//
+//        model.addAttribute("proportionOfJointComplicationCount", proportionOfJointComplicationCount);
+//        model.addAttribute("proportionOfMotorDysfunctionCount", proportionOfMotorDysfunctionCount);
+//        model.addAttribute("proportionOfTraumaComplicationCount", proportionOfTraumaComplicationCount);
+//        model.addAttribute("proportionOfAnkleComplicationCount", proportionOfAnkleComplicationCount);
+//        model.addAttribute("proportionOfPediatricAdverseEventCount", proportionOfPediatricAdverseEventCount);
+//        model.addAttribute("proportionOfSpinalComplicationCount", proportionOfSpinalComplicationCount);
+//        model.addAttribute("proportionOfHandSurgeryComplicationCount", proportionOfHandSurgeryComplicationCount);
+//
+//
+//
+//        return "afterSurgeryTableThree";
+//    }
+
+    @GetMapping({"", "/"})
+    public String showTableOne(
+            @RequestParam(required = false) LocalDate startDate,
+            @RequestParam(required = false) LocalDate endDate,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "20") int size,
+            @RequestParam(defaultValue = "date") String sort,
+            @RequestParam(defaultValue = "DESC") Sort.Direction dir,
+            Model model
+    ) {
+        // Default to last 30 days (inclusive)
+        LocalDate today = LocalDate.now();
+        if (endDate == null) endDate = today;
+        if (startDate == null) startDate = endDate.minusDays(29);
+
+        // Guard rails
+        if (startDate.isAfter(endDate)) {
+            model.addAttribute("error", "Start date must be on or before end date. Showing last 30 days.");
+            endDate = today;
+            startDate = endDate.minusDays(29);
+        }
+
+        PageRequest pr = PageRequest.of(page, size, Sort.by(dir, sort));
+
+
+        TableOneTotals totalsTableOne =
+                afterSurgeryTableOneRepository.computeTotalsInRange(startDate, endDate);
+
+        // TableThree
+        Page<AfterSurgeryTableThree> pageDataTableThree =
+                afterSurgeryTableThreeRepository.findByDateBetween(startDate, endDate, pr);
+
+        TableThreeTotals totalsTableThree =
+                afterSurgeryTableThreeRepository.computeTotalsInRange(startDate, endDate);
+
+
+        long totalAdverse = totalsTableOne.totalAdverse();
+
+        long totalNumOfJointComplicationCount = totalsTableThree.totalNumOfJointComplicationCount();
+        long totalNumOfMotorDysfunctionCount = totalsTableThree.totalNumOfMotorDysfunctionCount();
+        long totalNumOfTraumaComplicationCount = totalsTableThree.totalNumOfTraumaComplicationCount();
+        long totalNumOfAnkleComplicationCount = totalsTableThree.totalNumOfAnkleComplicationCount();
+        long totalNumOfPediatricAdverseEventCount = totalsTableThree.totalNumOfPediatricAdverseEventCount();
+        long totalNumOfSpinalComplicationCount = totalsTableThree.totalNumOfSpinalComplicationCount();
+        long totalNumOfHandSurgeryComplicationCount = totalsTableThree.totalNumOfHandSurgeryComplicationCount();
+
+
+        float proportionOfJointComplicationCount = (totalAdverse == 0) ? 0f : (float) totalNumOfJointComplicationCount / totalAdverse;
+        float proportionOfMotorDysfunctionCount = (totalAdverse == 0) ? 0f : (float) totalNumOfMotorDysfunctionCount / totalAdverse;
+        float proportionOfTraumaComplicationCount = (totalAdverse == 0) ? 0f : ((float) totalNumOfTraumaComplicationCount / totalAdverse);
+        float proportionOfAnkleComplicationCount = (totalAdverse == 0) ? 0f : (float) totalNumOfAnkleComplicationCount / totalAdverse;
+        float proportionOfPediatricAdverseEventCount = (totalAdverse == 0) ? 0f : (float) totalNumOfPediatricAdverseEventCount / totalAdverse;
+        float proportionOfSpinalComplicationCount = (totalAdverse == 0) ? 0f : ((float) totalNumOfSpinalComplicationCount / totalAdverse);
+        float proportionOfHandSurgeryComplicationCount = (totalAdverse == 0) ? 0f : ((float) totalNumOfHandSurgeryComplicationCount / totalAdverse);
+
+        model.addAttribute("page", pageDataTableThree);
+        model.addAttribute("content", pageDataTableThree.getContent());
+        model.addAttribute("currentPage", pageDataTableThree.getNumber());
+        model.addAttribute("totalPages", pageDataTableThree.getTotalPages());
+        model.addAttribute("size", pageDataTableThree.getSize());
+        model.addAttribute("sort", sort);
+        model.addAttribute("dir", dir.name());
+
+        model.addAttribute("startDate", startDate);
+        model.addAttribute("endDate", endDate);
+
+        model.addAttribute("totalAdverse", totalAdverse);
 
         model.addAttribute("totalNumOfJointComplicationCount", totalNumOfJointComplicationCount);
         model.addAttribute("totalNumOfMotorDysfunctionCount", totalNumOfMotorDysfunctionCount);
@@ -124,8 +218,6 @@ public class AfterSurgeryTableThreeController {
         model.addAttribute("proportionOfPediatricAdverseEventCount", proportionOfPediatricAdverseEventCount);
         model.addAttribute("proportionOfSpinalComplicationCount", proportionOfSpinalComplicationCount);
         model.addAttribute("proportionOfHandSurgeryComplicationCount", proportionOfHandSurgeryComplicationCount);
-
-
 
         return "afterSurgeryTableThree";
     }
