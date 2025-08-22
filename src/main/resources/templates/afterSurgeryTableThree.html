@@ -24,175 +24,371 @@
 <div th:replace="fragments/navbar :: navbar"></div>
 
 
-<div class="table-responsive mb-4">
-  <table id="afterSurgeryTableOne" class="table table-bordered table-striped table-hover text-center align-middle">
-    <thead class="table-light">
-    <tr>
-      <th>序号</th>
-      <th>日期</th>
-      <th>关节不良数</th>
-      <th>运动不良数</th>
-      <th>创伤不良数</th>
-      <th>足踝不良数</th>
-      <th>小儿不良数</th>
-      <th>脊柱不良数</th>
-      <th>手外不良数</th>
-      <th>产科</th>
-      <th>妇科</th>
-    </tr>
-    </thead>
-    <tbody>
-    <tr th:each="rec : ${tableThreeRecords}">
-      <td th:text="${rec.id}"></td>
-      <td th:text="${rec.date}" style="white-space: nowrap;"></td>
-      <td th:text="${rec.numOfJointComplicationCount}"></td>
-      <td th:text="${rec.numOfMotorDysfunctionCount}"></td>
-      <td th:text="${rec.numOfTraumaComplicationCount}"></td>
-      <td th:text="${rec.numOfAnkleComplicationCount}"></td>
-      <td th:text="${rec.numOfPediatricAdverseEventCount}"></td>
-      <td th:text="${rec.numOfSpinalComplicationCount}"></td>
-      <td th:text="${rec.numOfHandSurgeryComplicationCount}"></td>
-      <td th:text="${rec.numOfObstetricAdverseEventCount}"></td>
-      <td th:text="${rec.numOfGynecologicalAdverseEventCount}"></td>
-      <td>
-        <a th:href="@{/afterSurgery/edit/{id}(id=${rec.id})}" class="btn btn-sm btn-outline-primary">
-          Edit
-        </a>
-      </td>
-    </tr>
-    </tbody>
-  </table>
-</div>
+<!--<div class="table-responsive mb-4">-->
+<!--  <table id="afterSurgeryTableOne" class="table table-bordered table-striped table-hover text-center align-middle">-->
+<!--    <thead class="table-light">-->
+<!--    <tr>-->
+<!--      <th>序号</th>-->
+<!--      <th>日期</th>-->
+<!--      <th>关节不良数</th>-->
+<!--      <th>运动不良数</th>-->
+<!--      <th>创伤不良数</th>-->
+<!--      <th>足踝不良数</th>-->
+<!--      <th>小儿不良数</th>-->
+<!--      <th>脊柱不良数</th>-->
+<!--      <th>手外不良数</th>-->
+<!--      <th>产科</th>-->
+<!--      <th>妇科</th>-->
+<!--    </tr>-->
+<!--    </thead>-->
+<!--    <tbody>-->
+<!--    <tr th:each="rec : ${tableThreeRecords}">-->
+<!--      <td th:text="${rec.id}"></td>-->
+<!--      <td th:text="${rec.date}" style="white-space: nowrap;"></td>-->
+<!--      <td th:text="${rec.numOfJointComplicationCount}"></td>-->
+<!--      <td th:text="${rec.numOfMotorDysfunctionCount}"></td>-->
+<!--      <td th:text="${rec.numOfTraumaComplicationCount}"></td>-->
+<!--      <td th:text="${rec.numOfAnkleComplicationCount}"></td>-->
+<!--      <td th:text="${rec.numOfPediatricAdverseEventCount}"></td>-->
+<!--      <td th:text="${rec.numOfSpinalComplicationCount}"></td>-->
+<!--      <td th:text="${rec.numOfHandSurgeryComplicationCount}"></td>-->
+<!--      <td th:text="${rec.numOfObstetricAdverseEventCount}"></td>-->
+<!--      <td th:text="${rec.numOfGynecologicalAdverseEventCount}"></td>-->
+<!--      <td>-->
+<!--        <a th:href="@{/afterSurgery/edit/{id}(id=${rec.id})}" class="btn btn-sm btn-outline-primary">-->
+<!--          Edit-->
+<!--        </a>-->
+<!--      </td>-->
+<!--    </tr>-->
+<!--    </tbody>-->
+<!--  </table>-->
+<!--</div>-->
 
-<div>
-  <table id="afterSurgeryTableOneSummary" class="table table-bordered table-striped table-hover text-center align-middle">
-    <thead class="table-light">
-    <tr>
-      <th>关节不良总数</th>
-      <th>运动不良数</th>
-      <th>创伤不良总数</th>
-      <th>足踝不良总数</th>
-      <th>小儿不良总数</th>
-      <th>脊柱不良总数</th>
-      <th>手外不良数</th>
-    </tr>
-    </thead>
-    <tbody>
-      <tr>
-        <td id="totalNumOfJointComplicationCount" th:text="${totalNumOfJointComplicationCount}">0</td>
-        <td id="totalNumOfMotorDysfunctionCount" th:text="${totalNumOfMotorDysfunctionCount}">0</td>
-        <td id="totalNumOfTraumaComplicationCount" th:text="${totalNumOfTraumaComplicationCount}">0</td>
-        <td id="totalNumOfAnkleComplicationCount" th:text="${totalNumOfAnkleComplicationCount}">0</td>
-        <td id="totalNumOfPediatricAdverseEventCount" th:text="${totalNumOfPediatricAdverseEventCount}">0</td>
-        <td id="totalNumOfSpinalComplicationCount" th:text="${totalNumOfSpinalComplicationCount}">0</td>
-        <td id="totalNumOfHandSurgeryComplicationCount" th:text="${totalNumOfHandSurgeryComplicationCount}">0</td>
-      </tr>
-    </tbody>
-  </table>
-</div>
 
-<div>
-  <table id="afterSurgeryTableOneSummaryProportion" class="table table-bordered table-striped table-hover text-center align-middle">
-    <thead class="table-light">
-    <tr>
-      <th>关节不良占比</th>
-      <th>运动不良占比</th>
-      <th>创伤不良占比</th>
-      <th>足踝不良占比</th>
-      <th>小儿不良占比</th>
-      <th>脊柱不良占比</th>
-      <th>手外不良占比</th>
-    </tr>
-    </thead>
-    <tbody>
-    <tr>
-      <td id="proportionOfJointComplicationCount" th:text="${proportionOfJointComplicationCount != null ? #numbers.formatDecimal(proportionOfJointComplicationCount * 100, 1, 2) + '%' : 'N/A'}">0</td>
-      <td id="proportionOfMotorDysfunctionCount" th:text="${proportionOfMotorDysfunctionCount != null ? #numbers.formatDecimal(proportionOfMotorDysfunctionCount * 100, 1, 2) + '%' : 'N/A'}">0</td>
-      <td id="proportionOfTraumaComplicationCount" th:text="${proportionOfTraumaComplicationCount != null ? #numbers.formatDecimal(proportionOfTraumaComplicationCount * 100, 1, 2) + '%' : 'N/A'}">0</td>
-      <td id="proportionOfAnkleComplicationCount" th:text="${proportionOfAnkleComplicationCount != null ? #numbers.formatDecimal(proportionOfAnkleComplicationCount * 100, 1, 2) + '%' : 'N/A'}">0</td>
-      <td id="proportionOfPediatricAdverseEventCount" th:text="${proportionOfPediatricAdverseEventCount != null ? #numbers.formatDecimal(proportionOfPediatricAdverseEventCount * 100, 1, 2) + '%' : 'N/A'}">0</td>
-      <td id="proportionOfSpinalComplicationCount" th:text="${proportionOfSpinalComplicationCount != null ? #numbers.formatDecimal(proportionOfSpinalComplicationCount * 100, 1, 2) + '%' : 'N/A'}">0</td>
-      <td id="proportionOfHandSurgeryComplicationCount" th:text="${proportionOfHandSurgeryComplicationCount != null ? #numbers.formatDecimal(proportionOfHandSurgeryComplicationCount * 100, 1, 2) + '%' : 'N/A'}">0</td>
-    </tbody>
-  </table>
-</div>
 
-<div class="container-fluid mb-4">
-  <div class="row g-3">
-    <div class="col-12 col-md-4">
-      <div class="card h-100">
-        <div class="card-body d-flex flex-column align-items-center">
-          <h6 class="card-title">关节不良数占比</h6>
-          <div style="width:220px;height:220px"><canvas id="pieJointComplicationCount"></canvas></div>
-          <div class="mt-2 small text-muted" id="pieJointComplicationCountText"></div>
-        </div>
-      </div>
-    </div>
-    <div class="col-12 col-md-4">
-      <div class="card h-100">
-        <div class="card-body d-flex flex-column align-items-center">
-          <h6 class="card-title">运动不良数占比</h6>
-          <div style="width:220px;height:220px"><canvas id="pieMotorDysfunctionCount"></canvas></div>
-          <div class="mt-2 small text-muted" id="pieMotorDysfunctionCountText"></div>
-        </div>
-      </div>
-    </div>
-    <div class="col-12 col-md-4">
-      <div class="card h-100">
-        <div class="card-body d-flex flex-column align-items-center">
-          <h6 class="card-title">创伤不良数占比</h6>
-          <div style="width:220px;height:220px"><canvas id="pieTraumaComplicationCount"></canvas></div>
-          <div class="mt-2 small text-muted" id="pieTraumaComplicationCountText"></div>
-        </div>
-      </div>
-    </div>
-  </div>
-</div>
+<div class="container mt-4">
+    <h2 class="mb-3">术后 - 表二</h2>
 
-<div class="container-fluid mb-4">
-  <div class="row g-3">
-    <div class="col-12 col-md-4">
-      <div class="card h-100">
-        <div class="card-body d-flex flex-column align-items-center">
-          <h6 class="card-title">足踝不良数占比</h6>
-          <div style="width:220px;height:220px"><canvas id="pieAnkleComplicationCount"></canvas></div>
-          <div class="mt-2 small text-muted" id="pieAnkleComplicationCountText"></div>
+    <!-- Date filter -->
+    <form class="row g-3 mb-3" method="get" th:action="@{/afterSurgeryTableThree}">
+        <div class="col-auto">
+            <label for="startDate" class="col-form-label">开始</label>
         </div>
-      </div>
-    </div>
-    <div class="col-12 col-md-4">
-      <div class="card h-100">
-        <div class="card-body d-flex flex-column align-items-center">
-          <h6 class="card-title">小儿不良数占比</h6>
-          <div style="width:220px;height:220px"><canvas id="piePediatricAdverseEventCount"></canvas></div>
-          <div class="mt-2 small text-muted" id="piePediatricAdverseEventCountText"></div>
+        <div class="col-auto">
+            <input id="startDate" name="startDate" type="date" class="form-control"
+                   th:value="${startDate}">
         </div>
-      </div>
-    </div>
-    <div class="col-12 col-md-4">
-      <div class="card h-100">
-        <div class="card-body d-flex flex-column align-items-center">
-          <h6 class="card-title">脊柱不良数占比</h6>
-          <div style="width:220px;height:220px"><canvas id="pieSpinalComplicationCount"></canvas></div>
-          <div class="mt-2 small text-muted" id="pieSpinalComplicationCountText"></div>
-        </div>
-      </div>
-    </div>
-  </div>
-</div>
 
-<div class="container-fluid mb-4">
-  <div class="row g-3">
-    <div class="col-12 col-md-4">
-      <div class="card h-100">
-        <div class="card-body d-flex flex-column align-items-center">
-          <h6 class="card-title">手外不良数占比</h6>
-          <div style="width:220px;height:220px"><canvas id="pieHandSurgeryComplicationCount"></canvas></div>
-          <div class="mt-2 small text-muted" id="pieHandSurgeryComplicationCountText"></div>
+        <div class="col-auto">
+            <label for="endDate" class="col-form-label">结束</label>
         </div>
-      </div>
+        <div class="col-auto">
+            <input id="endDate" name="endDate" type="date" class="form-control"
+                   th:value="${endDate}">
+        </div>
+
+        <div class="col-auto">
+            <button class="btn btn-primary" type="submit">提交</button>
+            <a class="btn btn-outline-secondary" th:href="@{/afterSurgeryTableThree}">最近30天</a>
+        </div>
+    </form>
+
+    <div th:if="${error}" class="alert alert-warning" th:text="${error}"></div>
+
+    <!-- Summary cards -->
+    <div class="row g-3 mb-3">
+        <div class="col-md-3">
+            <div class="card shadow-sm">
+                <div class="card-body">
+                    <div class="text-muted">关节不良数占比</div>
+                    <div class="h4 stat" th:text="${totalNumOfJointComplicationCount}">0</div>
+                    <div class="small text-muted">
+                        占比:
+                        <span th:text="${#numbers.formatPercent(proportionOfJointComplicationCount, 1, 2)}">0%</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card shadow-sm">
+                <div class="card-body">
+                    <div class="text-muted">运动不良数占比</div>
+                    <div class="h4 stat" th:text="${totalNumOfMotorDysfunctionCount}">0</div>
+                    <div class="small text-muted">
+                        占比:
+                        <span th:text="${#numbers.formatPercent(proportionOfMotorDysfunctionCount, 1, 2)}">0%</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card shadow-sm">
+                <div class="card-body">
+                    <div class="text-muted">创伤不良数占比</div>
+                    <div class="h4 stat" th:text="${totalNumOfTraumaComplicationCount}">0</div>
+                    <div class="small text-muted">
+                        占比:
+                        <span th:text="${#numbers.formatPercent(proportionOfTraumaComplicationCount, 1, 2)}">0%</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card shadow-sm">
+                <div class="card-body">
+                    <div class="text-muted">足踝不良数占比</div>
+                    <div class="h4 stat" th:text="${totalNumOfAnkleComplicationCount}">0</div>
+                    <div class="small text-muted">
+                        占比:
+                        <span th:text="${#numbers.formatPercent(proportionOfAnkleComplicationCount, 1, 2)}">0%</span>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
-  </div>
+
+    <!-- Summary cards -->
+    <div class="row g-3 mb-3">
+        <div class="col-md-3">
+            <div class="card shadow-sm">
+                <div class="card-body">
+                    <div class="text-muted">小儿不良数占比</div>
+                    <div class="h4 stat" th:text="${totalNumOfPediatricAdverseEventCount}">0</div>
+                    <div class="small text-muted">
+                        占比:
+                        <span th:text="${#numbers.formatPercent(proportionOfPediatricAdverseEventCount, 1, 2)}">0%</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card shadow-sm">
+                <div class="card-body">
+                    <div class="text-muted">脊柱不良数占比</div>
+                    <div class="h4 stat" th:text="${totalNumOfSpinalComplicationCount}">0</div>
+                    <div class="small text-muted">
+                        占比:
+                        <span th:text="${#numbers.formatPercent(proportionOfSpinalComplicationCount, 1, 2)}">0%</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card shadow-sm">
+                <div class="card-body">
+                    <div class="text-muted">手外不良数占比</div>
+                    <div class="h4 stat" th:text="${totalNumOfHandSurgeryComplicationCount}">0</div>
+                    <div class="small text-muted">
+                        占比:
+                        <span th:text="${#numbers.formatPercent(proportionOfHandSurgeryComplicationCount, 1, 2)}">0%</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card shadow-sm">
+                <div class="card-body">
+                    <div class="text-muted">不良反应例数</div>
+                    <div class="h4 stat" th:text="${totalAdverse}">0</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Data table -->
+    <div class="table-responsive mb-3">
+        <table class="table table-bordered table-striped table-hover align-middle text-center bg-white">
+            <thead class="table-light">
+            <tr>
+                <th>ID</th>
+                <th>
+                    <a th:href="@{|/afterSurgeryTableThree?page=0&size=${size}&sort=date&dir=${dir=='ASC'?'DESC':'ASC'}&startDate=${startDate}&endDate=${endDate}|}">
+                        日期
+                    </a>
+                </th>
+                <th>关节不良数占比</th>
+                <th>运动不良数占比</th>
+                <th>创伤不良数占比</th>
+                <th>足踝不良数占比</th>
+                <th>小儿不良数占比</th>
+                <th>脊柱不良数占比</th>
+                <th>手外不良数占比</th>
+                <th>儿科不良数占比</th>
+                <th>妇科不良数占比</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr th:each="r : ${content}">
+                <td th:text="${r.id}">1</td>
+                <td th:text="${r.date}">2025-01-01</td>
+                <td th:text="${r.numOfJointComplicationCount}">0</td>
+                <td th:text="${r.numOfMotorDysfunctionCount}">0</td>
+                <td th:text="${r.numOfTraumaComplicationCount}">0</td>
+                <td th:text="${r.numOfAnkleComplicationCount}">0</td>
+                <td th:text="${r.numOfPediatricAdverseEventCount}">0</td>
+                <td th:text="${r.numOfSpinalComplicationCount}">0</td>
+                <td th:text="${r.numOfHandSurgeryComplicationCount}">0</td>
+                <td th:text="${r.numOfObstetricAdverseEventCount}">0</td>
+                <td th:text="${r.numOfGynecologicalAdverseEventCount}">0</td>
+            </tr>
+            <tr th:if="${#lists.isEmpty(content)}">
+                <td colspan="6" class="text-muted">No records for the selected dates.</td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <!-- Pagination -->
+    <nav class="mt-3">
+        <ul class="pagination justify-content-center">
+            <li class="page-item" th:classappend="${page.first} ? 'disabled'">
+                <a class="page-link"
+                   th:href="@{|/afterSurgeryTableThree?page=${currentPage-1}&size=${size}&sort=${sort}&dir=${dir}&startDate=${startDate}&endDate=${endDate}|}">
+                    上页
+                </a>
+            </li>
+            <li class="page-item disabled">
+                <span class="page-link" th:text="'页数 ' + ${currentPage+1} + ' of ' + ${totalPages}"></span>
+            </li>
+            <li class="page-item" th:classappend="${page.last} ? 'disabled'">
+                <a class="page-link"
+                   th:href="@{|/afterSurgeryTableThree?page=${currentPage+1}&size=${size}&sort=${sort}&dir=${dir}&startDate=${startDate}&endDate=${endDate}|}">
+                    下页
+                </a>
+            </li>
+        </ul>
+    </nav>
+
+    <div>
+        <table id="afterSurgeryTableOneSummary" class="table table-bordered table-striped table-hover text-center align-middle">
+            <thead class="table-light">
+            <tr>
+                <th>关节不良总数</th>
+                <th>运动不良数</th>
+                <th>创伤不良总数</th>
+                <th>足踝不良总数</th>
+                <th>小儿不良总数</th>
+                <th>脊柱不良总数</th>
+                <th>手外不良数</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr>
+                <td id="totalNumOfJointComplicationCount" th:text="${totalNumOfJointComplicationCount}">0</td>
+                <td id="totalNumOfMotorDysfunctionCount" th:text="${totalNumOfMotorDysfunctionCount}">0</td>
+                <td id="totalNumOfTraumaComplicationCount" th:text="${totalNumOfTraumaComplicationCount}">0</td>
+                <td id="totalNumOfAnkleComplicationCount" th:text="${totalNumOfAnkleComplicationCount}">0</td>
+                <td id="totalNumOfPediatricAdverseEventCount" th:text="${totalNumOfPediatricAdverseEventCount}">0</td>
+                <td id="totalNumOfSpinalComplicationCount" th:text="${totalNumOfSpinalComplicationCount}">0</td>
+                <td id="totalNumOfHandSurgeryComplicationCount" th:text="${totalNumOfHandSurgeryComplicationCount}">0</td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <div>
+        <table id="afterSurgeryTableOneSummaryProportion" class="table table-bordered table-striped table-hover text-center align-middle">
+            <thead class="table-light">
+            <tr>
+                <th>关节不良占比</th>
+                <th>运动不良占比</th>
+                <th>创伤不良占比</th>
+                <th>足踝不良占比</th>
+                <th>小儿不良占比</th>
+                <th>脊柱不良占比</th>
+                <th>手外不良占比</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr>
+                <td id="proportionOfJointComplicationCount" th:text="${proportionOfJointComplicationCount != null ? #numbers.formatDecimal(proportionOfJointComplicationCount * 100, 1, 2) + '%' : 'N/A'}">0</td>
+                <td id="proportionOfMotorDysfunctionCount" th:text="${proportionOfMotorDysfunctionCount != null ? #numbers.formatDecimal(proportionOfMotorDysfunctionCount * 100, 1, 2) + '%' : 'N/A'}">0</td>
+                <td id="proportionOfTraumaComplicationCount" th:text="${proportionOfTraumaComplicationCount != null ? #numbers.formatDecimal(proportionOfTraumaComplicationCount * 100, 1, 2) + '%' : 'N/A'}">0</td>
+                <td id="proportionOfAnkleComplicationCount" th:text="${proportionOfAnkleComplicationCount != null ? #numbers.formatDecimal(proportionOfAnkleComplicationCount * 100, 1, 2) + '%' : 'N/A'}">0</td>
+                <td id="proportionOfPediatricAdverseEventCount" th:text="${proportionOfPediatricAdverseEventCount != null ? #numbers.formatDecimal(proportionOfPediatricAdverseEventCount * 100, 1, 2) + '%' : 'N/A'}">0</td>
+                <td id="proportionOfSpinalComplicationCount" th:text="${proportionOfSpinalComplicationCount != null ? #numbers.formatDecimal(proportionOfSpinalComplicationCount * 100, 1, 2) + '%' : 'N/A'}">0</td>
+                <td id="proportionOfHandSurgeryComplicationCount" th:text="${proportionOfHandSurgeryComplicationCount != null ? #numbers.formatDecimal(proportionOfHandSurgeryComplicationCount * 100, 1, 2) + '%' : 'N/A'}">0</td>
+            </tbody>
+        </table>
+    </div>
+
+    <div class="container-fluid mb-4">
+        <div class="row g-3">
+            <div class="col-12 col-md-4">
+                <div class="card h-100">
+                    <div class="card-body d-flex flex-column align-items-center">
+                        <h6 class="card-title">关节不良数占比</h6>
+                        <div style="width:220px;height:220px"><canvas id="pieJointComplicationCount"></canvas></div>
+                        <div class="mt-2 small text-muted" id="pieJointComplicationCountText"></div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-12 col-md-4">
+                <div class="card h-100">
+                    <div class="card-body d-flex flex-column align-items-center">
+                        <h6 class="card-title">运动不良数占比</h6>
+                        <div style="width:220px;height:220px"><canvas id="pieMotorDysfunctionCount"></canvas></div>
+                        <div class="mt-2 small text-muted" id="pieMotorDysfunctionCountText"></div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-12 col-md-4">
+                <div class="card h-100">
+                    <div class="card-body d-flex flex-column align-items-center">
+                        <h6 class="card-title">创伤不良数占比</h6>
+                        <div style="width:220px;height:220px"><canvas id="pieTraumaComplicationCount"></canvas></div>
+                        <div class="mt-2 small text-muted" id="pieTraumaComplicationCountText"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="container-fluid mb-4">
+        <div class="row g-3">
+            <div class="col-12 col-md-4">
+                <div class="card h-100">
+                    <div class="card-body d-flex flex-column align-items-center">
+                        <h6 class="card-title">足踝不良数占比</h6>
+                        <div style="width:220px;height:220px"><canvas id="pieAnkleComplicationCount"></canvas></div>
+                        <div class="mt-2 small text-muted" id="pieAnkleComplicationCountText"></div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-12 col-md-4">
+                <div class="card h-100">
+                    <div class="card-body d-flex flex-column align-items-center">
+                        <h6 class="card-title">小儿不良数占比</h6>
+                        <div style="width:220px;height:220px"><canvas id="piePediatricAdverseEventCount"></canvas></div>
+                        <div class="mt-2 small text-muted" id="piePediatricAdverseEventCountText"></div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-12 col-md-4">
+                <div class="card h-100">
+                    <div class="card-body d-flex flex-column align-items-center">
+                        <h6 class="card-title">脊柱不良数占比</h6>
+                        <div style="width:220px;height:220px"><canvas id="pieSpinalComplicationCount"></canvas></div>
+                        <div class="mt-2 small text-muted" id="pieSpinalComplicationCountText"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="container-fluid mb-4">
+        <div class="row g-3">
+            <div class="col-12 col-md-4">
+                <div class="card h-100">
+                    <div class="card-body d-flex flex-column align-items-center">
+                        <h6 class="card-title">手外不良数占比</h6>
+                        <div style="width:220px;height:220px"><canvas id="pieHandSurgeryComplicationCount"></canvas></div>
+                        <div class="mt-2 small text-muted" id="pieHandSurgeryComplicationCountText"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
 </div>
 
 <script th:inline="javascript">
