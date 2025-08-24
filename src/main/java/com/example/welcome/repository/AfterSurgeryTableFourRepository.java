@@ -1,7 +1,11 @@
 package com.example.welcome.repository;
 
+import com.example.welcome.TableFourTotals;
+import com.example.welcome.TableThreeTotals;
 import com.example.welcome.model.AfterSurgeryTableFour;
 import com.example.welcome.model.AfterSurgeryTableThree;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -21,4 +25,21 @@ public interface AfterSurgeryTableFourRepository extends JpaRepository<AfterSurg
     Set<LocalDate> findExistingDates(@Param("dates") Collection<LocalDate> dates);
 
     Optional<AfterSurgeryTableThree> findByDate(LocalDate date);
+
+    // for TableFour
+    Page<AfterSurgeryTableFour> findByDateBetween(LocalDate start, LocalDate end, Pageable pageable);
+
+    @Query("""
+      select new com.example.welcome.TableFourTotals(
+        coalesce(sum(t.numOfFormulationOne), 0L),
+        coalesce(sum(t.numOfFormulationTwo), 0L),
+        coalesce(sum(t.numOfFormulationThree), 0L),
+        coalesce(sum(t.numOfFormulationFour), 0L),
+        coalesce(sum(t.numOfFormulationFive), 0L),
+        coalesce(sum(t.numOfFormulationSix), 0L)
+      )
+      from AfterSurgeryTableFour t
+      where t.date between :start and :end
+    """)
+    TableFourTotals computeTotalsInRange(@Param("start") LocalDate start, @Param("end") LocalDate end);
 }
