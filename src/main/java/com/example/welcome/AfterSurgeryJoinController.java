@@ -1,16 +1,16 @@
-// src/main/java/com/example/welcome/controller/AfterSurgeryJoinController.java
+// src/main/java/com/example/welcome/AfterSurgeryJoinController.java
 package com.example.welcome;
 
 import com.example.welcome.dto.AfterSurgeryJoinDto;
 import com.example.welcome.repository.AfterSurgeryJoinRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.*;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 
 import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.List;
 
 @Controller
 public class AfterSurgeryJoinController {
@@ -19,52 +19,40 @@ public class AfterSurgeryJoinController {
     private AfterSurgeryJoinRepository joinRepository;
 
     @GetMapping("/afterSurgery/joined")
-    public String showJoinedTable(Model model) {
-        List<Object[]> raw = joinRepository.fetchJoinedData();
-        List<AfterSurgeryJoinDto> joinedList = new ArrayList<>();
+    public String showJoinedTable(
+            @RequestParam(required = false) LocalDate startDate,
+            @RequestParam(required = false) LocalDate endDate,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "20") int size,
+            @RequestParam(defaultValue = "date") String sort,
+            @RequestParam(defaultValue = "DESC") Sort.Direction dir,
+            Model model
+    ) {
+        // Defaults: last 30 days (inclusive), like TableOne
+        LocalDate today = LocalDate.now();
+        if (endDate == null) endDate = today;
+        if (startDate == null) startDate = endDate.minusDays(29);
 
-        for (Object[] row : raw) {
-            AfterSurgeryJoinDto dto = new AfterSurgeryJoinDto();
-            dto.setDate((row[0] instanceof java.sql.Date) ? ((java.sql.Date) row[0]).toLocalDate() : (LocalDate) row[0]);
-            dto.setNumOfPostoperativeVisits((Integer) row[1]);
-            dto.setNumOfPostoperativeAnalgesiaCases((Integer) row[2]);
-            dto.setNumOfAdverseReactionCases((Integer) row[3]);
-            dto.setNumOfInadequateAnalgesia((Integer) row[4]);
-            dto.setNumOfNauseaAndVomiting((Integer) row[5]);
-            dto.setNumOfDizziness((Integer) row[6]);
-            dto.setNumOfNauseaAndVomitingAndDizziness((Integer) row[7]);
-            dto.setNumOfItching((Integer) row[8]);
-            dto.setNumOfAllergicRash((Integer) row[9]);
-            dto.setNumOfProlongedAnestheticRecovery((Integer) row[10]);
-            dto.setNumOfPunctureSiteAbnormality((Integer) row[11]);
-            dto.setNumOfAbdominalDistension((Integer) row[12]);
-            dto.setNumOfEndotrachealIntubationDiscomfort((Integer) row[13]);
-            dto.setNumOfEpigastricPain((Integer) row[14]);
-            dto.setNumOfDelirium((Integer) row[15]);
-            dto.setNumOfChestDiscomfort((Integer) row[16]);
-            dto.setNumOfTourniquetReaction((Integer) row[17]);
-            dto.setNumOfOther((Integer) row[18]);
-            dto.setOtherComments((String) row[19]);
-            dto.setNumOfJointComplicationCount((Integer) row[20]);
-            dto.setNumOfMotorDysfunctionCount((Integer) row[21]);
-            dto.setNumOfTraumaComplicationCount((Integer) row[22]);
-            dto.setNumOfAnkleComplicationCount((Integer) row[23]);
-            dto.setNumOfPediatricAdverseEventCount((Integer) row[24]);
-            dto.setNumOfSpinalComplicationCount((Integer) row[25]);
-            dto.setNumOfHandSurgeryComplicationCount((Integer) row[26]);
-            dto.setNumOfObstetricAdverseEventCount((Integer) row[27]);
-            dto.setNumOfGynecologicalAdverseEventCount((Integer) row[28]);
-            dto.setNumOfFormulationOne((Integer) row[29]);
-            dto.setNumOfFormulationTwo((Integer) row[30]);
-            dto.setNumOfFormulationThree((Integer) row[31]);
-            dto.setNumOfFormulationFour((Integer) row[32]);
-            dto.setNumOfFormulationFive((Integer) row[33]);
-            dto.setNumOfFormulationSix((Integer) row[34]);
-            joinedList.add(dto);
+        if (startDate.isAfter(endDate)) {
+            model.addAttribute("error", "Start date must be on or before end date. Showing last 30 days.");
+            endDate = today;
+            startDate = endDate.minusDays(29);
         }
 
-        model.addAttribute("joinedData", joinedList);
-        return "afterSurgeryJoinedTable";
+        Pageable pageable = PageRequest.of(page, size, Sort.by(dir, sort));
+        var pageData = joinRepository.fetchJoinedData(startDate, endDate, pageable);
+
+        model.addAttribute("page", pageData);
+        model.addAttribute("joinedData", pageData.getContent());
+        model.addAttribute("currentPage", pageData.getNumber());
+        model.addAttribute("totalPages", pageData.getTotalPages());
+        model.addAttribute("size", pageData.getSize());
+        model.addAttribute("sort", sort);
+        model.addAttribute("dir", dir.name());
+
+        model.addAttribute("startDate", startDate);
+        model.addAttribute("endDate", endDate);
+
+        return "afterSurgeryJoinedTable"; // your Thymeleaf page
     }
 }
-
