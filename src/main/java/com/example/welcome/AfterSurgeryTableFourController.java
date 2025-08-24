@@ -3,6 +3,9 @@ import com.example.welcome.model.AfterSurgeryTableFour;
 import com.example.welcome.model.AfterSurgeryTableThree;
 import com.example.welcome.repository.AfterSurgeryTableFourRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Controller;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.ui.Model;
@@ -25,67 +28,153 @@ public class AfterSurgeryTableFourController {
     private AfterSurgeryTableFourRepository afterSurgeryTableFourRepository;
 
     @Autowired
-    private AfterSurgeryTableOneRepository afterSurgeryRepositoryTableOne;
+    private AfterSurgeryTableOneRepository afterSurgeryTableOneRepository;
 
-    @GetMapping({"/", ""})
-    public String showTableOne(Model model) {
-        List<AfterSurgeryTableFour> tableFourRecords = afterSurgeryTableFourRepository.findAll();
+//    @GetMapping({"/", ""})
+//    public String showTableOne(Model model) {
+//        List<AfterSurgeryTableFour> tableFourRecords = afterSurgeryTableFourRepository.findAll();
+//
+//        int totalNumOfFormulationOne = tableFourRecords.stream()
+//                .filter(r -> r.getNumOfFormulationOne() != null)
+//                .mapToInt(AfterSurgeryTableFour::getNumOfFormulationOne)
+//                .sum();
+//
+//        int totalNumOfFormulationTwo = tableFourRecords.stream()
+//                .filter(r -> r.getNumOfFormulationTwo() != null)
+//                .mapToInt(AfterSurgeryTableFour::getNumOfFormulationTwo)
+//                .sum();
+//
+//        int totalNumOfFormulationThree = tableFourRecords.stream()
+//                .filter(r -> r.getNumOfFormulationThree() != null)
+//                .mapToInt(AfterSurgeryTableFour::getNumOfFormulationThree)
+//                .sum();
+//
+//        int totalNumOfFormulationFour = tableFourRecords.stream()
+//                .filter(r -> r.getNumOfFormulationFour() != null)
+//                .mapToInt(AfterSurgeryTableFour::getNumOfFormulationFour)
+//                .sum();
+//
+//        int totalNumOfFormulationFive = tableFourRecords.stream()
+//                .filter(r -> r.getNumOfFormulationFive() != null)
+//                .mapToInt(AfterSurgeryTableFour::getNumOfFormulationFive)
+//                .sum();
+//
+//        int totalNumOfFormulationSix = tableFourRecords.stream()
+//                .filter(r -> r.getNumOfFormulationSix() != null)
+//                .mapToInt(AfterSurgeryTableFour::getNumOfFormulationSix)
+//                .sum();
+//
+//
+//
+//        // TableOne
+//        List<AfterSurgeryTableOne> tableOneRecords = afterSurgeryRepositoryTableOne.findAll();
+//
+//        int totalAdverseReactions = tableOneRecords.stream()
+//                .filter(r -> r.getNumOfAdverseReactionCases() != null)
+//                .mapToInt(AfterSurgeryTableOne::getNumOfAdverseReactionCases)
+//                .sum();
+//
+//        // Proportion
+//
+//        float proportionOfFormulationOne = (float) totalNumOfFormulationOne / totalAdverseReactions;
+//
+//        float proportionOfFormulationTwo = (float) totalNumOfFormulationTwo / totalAdverseReactions;
+//
+//        float proportionOfFormulationThree = (float) totalNumOfFormulationThree / totalAdverseReactions;
+//
+//        float proportionOfFormulationFour = (float) totalNumOfFormulationFour / totalAdverseReactions;
+//
+//        float proportionOfFormulationFive = (float) totalNumOfFormulationFive / totalAdverseReactions;
+//
+//        float proportionOfFormulationSix = (float) totalNumOfFormulationSix / totalAdverseReactions;
+//
+//        model.addAttribute("tableFourRecords", tableFourRecords);
+//
+//        model.addAttribute("totalNumOfFormulationOne", totalNumOfFormulationOne);
+//        model.addAttribute("totalNumOfFormulationTwo", totalNumOfFormulationTwo);
+//        model.addAttribute("totalNumOfFormulationThree", totalNumOfFormulationThree);
+//        model.addAttribute("totalNumOfFormulationFour", totalNumOfFormulationFour);
+//        model.addAttribute("totalNumOfFormulationFive", totalNumOfFormulationFive);
+//        model.addAttribute("totalNumOfFormulationSix", totalNumOfFormulationSix);
+//
+//        model.addAttribute("proportionOfFormulationOne", proportionOfFormulationOne);
+//        model.addAttribute("proportionOfFormulationTwo", proportionOfFormulationTwo);
+//        model.addAttribute("proportionOfFormulationThree", proportionOfFormulationThree);
+//        model.addAttribute("proportionOfFormulationFour", proportionOfFormulationFour);
+//        model.addAttribute("proportionOfFormulationFive", proportionOfFormulationFive);
+//        model.addAttribute("proportionOfFormulationSix", proportionOfFormulationSix);
+//
+//
+//        return "afterSurgeryTableFour";
+//    }
 
-        int totalNumOfFormulationOne = tableFourRecords.stream()
-                .filter(r -> r.getNumOfFormulationOne() != null)
-                .mapToInt(AfterSurgeryTableFour::getNumOfFormulationOne)
-                .sum();
+    @GetMapping({"", "/"})
+    public String showTableOne(
+            @RequestParam(required = false) LocalDate startDate,
+            @RequestParam(required = false) LocalDate endDate,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "20") int size,
+            @RequestParam(defaultValue = "date") String sort,
+            @RequestParam(defaultValue = "DESC") Sort.Direction dir,
+            Model model
+    ) {
+        // Default to last 30 days (inclusive)
+        LocalDate today = LocalDate.now();
+        if (endDate == null) endDate = today;
+        if (startDate == null) startDate = endDate.minusDays(29);
 
-        int totalNumOfFormulationTwo = tableFourRecords.stream()
-                .filter(r -> r.getNumOfFormulationTwo() != null)
-                .mapToInt(AfterSurgeryTableFour::getNumOfFormulationTwo)
-                .sum();
+        // Guard rails
+        if (startDate.isAfter(endDate)) {
+            model.addAttribute("error", "Start date must be on or before end date. Showing last 30 days.");
+            endDate = today;
+            startDate = endDate.minusDays(29);
+        }
 
-        int totalNumOfFormulationThree = tableFourRecords.stream()
-                .filter(r -> r.getNumOfFormulationThree() != null)
-                .mapToInt(AfterSurgeryTableFour::getNumOfFormulationThree)
-                .sum();
-
-        int totalNumOfFormulationFour = tableFourRecords.stream()
-                .filter(r -> r.getNumOfFormulationFour() != null)
-                .mapToInt(AfterSurgeryTableFour::getNumOfFormulationFour)
-                .sum();
-
-        int totalNumOfFormulationFive = tableFourRecords.stream()
-                .filter(r -> r.getNumOfFormulationFive() != null)
-                .mapToInt(AfterSurgeryTableFour::getNumOfFormulationFive)
-                .sum();
-
-        int totalNumOfFormulationSix = tableFourRecords.stream()
-                .filter(r -> r.getNumOfFormulationSix() != null)
-                .mapToInt(AfterSurgeryTableFour::getNumOfFormulationSix)
-                .sum();
+        PageRequest pr = PageRequest.of(page, size, Sort.by(dir, sort));
 
 
+        TableOneTotals totalsTableOne =
+                afterSurgeryTableOneRepository.computeTotalsInRange(startDate, endDate);
 
-        // TableOne
-        List<AfterSurgeryTableOne> tableOneRecords = afterSurgeryRepositoryTableOne.findAll();
+        // TableFour
+        Page<AfterSurgeryTableFour> pageDataTableThree =
+                afterSurgeryTableFourRepository.findByDateBetween(startDate, endDate, pr);
 
-        int totalAdverseReactions = tableOneRecords.stream()
-                .filter(r -> r.getNumOfAdverseReactionCases() != null)
-                .mapToInt(AfterSurgeryTableOne::getNumOfAdverseReactionCases)
-                .sum();
+        TableFourTotals totalsTableFour =
+                afterSurgeryTableFourRepository.computeTotalsInRange(startDate, endDate);
 
-        // Proportion
 
-        float proportionOfFormulationOne = (float) totalNumOfFormulationOne / totalAdverseReactions;
+        long totalAdverse = totalsTableOne.totalAdverse();
 
-        float proportionOfFormulationTwo = (float) totalNumOfFormulationTwo / totalAdverseReactions;
+        long totalNumOfFormulationOne = totalsTableFour.totalNumOfFormulationOne();
+        long totalNumOfFormulationTwo = totalsTableFour.totalNumOfFormulationTwo();
+        long totalNumOfFormulationThree = totalsTableFour.totalNumOfFormulationThree();
+        long totalNumOfFormulationFour = totalsTableFour.totalNumOfFormulationFour();
+        long totalNumOfFormulationFive = totalsTableFour.totalNumOfFormulationFive();
+        long totalNumOfFormulationSix = totalsTableFour.totalNumOfFormulationSix();
 
-        float proportionOfFormulationThree = (float) totalNumOfFormulationThree / totalAdverseReactions;
 
-        float proportionOfFormulationFour = (float) totalNumOfFormulationFour / totalAdverseReactions;
 
-        float proportionOfFormulationFive = (float) totalNumOfFormulationFive / totalAdverseReactions;
+        float proportionOfFormulationOne = (totalAdverse == 0) ? 0f : (float) totalNumOfFormulationOne / totalAdverse;
+        float proportionOfFormulationTwo = (totalAdverse == 0) ? 0f : (float) totalNumOfFormulationTwo / totalAdverse;
+        float proportionOfFormulationThree = (totalAdverse == 0) ? 0f : ((float) totalNumOfFormulationThree / totalAdverse);
+        float proportionOfFormulationFour = (totalAdverse == 0) ? 0f : (float) totalNumOfFormulationFour / totalAdverse;
+        float proportionOfFormulationFive = (totalAdverse == 0) ? 0f : (float) totalNumOfFormulationFive / totalAdverse;
+        float proportionOfFormulationSix = (totalAdverse == 0) ? 0f : ((float) totalNumOfFormulationSix / totalAdverse);
 
-        float proportionOfFormulationSix = (float) totalNumOfFormulationSix / totalAdverseReactions;
 
-        model.addAttribute("tableFourRecords", tableFourRecords);
+        model.addAttribute("page", pageDataTableThree);
+        model.addAttribute("content", pageDataTableThree.getContent());
+        model.addAttribute("currentPage", pageDataTableThree.getNumber());
+        model.addAttribute("totalPages", pageDataTableThree.getTotalPages());
+        model.addAttribute("size", pageDataTableThree.getSize());
+        model.addAttribute("sort", sort);
+        model.addAttribute("dir", dir.name());
+
+        model.addAttribute("startDate", startDate);
+        model.addAttribute("endDate", endDate);
+
+        model.addAttribute("totalAdverse", totalAdverse);
 
         model.addAttribute("totalNumOfFormulationOne", totalNumOfFormulationOne);
         model.addAttribute("totalNumOfFormulationTwo", totalNumOfFormulationTwo);
@@ -94,13 +183,13 @@ public class AfterSurgeryTableFourController {
         model.addAttribute("totalNumOfFormulationFive", totalNumOfFormulationFive);
         model.addAttribute("totalNumOfFormulationSix", totalNumOfFormulationSix);
 
+
         model.addAttribute("proportionOfFormulationOne", proportionOfFormulationOne);
         model.addAttribute("proportionOfFormulationTwo", proportionOfFormulationTwo);
         model.addAttribute("proportionOfFormulationThree", proportionOfFormulationThree);
         model.addAttribute("proportionOfFormulationFour", proportionOfFormulationFour);
         model.addAttribute("proportionOfFormulationFive", proportionOfFormulationFive);
         model.addAttribute("proportionOfFormulationSix", proportionOfFormulationSix);
-
 
         return "afterSurgeryTableFour";
     }
