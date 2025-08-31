@@ -65,7 +65,11 @@
         <table id="afterSurgeryTableOne" class="table table-bordered table-striped table-hover text-center align-middle table-wide">
           <thead class="table-light">
             <tr>
-            <th>日期</th>
+            <th>
+                <a th:href="@{|/afterSurgery/joined?page=0&size=${size}&sort=date&dir=${dir=='ASC'?'DESC':'ASC'}&startDate=${startDate}&endDate=${endDate}|}">
+                    日期
+                </a>
+            </th>
             <th>术后访视例数</th>
             <th>术后镇痛例数</th>
             <th>不良反应例数</th>
