@@ -3,6 +3,7 @@ package com.example.welcome.repository;
 import com.example.welcome.TableFourTotals;
 import com.example.welcome.TableThreeTotals;
 import com.example.welcome.model.AfterSurgeryTableFour;
+import com.example.welcome.model.AfterSurgeryTableOne;
 import com.example.welcome.model.AfterSurgeryTableThree;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -13,6 +14,7 @@ import org.springframework.stereotype.Repository;
 
 import java.time.LocalDate;
 import java.util.Collection;
+import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 
@@ -25,6 +27,8 @@ public interface AfterSurgeryTableFourRepository extends JpaRepository<AfterSurg
     Set<LocalDate> findExistingDates(@Param("dates") Collection<LocalDate> dates);
 
     Optional<AfterSurgeryTableThree> findByDate(LocalDate date);
+
+    List<AfterSurgeryTableFour> findByDateBetween(LocalDate start, LocalDate end);
 
     // for TableFour
     Page<AfterSurgeryTableFour> findByDateBetween(LocalDate start, LocalDate end, Pageable pageable);

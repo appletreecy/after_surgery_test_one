@@ -2,6 +2,11 @@ package com.example.welcome;
 import com.example.welcome.model.AfterSurgeryTableFour;
 import com.example.welcome.model.AfterSurgeryTableThree;
 import com.example.welcome.repository.AfterSurgeryTableFourRepository;
+import jakarta.servlet.http.HttpServletResponse;
+import org.apache.poi.ss.usermodel.Row;
+import org.apache.poi.ss.usermodel.Sheet;
+import org.apache.poi.ss.usermodel.Workbook;
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -16,6 +21,7 @@ import com.example.welcome.repository.AfterSurgeryTableOneRepository;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.BufferedReader;
+import java.io.IOException;
 import java.io.InputStreamReader;
 import java.time.LocalDate;
 import java.util.*;
@@ -325,6 +331,111 @@ public class AfterSurgeryTableFourController {
         afterSurgeryTableFourRepository.saveAll(rows);
         model.addAttribute("message", "Successfully uploaded " + rows.size() + " records.");
         return "uploadAfterSurgeryTableFour";
+    }
+
+    @GetMapping("/export")
+    public void exportToExcel(
+            @RequestParam(required = false) String startDate,
+            @RequestParam(required = false) String endDate,
+            HttpServletResponse response) throws IOException {
+
+        LocalDate start = (startDate != null && !startDate.isEmpty())
+                ? LocalDate.parse(startDate) : LocalDate.now().minusDays(30);
+        LocalDate endD = (endDate != null && !endDate.isEmpty())
+                ? LocalDate.parse(endDate) : LocalDate.now();
+
+        List<AfterSurgeryTableFour> records = afterSurgeryTableFourRepository.findByDateBetween(start, endD);
+
+        response.setContentType("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");
+        response.setHeader("Content-Disposition", "attachment; filename=after_surgery_table_four.xlsx");
+
+        try (Workbook workbook = new XSSFWorkbook()) {
+            Sheet sheet = workbook.createSheet("术后表四");
+
+            // Header row
+            String[] headers = {"ID", "日期", "配方一数量", "配方二数量", "配方三数量", "配方四数量","配方五数量", "配方六数量"};
+            Row header = sheet.createRow(0);
+            for (int i = 0; i < headers.length; i++) {
+                header.createCell(i).setCellValue(headers[i]);
+            }
+
+            // Data rows (null-safe)
+            int rowIdx = 1;
+            for (AfterSurgeryTableFour r : records) {
+                Row row = sheet.createRow(rowIdx++);
+                setString(row, 0, r.getId() == null ? "" : r.getId().toString());
+                setString(row, 1, r.getDate() == null ? "" : r.getDate().toString());
+                setNumber(row, 2, r.getNumOfFormulationOne());
+                setNumber(row, 3, r.getNumOfFormulationTwo());
+                setNumber(row, 4, r.getNumOfFormulationThree());
+                setNumber(row, 5, r.getNumOfFormulationFour());
+                setNumber(row, 6, r.getNumOfFormulationFive());
+                setNumber(row, 7, r.getNumOfFormulationSix());
+            }
+
+            // Auto-size
+            for (int i = 0; i < headers.length; i++) sheet.autoSizeColumn(i);
+
+            workbook.write(response.getOutputStream());
+        }
+    }
+
+    @GetMapping("/export/csv")
+    public void exportToCsv(
+            @RequestParam(required = false) String startDate,
+            @RequestParam(required = false) String endDate,
+            HttpServletResponse response) throws IOException {
+
+        LocalDate start = (startDate != null && !startDate.isEmpty())
+                ? LocalDate.parse(startDate) : LocalDate.now().minusDays(30);
+        LocalDate endD = (endDate != null && !endDate.isEmpty())
+                ? LocalDate.parse(endDate) : LocalDate.now();
+
+        List<AfterSurgeryTableFour> records = afterSurgeryTableFourRepository.findByDateBetween(start, endD);
+
+        // Set CSV headers
+        response.setContentType("text/csv; charset=UTF-8");
+        response.setHeader("Content-Disposition", "attachment; filename=after_surgery_table_four.csv");
+
+        // Write CSV to response
+        try (var writer = new java.io.PrintWriter(response.getOutputStream())) {
+            // CSV Header
+            writer.println("ID,日期,配方一数量,配方二数量,配方三数量,配方四数量,配方五数量,配方六数量");
+
+            // CSV Rows
+            for (AfterSurgeryTableFour record : records) {
+                writer.printf(
+                        "%s,%s,%s,%s,%s,%s,%s,%s%n",
+                        record.getId() == null ? "" : record.getId(),
+                        record.getDate() == null ? "" : record.getDate(),
+                        record.getNumOfFormulationOne() == null ? "" : record.getNumOfFormulationOne(),
+                        record.getNumOfFormulationTwo() == null ? "" : record.getNumOfFormulationTwo(),
+                        record.getNumOfFormulationThree() == null ? "" : record.getNumOfFormulationThree(),
+                        record.getNumOfFormulationFour() == null ? "" : record.getNumOfFormulationFour(),
+                        record.getNumOfFormulationFive() == null ? "" : record.getNumOfFormulationFive(),
+                        record.getNumOfFormulationSix() == null ? "" : record.getNumOfFormulationSix()
+                );
+            }
+            writer.flush();
+        }
+    }
+
+    // Helper: Write a string value into a cell safely
+    private void setString(Row row, int idx, String val) {
+        if (val == null) {
+            row.createCell(idx).setCellValue("");
+        } else {
+            row.createCell(idx).setCellValue(val);
+        }
+    }
+
+    // Helper: Write a numeric value into a cell safely
+    private void setNumber(Row row, int idx, Integer val) {
+        if (val == null) {
+            row.createCell(idx).setBlank();
+        } else {
+            row.createCell(idx).setCellValue(val);
+        }
     }
 
 }

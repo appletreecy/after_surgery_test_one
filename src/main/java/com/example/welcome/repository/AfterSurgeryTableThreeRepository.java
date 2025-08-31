@@ -13,6 +13,7 @@ import org.springframework.stereotype.Repository;
 
 import java.time.LocalDate;
 import java.util.Collection;
+import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 
@@ -25,6 +26,8 @@ public interface AfterSurgeryTableThreeRepository extends JpaRepository<AfterSur
     Set<LocalDate> findExistingDates(@Param("dates") Collection<LocalDate> dates);
 
     Optional<AfterSurgeryTableThree> findByDate(LocalDate date);
+
+    List<AfterSurgeryTableThree> findByDateBetween(LocalDate start, LocalDate end);
 
     // for TableThree
     Page<AfterSurgeryTableThree> findByDateBetween(LocalDate start, LocalDate end, Pageable pageable);
