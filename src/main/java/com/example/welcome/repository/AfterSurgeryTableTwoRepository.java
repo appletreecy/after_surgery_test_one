@@ -2,6 +2,7 @@ package com.example.welcome.repository;
 
 import com.example.welcome.TableThreeTotals;
 import com.example.welcome.TableTwoTotals;
+import com.example.welcome.model.AfterSurgeryTableOne;
 import com.example.welcome.model.AfterSurgeryTableThree;
 import com.example.welcome.model.AfterSurgeryTableTwo;
 import org.springframework.data.domain.Page;
@@ -12,9 +13,12 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import java.time.LocalDate;
+import java.util.List;
 
 @Repository
 public interface AfterSurgeryTableTwoRepository extends JpaRepository<AfterSurgeryTableTwo, Long> {
+
+    List<AfterSurgeryTableTwo> findByDateBetween(LocalDate start, LocalDate end);
     // for TableTwo
     Page<AfterSurgeryTableTwo> findByDateBetween(LocalDate start, LocalDate end, Pageable pageable);
 

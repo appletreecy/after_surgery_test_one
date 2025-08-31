@@ -2,6 +2,11 @@ package com.example.welcome;
 import com.example.welcome.model.AfterSurgeryTableThree;
 import com.example.welcome.model.AfterSurgeryTableTwo;
 import com.example.welcome.repository.AfterSurgeryTableTwoRepository;
+import jakarta.servlet.http.HttpServletResponse;
+import org.apache.poi.ss.usermodel.Row;
+import org.apache.poi.ss.usermodel.Sheet;
+import org.apache.poi.ss.usermodel.Workbook;
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -383,6 +388,133 @@ public class AfterSurgeryTableTwoController {
         }
 
         return "uploadAfterSurgeryTableTwo";
+    }
+
+    @GetMapping("/export")
+    public void exportToExcel(
+            @RequestParam(required = false) String startDate,
+            @RequestParam(required = false) String endDate,
+            HttpServletResponse response) throws IOException {
+
+        LocalDate start = (startDate != null && !startDate.isEmpty())
+                ? LocalDate.parse(startDate) : LocalDate.now().minusDays(30);
+        LocalDate endD = (endDate != null && !endDate.isEmpty())
+                ? LocalDate.parse(endDate) : LocalDate.now();
+
+        List<AfterSurgeryTableTwo> records = afterSurgeryTableTwoRepository.findByDateBetween(start, endD);
+
+        response.setContentType("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");
+        response.setHeader("Content-Disposition", "attachment; filename=after_surgery_table_two.xlsx");
+
+        try (Workbook workbook = new XSSFWorkbook()) {
+            Sheet sheet = workbook.createSheet("术后表二");
+
+            // Header row
+            String[] headers = {"ID", "日期", "恶心呕吐", "头晕", "恶心呕吐头晕", "皮肤瘙痒",
+                    "过敏性皮疹", "麻醉恢复迟滞", "穿刺部位异常", "腹胀",
+                    "气插不适", "胃脘痛", "瞻望", "心胸不适",
+                    "止血带反应", "其他", "其他备注"};
+            Row header = sheet.createRow(0);
+            for (int i = 0; i < headers.length; i++) {
+                header.createCell(i).setCellValue(headers[i]);
+            }
+
+            // Data rows (null-safe)
+            int rowIdx = 1;
+            for (AfterSurgeryTableTwo r : records) {
+                Row row = sheet.createRow(rowIdx++);
+                setString(row, 0, r.getId() == null ? "" : r.getId().toString());
+                setString(row, 1, r.getDate() == null ? "" : r.getDate().toString());
+                setNumber(row, 2, r.getNumOfNauseaAndVomiting());
+                setNumber(row, 3, r.getNumOfDizziness());
+                setNumber(row, 4, r.getNumOfNauseaAndVomitingAndDizziness());
+                setNumber(row, 5, r.getNumOfItching());
+                setNumber(row, 6, r.getNumOfAllergicRash());
+                setNumber(row, 7, r.getNumOfProlongedAnestheticRecovery());
+                setNumber(row, 8, r.getNumOfPunctureSiteAbnormality());
+                setNumber(row, 9, r.getNumOfAbdominalDistension());
+                setNumber(row, 10, r.getNumOfEndotrachealIntubationDiscomfort());
+                setNumber(row, 11, r.getNumOfEpigastricPain());
+                setNumber(row, 12, r.getNumOfDelirium());
+                setNumber(row, 13, r.getNumOfChestDiscomfort());
+                setNumber(row, 14, r.getNumOfTourniquetReaction());
+                setNumber(row, 15, r.getNumOfOther());
+                setString(row, 16, r.getOtherComments());
+
+            }
+
+            // Auto-size
+            for (int i = 0; i < headers.length; i++) sheet.autoSizeColumn(i);
+
+            workbook.write(response.getOutputStream());
+        }
+    }
+
+    @GetMapping("/export/csv")
+    public void exportToCsv(
+            @RequestParam(required = false) String startDate,
+            @RequestParam(required = false) String endDate,
+            HttpServletResponse response) throws IOException {
+
+        LocalDate start = (startDate != null && !startDate.isEmpty())
+                ? LocalDate.parse(startDate) : LocalDate.now().minusDays(30);
+        LocalDate endD = (endDate != null && !endDate.isEmpty())
+                ? LocalDate.parse(endDate) : LocalDate.now();
+
+        List<AfterSurgeryTableTwo> records = afterSurgeryTableTwoRepository.findByDateBetween(start, endD);
+
+        // Set CSV headers
+        response.setContentType("text/csv; charset=UTF-8");
+        response.setHeader("Content-Disposition", "attachment; filename=after_surgery_table_two.csv");
+
+        // Write CSV to response
+        try (var writer = new java.io.PrintWriter(response.getOutputStream())) {
+            // CSV Header
+            writer.println("ID,日期,恶心呕吐,头晕,恶心呕吐头晕,皮肤瘙痒,过敏性皮疹,麻醉恢复迟滞,穿刺部位异常,腹胀,气插不适,胃脘痛,瞻望,心胸不适,止血带反应,其他,其他备注");
+
+            // CSV Rows
+            for (AfterSurgeryTableTwo record : records) {
+                writer.printf(
+                        "%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s%s,%s,%s,%s,%s,%s%n",
+                        record.getId() == null ? "" : record.getId(),
+                        record.getDate() == null ? "" : record.getDate(),
+                        record.getNumOfNauseaAndVomiting() == null ? "" : record.getNumOfNauseaAndVomiting(),
+                        record.getNumOfDizziness() == null ? "" : record.getNumOfDizziness(),
+                        record.getNumOfNauseaAndVomitingAndDizziness() == null ? "" : record.getNumOfNauseaAndVomitingAndDizziness(),
+                        record.getNumOfItching() == null ? "" : record.getNumOfItching(),
+                        record.getNumOfAllergicRash() == null ? "" : record.getNumOfAllergicRash(),
+                        record.getNumOfProlongedAnestheticRecovery() == null ? "" : record.getNumOfProlongedAnestheticRecovery(),
+                        record.getNumOfPunctureSiteAbnormality() == null ? "" : record.getNumOfPunctureSiteAbnormality(),
+                        record.getNumOfAbdominalDistension() == null ? "" : record.getNumOfAbdominalDistension(),
+                        record.getNumOfEndotrachealIntubationDiscomfort() == null ? "" : record.getNumOfEndotrachealIntubationDiscomfort(),
+                        record.getNumOfEpigastricPain() == null ? "" : record.getNumOfEpigastricPain(),
+                        record.getNumOfDelirium() == null ? "" : record.getNumOfDelirium(),
+                        record.getNumOfChestDiscomfort() == null ? "" : record.getNumOfChestDiscomfort(),
+                        record.getNumOfTourniquetReaction() == null ? "" : record.getNumOfTourniquetReaction(),
+                        record.getNumOfOther() == null ? "" : record.getNumOfOther(),
+                        record.getOtherComments() == null ? "" : record.getOtherComments()
+                );
+            }
+            writer.flush();
+        }
+    }
+
+    // Helper: Write a string value into a cell safely
+    private void setString(Row row, int idx, String val) {
+        if (val == null) {
+            row.createCell(idx).setCellValue("");
+        } else {
+            row.createCell(idx).setCellValue(val);
+        }
+    }
+
+    // Helper: Write a numeric value into a cell safely
+    private void setNumber(Row row, int idx, Integer val) {
+        if (val == null) {
+            row.createCell(idx).setBlank();
+        } else {
+            row.createCell(idx).setCellValue(val);
+        }
     }
 }
 
