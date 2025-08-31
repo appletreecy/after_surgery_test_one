@@ -10,9 +10,14 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
 import java.time.LocalDate;
+import java.util.List;
 
 @Repository
 public interface AfterSurgeryTableOneRepository extends JpaRepository<AfterSurgeryTableOne, Long> {
+
+    // AfterSurgeryTableOneRepository.java
+    List<AfterSurgeryTableOne> findByDateBetween(LocalDate start, LocalDate end);
+
 
     Page<AfterSurgeryTableOne> findByDateBetween(LocalDate start, LocalDate end, Pageable pageable);
 
