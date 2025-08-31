@@ -136,6 +136,19 @@
 
     <!-- Data table -->
     <div class="table-responsive mb-3">
+        <div class="d-flex justify-content-end mb-3">
+            <!-- Export as Excel -->
+            <a class="btn btn-success me-2"
+               th:href="@{|/afterSurgeryTableOne/export?startDate=${startDate}&endDate=${endDate}|}">
+                导出为 Excel
+            </a>
+
+            <!-- Export as CSV -->
+            <a class="btn btn-primary"
+               th:href="@{|/afterSurgeryTableOne/export/csv?startDate=${startDate}&endDate=${endDate}|}">
+                导出为 CSV
+            </a>
+        </div>
         <table class="table table-bordered table-striped table-hover align-middle text-center bg-white">
             <thead class="table-light">
             <tr>
