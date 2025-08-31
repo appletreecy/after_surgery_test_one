@@ -60,8 +60,33 @@
         </div>
     </form>
 
+    <div class="d-flex justify-content-end mb-3">
+        <!-- Export as Excel -->
+        <a class="btn btn-success me-2"
+           th:href="@{/afterSurgery/joined/export/xlsx(
+        startDate=${startDate},
+        endDate=${endDate},
+        sort=${sort},
+        dir=${dir}
+     )}">
+            导出为 Excel
+        </a>
 
-      <div class="table-responsive mb-4">
+        <!-- Export as CSV -->
+        <a class="btn btn-primary"
+           th:href="@{/afterSurgery/joined/export/csv(
+        startDate=${startDate},
+        endDate=${endDate},
+        sort=${sort},
+        dir=${dir}
+     )}">
+            导出为 CSV
+        </a>
+    </div>
+
+
+
+    <div class="table-responsive mb-4">
         <table id="afterSurgeryTableOne" class="table table-bordered table-striped table-hover text-center align-middle table-wide">
           <thead class="table-light">
             <tr>
