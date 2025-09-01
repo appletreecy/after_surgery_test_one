@@ -39,10 +39,16 @@ import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.Map;
 
+import java.util.stream.IntStream;
+
 
 @Controller
 @RequestMapping("afterSurgeryTableOne")
 public class AfterSurgeryTableOneController {
+
+    private static final int MIN_YEAR = 2015;
+    private static final int MAX_YEAR = 2035;
+
 
     @Autowired
     private AfterSurgeryTableOneRepository afterSurgeryTableOneRepository;
@@ -383,14 +389,64 @@ public class AfterSurgeryTableOneController {
         }
     }
 
-    // Optional endpoint or can be called from your existing showTableOne()
+//    // Optional endpoint or can be called from your existing showTableOne()
+//    @GetMapping("/monthly-totals")
+//    public String monthlyTotalsYTD(Model model) {
+//        LocalDate today = LocalDate.now();
+//        LocalDate startOfYear = today.withDayOfYear(1);
+//
+//        // Raw aggregated rows from DB (might skip months with no data)
+//        List<MonthlyTotals> raw = afterSurgeryTableOneRepository.computeMonthlyTotals(startOfYear, today);
+//
+//        // Index by YearMonth for easy fill
+//        Map<YearMonth, MonthlyTotals> byYm = raw.stream().collect(Collectors.toMap(
+//                mt -> YearMonth.of(mt.year(), mt.month()),
+//                Function.identity()
+//        ));
+//
+//        // Build a full Jan..current series, filling gaps with zeros
+//        List<MonthlyTotals> ytd = new ArrayList<>();
+//        YearMonth cursor = YearMonth.of(today.getYear(), 1);
+//        YearMonth last = YearMonth.from(today);
+//
+//        while (!cursor.isAfter(last)) {
+//            MonthlyTotals mt = byYm.getOrDefault(
+//                    cursor,
+//                    new MonthlyTotals(cursor.getYear(), cursor.getMonthValue(), 0L, 0L, 0L, 0L)
+//            );
+//            ytd.add(mt);
+//            cursor = cursor.plusMonths(1);
+//        }
+//
+//        model.addAttribute("monthlyTotals", ytd);        // List<MonthlyTotals> in Jan..current order
+//        model.addAttribute("year", today.getYear());     // e.g. for page title
+//        return "afterSurgeryTableOneMonthlyTotals";      // create a simple Thymeleaf view
+//    }
+//
+//
     @GetMapping("/monthly-totals")
-    public String monthlyTotalsYTD(Model model) {
+    public String monthlyTotals(
+            @RequestParam(required = false) Integer year,
+            Model model
+    ) {
         LocalDate today = LocalDate.now();
-        LocalDate startOfYear = today.withDayOfYear(1);
+        int currentYear = today.getYear();
+
+        // Pick the selected year (default = current year) and clamp to [2015..2035]
+        int selectedYear = (year == null) ? currentYear : year;
+        if (selectedYear < MIN_YEAR) selectedYear = MIN_YEAR;
+        if (selectedYear > MAX_YEAR) selectedYear = MAX_YEAR;
+
+        // Build start/end for the query:
+        // - If selected year is current year, end at "today" (YTD)
+        // - Otherwise, show the whole year (Jan..Dec)
+        LocalDate start = LocalDate.of(selectedYear, 1, 1);
+        LocalDate end   = (selectedYear == currentYear)
+                ? today
+                : LocalDate.of(selectedYear, 12, 31);
 
         // Raw aggregated rows from DB (might skip months with no data)
-        List<MonthlyTotals> raw = afterSurgeryTableOneRepository.computeMonthlyTotals(startOfYear, today);
+        List<MonthlyTotals> raw = afterSurgeryTableOneRepository.computeMonthlyTotals(start, end);
 
         // Index by YearMonth for easy fill
         Map<YearMonth, MonthlyTotals> byYm = raw.stream().collect(Collectors.toMap(
@@ -398,25 +454,34 @@ public class AfterSurgeryTableOneController {
                 Function.identity()
         ));
 
-        // Build a full Jan..current series, filling gaps with zeros
-        List<MonthlyTotals> ytd = new ArrayList<>();
-        YearMonth cursor = YearMonth.of(today.getYear(), 1);
-        YearMonth last = YearMonth.from(today);
+        // Build complete series:
+        // - If selected year is current year: Jan..current month
+        // - Else: Jan..Dec of that year
+        List<MonthlyTotals> series = new ArrayList<>();
+        YearMonth cursor = YearMonth.of(selectedYear, 1);
+        YearMonth last   = (selectedYear == currentYear)
+                ? YearMonth.from(today)
+                : YearMonth.of(selectedYear, 12);
 
         while (!cursor.isAfter(last)) {
             MonthlyTotals mt = byYm.getOrDefault(
                     cursor,
                     new MonthlyTotals(cursor.getYear(), cursor.getMonthValue(), 0L, 0L, 0L, 0L)
             );
-            ytd.add(mt);
+            series.add(mt);
             cursor = cursor.plusMonths(1);
         }
 
-        model.addAttribute("monthlyTotals", ytd);        // List<MonthlyTotals> in Jan..current order
-        model.addAttribute("year", today.getYear());     // e.g. for page title
-        return "afterSurgeryTableOneMonthlyTotals";      // create a simple Thymeleaf view
-    }
+        // Years dropdown data
+        List<Integer> years = IntStream.rangeClosed(MIN_YEAR, MAX_YEAR)
+                .boxed()
+                .collect(Collectors.toList());
 
+        model.addAttribute("monthlyTotals", series);
+        model.addAttribute("year", selectedYear);   // used in title & selecting the dropdown
+        model.addAttribute("years", years);         // for the <select> options
+        return "afterSurgeryTableOneMonthlyTotals";
+    }
 
     /** Return null if s is empty/blank; otherwise parse an Integer (throws on non-numeric). */
     private Integer parseNullableInt(String s) {
