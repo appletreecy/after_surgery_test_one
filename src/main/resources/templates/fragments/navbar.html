@@ -17,8 +17,25 @@
             <li class="nav-item">
               <a class="nav-link" th:href="@{/afterSurgery/joined}">总表</a>
             </li>
-            <li class="nav-item">
-              <a class="nav-link" th:href="@{/afterSurgeryTableOne/monthly-totals}">Monthly Table</a>
+            <li class="nav-item dropdown" sec:authorize="isAuthenticated()">
+              <a class="nav-link dropdown-toggle" href="#" id="tableDropdownOne" role="button"
+                 data-bs-toggle="dropdown" aria-expanded="false">
+                  月表
+              </a>
+              <ul class="dropdown-menu" aria-labelledby="tableDropdown">
+                  <li>
+                      <a class="dropdown-item" th:href="@{/afterSurgeryTableOne/monthly-totals}">表一</a>
+                  </li>
+<!--                  <li>-->
+<!--                      <a class="dropdown-item" th:href="@{/afterSurgeryTableTwo}">表二</a>-->
+<!--                  </li>-->
+<!--                  <li>-->
+<!--                      <a class="dropdown-item" th:href="@{/afterSurgeryTableThree}">表三</a>-->
+<!--                  </li>-->
+<!--                  <li>-->
+<!--                      <a class="dropdown-item" th:href="@{/afterSurgeryTableFour}">表四</a>-->
+<!--                  </li>-->
+              </ul>
             </li>
             <li class="nav-item dropdown" sec:authorize="isAuthenticated()">
               <a class="nav-link dropdown-toggle" href="#" id="tableDropdown" role="button"
