@@ -1,0 +1,126 @@
+<!-- src/main/resources/templates/afterSurgeryTableOneMonthlyTotals.html -->
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="zh">
+<head>
+    <meta charset="UTF-8">
+    <title th:text="${year} + ' 年（月度汇总）'">月度汇总</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body class="p-3">
+
+<div th:replace="fragments/navbar :: navbar"></div>
+<div class="container mt-4">
+    <h3 th:text="${year} + ' 年（月度汇总）'"></h3>
+
+    <table class="table table-sm table-bordered align-middle">
+        <thead class="table-light">
+        <tr>
+            <th>月份</th>
+            <th>术后访视例数</th>
+            <th>术后镇痛例数</th>
+            <th>不良反应例数</th>
+            <th>镇痛效果欠佳</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="m : ${monthlyTotals}">
+            <td th:text="${#numbers.formatInteger(m.month(),2)}"></td>
+            <td th:text="${m.totalVisits()}"></td>
+            <td th:text="${m.totalAnalgesia()}"></td>
+            <td th:text="${m.totalAdverse()}"></td>
+            <td th:text="${m.totalInadequate()}"></td>
+        </tr>
+        </tbody>
+    </table>
+
+    <!-- Chart container under the table -->
+    <hr class="my-4">
+    <h5 class="mb-3">月度趋势图</h5>
+    <canvas id="monthlyChart" height="100"></canvas>
+
+    <h5 class="mt-5 mb-3">月度柱状图</h5>
+    <canvas id="monthlyBar" height="110"></canvas>
+
+</div>
+
+<!-- Chart.js (only include once per page/app) -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+<script th:inline="javascript">
+    /*<![CDATA[*/
+    const labels = [];
+    const totalVisits = [];
+    const totalAnalgesia = [];
+    const totalAdverse = [];
+    const totalInadequate = [];
+
+    /*[# th:each="m : ${monthlyTotals}"]*/
+      (function(){
+        const mm = /*[[${m.month}]]*/ 1;                 // Integer, e.g. 1..12
+        labels.push(String(mm).padStart(2,'0'));          // '01'..'12' in JS (no Thymeleaf string utils)
+        totalVisits.push(/*[[${m.totalVisits}]]*/ 0);
+        totalAnalgesia.push(/*[[${m.totalAnalgesia}]]*/ 0);
+        totalAdverse.push(/*[[${m.totalAdverse}]]*/ 0);
+        totalInadequate.push(/*[[${m.totalInadequate}]]*/ 0);
+      })();
+    /*[/]*/
+
+    const ctx = document.getElementById('monthlyChart').getContext('2d');
+    new Chart(ctx, {
+      type: 'line',
+      data: {
+        labels: labels.map(m => m + '月'),
+        datasets: [
+          { label: '术后访视例数',      data: totalVisits,     borderColor: '#0d6efd', tension: 0.2, fill: false },
+          { label: '术后镇痛例数',      data: totalAnalgesia,  borderColor: '#198754', tension: 0.2, fill: false },
+          { label: '不良反应例数',      data: totalAdverse,    borderColor: '#ffc107', tension: 0.2, fill: false },
+          { label: '镇痛效果欠佳',      data: totalInadequate, borderColor: '#dc3545', tension: 0.2, fill: false }
+        ]
+      },
+      options: {
+        responsive: true,
+        plugins: {
+          title: { display: false },
+          legend: { position: 'top' },
+          tooltip: { mode: 'index', intersect: false }
+        },
+        interaction: { mode: 'nearest', axis: 'x', intersect: false },
+        scales: { y: { beginAtZero: true, ticks: { precision: 0 } } }
+      }
+    });
+    /*]]>*/
+
+    // --- Bar chart under the line chart ---
+    const barCtx = document.getElementById('monthlyBar').getContext('2d');
+    new Chart(barCtx, {
+      type: 'bar',
+      data: {
+        labels: labels.map(m => m + '月'),
+        datasets: [
+          { label: '术后访视例数',      data: totalVisits,     backgroundColor: 'rgba(13,110,253,0.35)',  borderColor: '#0d6efd',  borderWidth: 1 },
+          { label: '术后镇痛例数',      data: totalAnalgesia,  backgroundColor: 'rgba(25,135,84,0.35)',   borderColor: '#198754',  borderWidth: 1 },
+          { label: '不良反应例数',      data: totalAdverse,    backgroundColor: 'rgba(255,193,7,0.45)',   borderColor: '#ffc107',  borderWidth: 1 },
+          { label: '镇痛效果欠佳',      data: totalInadequate, backgroundColor: 'rgba(220,53,69,0.35)',   borderColor: '#dc3545',  borderWidth: 1 }
+        ]
+      },
+      options: {
+        responsive: true,
+        plugins: {
+          legend: { position: 'top' },
+          tooltip: { mode: 'index', intersect: false }
+        },
+        interaction: { mode: 'nearest', axis: 'x', intersect: false },
+        scales: {
+          y: { beginAtZero: true, ticks: { precision: 0 } },
+          x: { stacked: false }
+        }
+      }
+    });
+</script>
+
+
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+
+</body>
+</html>

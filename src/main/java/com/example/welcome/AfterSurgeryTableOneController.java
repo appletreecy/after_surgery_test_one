@@ -33,6 +33,12 @@ import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDate;
 
+import com.example.welcome.dto.MonthlyTotals;
+import java.time.YearMonth;
+import java.util.function.Function;
+import java.util.stream.Collectors;
+import java.util.Map;
+
 
 @Controller
 @RequestMapping("afterSurgeryTableOne")
@@ -377,7 +383,39 @@ public class AfterSurgeryTableOneController {
         }
     }
 
+    // Optional endpoint or can be called from your existing showTableOne()
+    @GetMapping("/monthly-totals")
+    public String monthlyTotalsYTD(Model model) {
+        LocalDate today = LocalDate.now();
+        LocalDate startOfYear = today.withDayOfYear(1);
 
+        // Raw aggregated rows from DB (might skip months with no data)
+        List<MonthlyTotals> raw = afterSurgeryTableOneRepository.computeMonthlyTotals(startOfYear, today);
+
+        // Index by YearMonth for easy fill
+        Map<YearMonth, MonthlyTotals> byYm = raw.stream().collect(Collectors.toMap(
+                mt -> YearMonth.of(mt.year(), mt.month()),
+                Function.identity()
+        ));
+
+        // Build a full Jan..current series, filling gaps with zeros
+        List<MonthlyTotals> ytd = new ArrayList<>();
+        YearMonth cursor = YearMonth.of(today.getYear(), 1);
+        YearMonth last = YearMonth.from(today);
+
+        while (!cursor.isAfter(last)) {
+            MonthlyTotals mt = byYm.getOrDefault(
+                    cursor,
+                    new MonthlyTotals(cursor.getYear(), cursor.getMonthValue(), 0L, 0L, 0L, 0L)
+            );
+            ytd.add(mt);
+            cursor = cursor.plusMonths(1);
+        }
+
+        model.addAttribute("monthlyTotals", ytd);        // List<MonthlyTotals> in Jan..current order
+        model.addAttribute("year", today.getYear());     // e.g. for page title
+        return "afterSurgeryTableOneMonthlyTotals";      // create a simple Thymeleaf view
+    }
 
 
     /** Return null if s is empty/blank; otherwise parse an Integer (throws on non-numeric). */

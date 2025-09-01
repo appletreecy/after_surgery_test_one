@@ -1,6 +1,7 @@
 package com.example.welcome.repository;
 
 import com.example.welcome.TableOneTotals;
+import com.example.welcome.dto.MonthlyTotals;
 import com.example.welcome.model.AfterSurgeryTableOne;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
@@ -32,5 +33,24 @@ public interface AfterSurgeryTableOneRepository extends JpaRepository<AfterSurge
       where t.date between :start and :end
     """)
     TableOneTotals computeTotalsInRange(@Param("start") LocalDate start, @Param("end") LocalDate end);
+
+    @Query("""
+  select new com.example.welcome.dto.MonthlyTotals(
+    YEAR(t.date),
+    MONTH(t.date),
+    coalesce(sum(t.numOfPostoperativeVisits), 0L),
+    coalesce(sum(t.numOfPostoperativeAnalgesiaCases), 0L),
+    coalesce(sum(t.numOfAdverseReactionCases), 0L),
+    coalesce(sum(t.numOfInadequateAnalgesia), 0L)
+  )
+  from AfterSurgeryTableOne t
+  where t.date between :start and :end
+  group by YEAR(t.date), MONTH(t.date)
+  order by YEAR(t.date), MONTH(t.date)
+""")
+    List<com.example.welcome.dto.MonthlyTotals> computeMonthlyTotals(
+            @Param("start") LocalDate start,
+            @Param("end") LocalDate end
+    );
 }
 
