@@ -55,6 +55,9 @@
                 <li>
                   <a class="dropdown-item" th:href="@{/afterSurgeryTableFour}">表四</a>
                 </li>
+                <li>
+                  <a class="dropdown-item" th:href="@{/afterSurgeryTableFive}">表五</a>
+                </li>
               </ul>
             </li>
           <li class="nav-item dropdown" sec:authorize="isAuthenticated()">
@@ -75,6 +78,9 @@
                   <li>
                       <a class="dropdown-item" th:href="@{/afterSurgeryTableFour/add}">添加表四</a>
                   </li>
+                  <li>
+                      <a class="dropdown-item" th:href="@{/afterSurgeryTableFive/add}">添加表五</a>
+                  </li>
               </ul>
           </li>
           <li class="nav-item dropdown" sec:authorize="isAuthenticated()">
@@ -94,6 +100,9 @@
                   </li>
                   <li>
                       <a class="dropdown-item" th:href="@{/afterSurgeryTableFour/delete}">删除表四(一行)</a>
+                  </li>
+                  <li>
+                      <a class="dropdown-item" th:href="@{/afterSurgeryTableFive/delete}">删除表五(一行)</a>
                   </li>
               </ul>
           </li>
