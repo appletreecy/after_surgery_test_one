@@ -20,6 +20,13 @@
     }
   }
 </style>
+<!-- Optional: put this CSS somewhere in your page -->
+<style>
+    .small-text {
+      font-size: 12px;    /* shrink only this card's text */
+      line-height: 1.2;   /* tighter spacing */
+    }
+</style>
 
 <div th:replace="fragments/navbar :: navbar"></div>
 
@@ -89,10 +96,111 @@
 
     <div th:if="${error}" class="alert alert-warning" th:text="${error}"></div>
 
-    <!-- Summary cards -->
+<!--    &lt;!&ndash; Summary cards &ndash;&gt;-->
+<!--    <div class="row g-3 mb-3">-->
+<!--        <div class="col-md-3">-->
+<!--            <div class="card shadow-sm">-->
+<!--                <div class="card-body">-->
+<!--                    <div class="text-muted">配方一占比</div>-->
+<!--                    <div class="h4 stat" th:text="${totalNumOfFormulationOne}">0</div>-->
+<!--                    <div class="small text-muted">-->
+<!--                        占比:-->
+<!--                        <span th:text="${#numbers.formatPercent(proportionOfFormulationOne, 1, 2)}">0%</span>-->
+<!--                    </div>-->
+<!--                </div>-->
+<!--            </div>-->
+<!--        </div>-->
+<!--        <div class="col-md-3">-->
+<!--            <div class="card shadow-sm">-->
+<!--                <div class="card-body">-->
+<!--                    <div class="text-muted">配方二占比</div>-->
+<!--                    <div class="h4 stat" th:text="${totalNumOfFormulationTwo}">0</div>-->
+<!--                    <div class="small text-muted">-->
+<!--                        占比:-->
+<!--                        <span th:text="${#numbers.formatPercent(proportionOfFormulationTwo, 1, 2)}">0%</span>-->
+<!--                    </div>-->
+<!--                </div>-->
+<!--            </div>-->
+<!--        </div>-->
+<!--        <div class="col-md-3">-->
+<!--            <div class="card shadow-sm">-->
+<!--                <div class="card-body">-->
+<!--                    <div class="text-muted">配方三占比</div>-->
+<!--                    <div class="h4 stat" th:text="${totalNumOfFormulationThree}">0</div>-->
+<!--                    <div class="small text-muted">-->
+<!--                        占比:-->
+<!--                        <span th:text="${#numbers.formatPercent(proportionOfFormulationThree, 1, 2)}">0%</span>-->
+<!--                    </div>-->
+<!--                </div>-->
+<!--            </div>-->
+<!--        </div>-->
+<!--        <div class="col-md-3">-->
+<!--            <div class="card shadow-sm">-->
+<!--                <div class="card-body">-->
+<!--                    <div class="text-muted">配方四占比</div>-->
+<!--                    <div class="h4 stat" th:text="${totalNumOfFormulationFour}">0</div>-->
+<!--                    <div class="small text-muted">-->
+<!--                        占比:-->
+<!--                        <span th:text="${#numbers.formatPercent(proportionOfFormulationFour, 1, 2)}">0%</span>-->
+<!--                    </div>-->
+<!--                </div>-->
+<!--            </div>-->
+<!--        </div>-->
+<!--    </div>-->
+
+<!--    &lt;!&ndash; Summary cards &ndash;&gt;-->
+<!--    <div class="row g-3 mb-3">-->
+<!--        <div class="col-md-3">-->
+<!--            <div class="card shadow-sm">-->
+<!--                <div class="card-body">-->
+<!--                    <div class="text-muted">配方五占比</div>-->
+<!--                    <div class="h4 stat" th:text="${totalNumOfFormulationFive}">0</div>-->
+<!--                    <div class="small text-muted">-->
+<!--                        占比:-->
+<!--                        <span th:text="${#numbers.formatPercent(proportionOfFormulationFive, 1, 2)}">0%</span>-->
+<!--                    </div>-->
+<!--                </div>-->
+<!--            </div>-->
+<!--        </div>-->
+<!--        <div class="col-md-3">-->
+<!--            <div class="card shadow-sm">-->
+<!--                <div class="card-body">-->
+<!--                    <div class="text-muted">配方六占比</div>-->
+<!--                    <div class="h4 stat" th:text="${totalNumOfFormulationSix}">0</div>-->
+<!--                    <div class="small text-muted">-->
+<!--                        占比:-->
+<!--                        <span th:text="${#numbers.formatPercent(proportionOfFormulationSix, 1, 2)}">0%</span>-->
+<!--                    </div>-->
+<!--                </div>-->
+<!--            </div>-->
+<!--        </div>-->
+<!--        <div class="col-md-3">-->
+<!--            <div class="card shadow-sm">-->
+<!--                <div class="card-body">-->
+<!--                    <div class="text-muted">不良反应例数</div>-->
+<!--                    <div class="h4 stat" th:text="${totalAdverse}">0</div>-->
+<!--                    <div style="height: 22px;"></div>-->
+<!--                </div>-->
+<!--            </div>-->
+<!--        </div>-->
+<!--        <div class="col-md-3">-->
+<!--            <div class="card shadow-sm">-->
+<!--                <div class="card-body">-->
+<!--                    <div class="text-muted">不良反应例数</div>-->
+<!--                    <div class="text-muted">不良反应例数</div>-->
+<!--                    <div class="text-muted">不良反应例数</div>-->
+<!--                    <div class="text-muted">不良反应例数</div>-->
+<!--                    <div class="text-muted">不良反应例数</div>-->
+<!--                    <div class="text-muted">不良反应例数</div>-->
+<!--                </div>-->
+<!--            </div>-->
+<!--        </div>-->
+<!--    </div>-->
+
+    <!-- Row 1 -->
     <div class="row g-3 mb-3">
-        <div class="col-md-3">
-            <div class="card shadow-sm">
+        <div class="col-md-3 d-flex">
+            <div class="card shadow-sm flex-fill h-100">
                 <div class="card-body">
                     <div class="text-muted">配方一占比</div>
                     <div class="h4 stat" th:text="${totalNumOfFormulationOne}">0</div>
@@ -103,8 +211,9 @@
                 </div>
             </div>
         </div>
-        <div class="col-md-3">
-            <div class="card shadow-sm">
+
+        <div class="col-md-3 d-flex">
+            <div class="card shadow-sm flex-fill h-100">
                 <div class="card-body">
                     <div class="text-muted">配方二占比</div>
                     <div class="h4 stat" th:text="${totalNumOfFormulationTwo}">0</div>
@@ -115,8 +224,9 @@
                 </div>
             </div>
         </div>
-        <div class="col-md-3">
-            <div class="card shadow-sm">
+
+        <div class="col-md-3 d-flex">
+            <div class="card shadow-sm flex-fill h-100">
                 <div class="card-body">
                     <div class="text-muted">配方三占比</div>
                     <div class="h4 stat" th:text="${totalNumOfFormulationThree}">0</div>
@@ -127,8 +237,9 @@
                 </div>
             </div>
         </div>
-        <div class="col-md-3">
-            <div class="card shadow-sm">
+
+        <div class="col-md-3 d-flex">
+            <div class="card shadow-sm flex-fill h-100">
                 <div class="card-body">
                     <div class="text-muted">配方四占比</div>
                     <div class="h4 stat" th:text="${totalNumOfFormulationFour}">0</div>
@@ -141,10 +252,10 @@
         </div>
     </div>
 
-    <!-- Summary cards -->
+    <!-- Row 2 -->
     <div class="row g-3 mb-3">
-        <div class="col-md-3">
-            <div class="card shadow-sm">
+        <div class="col-md-3 d-flex">
+            <div class="card shadow-sm flex-fill h-100">
                 <div class="card-body">
                     <div class="text-muted">配方五占比</div>
                     <div class="h4 stat" th:text="${totalNumOfFormulationFive}">0</div>
@@ -155,8 +266,9 @@
                 </div>
             </div>
         </div>
-        <div class="col-md-3">
-            <div class="card shadow-sm">
+
+        <div class="col-md-3 d-flex">
+            <div class="card shadow-sm flex-fill h-100">
                 <div class="card-body">
                     <div class="text-muted">配方六占比</div>
                     <div class="h4 stat" th:text="${totalNumOfFormulationSix}">0</div>
@@ -167,15 +279,33 @@
                 </div>
             </div>
         </div>
-        <div class="col-md-3">
-            <div class="card shadow-sm">
+
+        <div class="col-md-3 d-flex">
+            <div class="card shadow-sm flex-fill h-100">
                 <div class="card-body">
                     <div class="text-muted">不良反应例数</div>
                     <div class="h4 stat" th:text="${totalAdverse}">0</div>
+                    <!-- spacer optional; equal height works without it -->
+                    <!-- <div style="height: 22px;"></div> -->
+                </div>
+            </div>
+        </div>
+
+        <!-- 8th card with smaller text so it doesn't force extra height -->
+        <div class="col-md-3 d-flex">
+            <div class="card shadow-sm flex-fill h-100">
+                <div class="card-body small-text">
+                    <div class="text-muted">配方1-舒酚肽尼</div>
+                    <div class="text-muted">配方2-舒+昂丹斯琼</div>
+                    <div class="text-muted">配方3-舒+氢吗+昂</div>
+                    <div class="text-muted">配方4-舒+尼松+昂</div>
+                    <div class="text-muted">配方5-舒+右美+昂</div>
+                    <div class="text-muted">配方6-舒+氟比+昂</div>
                 </div>
             </div>
         </div>
     </div>
+
 
     <div class="d-flex justify-content-end mb-3">
         <!-- Export as Excel -->
