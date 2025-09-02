@@ -115,7 +115,7 @@ public class AfterSurgeryTableThreeController {
         model.addAttribute("startDate", startDate);
         model.addAttribute("endDate", endDate);
 
-        model.addAttribute("totalAdverse", totalAdverse);
+        model.addAttribute("totalCasesTableThree", totalCasesTableThree);
 
         model.addAttribute("totalNumOfJointComplicationCount", totalNumOfJointComplicationCount);
         model.addAttribute("totalNumOfMotorDysfunctionCount", totalNumOfMotorDysfunctionCount);
