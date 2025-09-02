@@ -123,7 +123,10 @@ public class AfterSurgeryJoinController {
                 "配方三",
                 "配方四",
                 "配方五",
-                "配方六"
+                "配方六",
+                "危重病人追访数",
+                "转危重抢救例数",
+                "死亡例数"
         ));
 
         for (var r : rows) {
@@ -162,7 +165,10 @@ public class AfterSurgeryJoinController {
                     n(r.getNumOfFormulationThree()),
                     n(r.getNumOfFormulationFour()),
                     n(r.getNumOfFormulationFive()),
-                    n(r.getNumOfFormulationSix())
+                    n(r.getNumOfFormulationSix()),
+                    n(r.getNumberOfFollowUpsForCriticallyIllPatients()),
+                    n(r.getNumberOfCirticalRescueCases()),
+                    n(r.getNumberOfDeaths())
             ));
         }
         out.flush();
@@ -226,7 +232,10 @@ public class AfterSurgeryJoinController {
                     "配方三",
                     "配方四",
                     "配方五",
-                    "配方六"
+                    "配方六",
+                    "危重病人追访数",
+                    "转危重抢救例数",
+                    "死亡例数"
             };
             Row hr = sheet.createRow(r++);
             for (int c = 0; c < headers.length; c++) {
@@ -272,6 +281,9 @@ public class AfterSurgeryJoinController {
                 row.createCell(c++).setCellValue(x.getNumOfFormulationFour());
                 row.createCell(c++).setCellValue(x.getNumOfFormulationFive());
                 row.createCell(c++).setCellValue(x.getNumOfFormulationSix());
+                row.createCell(c++).setCellValue(x.getNumberOfFollowUpsForCriticallyIllPatients());
+                row.createCell(c++).setCellValue(x.getNumberOfCirticalRescueCases());
+                row.createCell(c++).setCellValue(x.getNumberOfDeaths());
             }
 
             for (int c = 0; c < headers.length; c++) sheet.autoSizeColumn(c);
