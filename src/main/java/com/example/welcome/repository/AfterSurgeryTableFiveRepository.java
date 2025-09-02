@@ -18,7 +18,7 @@ import java.util.Set;
 @Repository
 public interface AfterSurgeryTableFiveRepository extends JpaRepository<AfterSurgeryTableFive, Long> {
 
-    @Query("select a.date from AfterSurgeryTableFour a where a.date in :dates")
+    @Query("select a.date from AfterSurgeryTableFive a where a.date in :dates")
     Set<LocalDate> findExistingDates(@Param("dates") Collection<LocalDate> dates);
 
     // AfterSurgeryTableFiveRepository.java
