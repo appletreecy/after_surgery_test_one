@@ -31,6 +31,7 @@ import java.util.Set;
 import org.springframework.transaction.annotation.Transactional;  // For @Transactional
 import java.util.HashSet;          // For HashSet
 import java.util.LinkedHashSet;    // For LinkedHashSet
+import java.util.stream.LongStream;
 
 
 @Controller
@@ -90,10 +91,15 @@ public class AfterSurgeryTableThreeController {
         long totalNumOfSpinalComplicationCount = totalsTableThree.totalNumOfSpinalComplicationCount();
         long totalNumOfHandSurgeryComplicationCount = totalsTableThree.totalNumOfHandSurgeryComplicationCount();
 
-        long totalCasesTableThree = totalNumOfJointComplicationCount + totalNumOfMotorDysfunctionCount +
-                totalNumOfTraumaComplicationCount + totalNumOfAnkleComplicationCount +
-                totalNumOfPediatricAdverseEventCount + totalNumOfSpinalComplicationCount +
-                totalNumOfHandSurgeryComplicationCount;
+        long totalCasesTableThree = LongStream.of(
+                totalNumOfJointComplicationCount,
+                totalNumOfMotorDysfunctionCount,
+                totalNumOfTraumaComplicationCount,
+                totalNumOfAnkleComplicationCount,
+                totalNumOfPediatricAdverseEventCount,
+                totalNumOfSpinalComplicationCount,
+                totalNumOfHandSurgeryComplicationCount
+        ).sum();
 
 
         float proportionOfJointComplicationCount = (totalCasesTableThree == 0) ? 0f : (float) totalNumOfJointComplicationCount / totalCasesTableThree;
