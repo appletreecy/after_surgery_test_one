@@ -64,11 +64,15 @@ public class AfterSurgeryJoinRepositoryImpl implements AfterSurgeryJoinRepositor
                         " t4.numOfFormulationThree, " +
                         " t4.numOfFormulationFour, " +
                         " t4.numOfFormulationFive, " +
-                        " t4.numOfFormulationSix " +
+                        " t4.numOfFormulationSix, " +
+                        " t5.numberOfFollowUpsForCriticallyIllPatients, " +
+                        " t5.numberOfCirticalRescueCases, " +
+                        " t5.numberOfDeaths " +
                         "FROM afterSurgeryTableOne t1 " +
                         "JOIN afterSurgeryTableTwo t2 ON t1.date = t2.date " +
                         "JOIN afterSurgeryTableThree t3 ON t1.date = t3.date " +
                         "JOIN afterSurgeryTableFour t4 ON t1.date = t4.date " +
+                        "JOIN afterSurgeryTableFive t5 ON t1.date = t5.date " +
                         "WHERE t1.date BETWEEN :start AND :end " +
                         "ORDER BY t1.date " + orderDir;
 
@@ -87,6 +91,7 @@ public class AfterSurgeryJoinRepositoryImpl implements AfterSurgeryJoinRepositor
                         "JOIN afterSurgeryTableTwo t2 ON t1.date = t2.date " +
                         "JOIN afterSurgeryTableThree t3 ON t1.date = t3.date " +
                         "JOIN afterSurgeryTableFour t4 ON t1.date = t4.date " +
+                        "JOIN afterSurgeryTableFive t5 ON t1.date = t5.date " +
                         "WHERE t1.date BETWEEN :start AND :end";
 
         Query countQuery = entityManager.createNativeQuery(countSql);
@@ -133,6 +138,9 @@ public class AfterSurgeryJoinRepositoryImpl implements AfterSurgeryJoinRepositor
             dto.setNumOfFormulationFour(((Number) row[i++]).intValue());
             dto.setNumOfFormulationFive(((Number) row[i++]).intValue());
             dto.setNumOfFormulationSix(((Number) row[i++]).intValue());
+            dto.setNumberOfFollowUpsForCriticallyIllPatients(((Number) row[i++]).intValue());
+            dto.setNumberOfCirticalRescueCases(((Number) row[i++]).intValue());
+            dto.setNumberOfDeaths(((Number) row[i++]).intValue());
             content.add(dto);
         }
 

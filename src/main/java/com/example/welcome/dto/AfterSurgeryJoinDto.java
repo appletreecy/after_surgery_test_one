@@ -47,6 +47,11 @@ public class AfterSurgeryJoinDto {
     private Integer numOfFormulationFive;
     private Integer numOfFormulationSix;
 
+    // TableFive
+    private Integer numberOfFollowUpsForCriticallyIllPatients;
+    private Integer numberOfCirticalRescueCases;
+    private Integer numberOfDeaths;
+
     // Getters and Setters
     public LocalDate getDate() { return date; }
     public void setDate(LocalDate date) { this.date = date; }
@@ -226,6 +231,30 @@ public class AfterSurgeryJoinDto {
 
     public void setNumOfFormulationSix(Integer numOfFormulationSix) {
         this.numOfFormulationSix = numOfFormulationSix;
+    }
+
+    public Integer getNumberOfFollowUpsForCriticallyIllPatients() {
+        return numberOfFollowUpsForCriticallyIllPatients;
+    }
+
+    public void setNumberOfFollowUpsForCriticallyIllPatients(Integer numberOfFollowUpsForCriticallyIllPatients) {
+        this.numberOfFollowUpsForCriticallyIllPatients = numberOfFollowUpsForCriticallyIllPatients;
+    }
+
+    public Integer getNumberOfCirticalRescueCases() {
+        return numberOfCirticalRescueCases;
+    }
+
+    public void setNumberOfCirticalRescueCases(Integer numberOfCirticalRescueCases) {
+        this.numberOfCirticalRescueCases = numberOfCirticalRescueCases;
+    }
+
+    public Integer getNumberOfDeaths() {
+        return numberOfDeaths;
+    }
+
+    public void setNumberOfDeaths(Integer numberOfDeaths) {
+        this.numberOfDeaths = numberOfDeaths;
     }
 }
 
