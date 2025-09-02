@@ -11,10 +11,15 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
 import java.time.LocalDate;
+import java.util.Collection;
 import java.util.List;
+import java.util.Set;
 
 @Repository
 public interface AfterSurgeryTableFiveRepository extends JpaRepository<AfterSurgeryTableFive, Long> {
+
+    @Query("select a.date from AfterSurgeryTableFour a where a.date in :dates")
+    Set<LocalDate> findExistingDates(@Param("dates") Collection<LocalDate> dates);
 
     // AfterSurgeryTableFiveRepository.java
     List<AfterSurgeryTableFive> findByDateBetween(LocalDate start, LocalDate end);
