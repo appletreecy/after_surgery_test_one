@@ -46,4 +46,28 @@ public interface AfterSurgeryTableThreeRepository extends JpaRepository<AfterSur
       where t.date between :start and :end
     """)
     TableThreeTotals computeTotalsInRange(@Param("start") LocalDate start, @Param("end") LocalDate end);
+
+    @Query("""
+  select new com.example.welcome.dto.MonthlyTotalsTableThree(
+    YEAR(t.date),
+    MONTH(t.date),
+    coalesce(sum(t.numOfJointComplicationCount), 0L),
+    coalesce(sum(t.numOfMotorDysfunctionCount), 0L),
+    coalesce(sum(t.numOfTraumaComplicationCount), 0L),
+    coalesce(sum(t.numOfAnkleComplicationCount), 0L),
+    coalesce(sum(t.numOfPediatricAdverseEventCount), 0L),
+    coalesce(sum(t.numOfSpinalComplicationCount), 0L),
+    coalesce(sum(t.numOfHandSurgeryComplicationCount), 0L),
+    coalesce(sum(t.numOfObstetricAdverseEventCount), 0L),
+    coalesce(sum(t.numOfGynecologicalAdverseEventCount), 0L)
+  )
+  from AfterSurgeryTableThree t
+  where t.date between :start and :end
+  group by YEAR(t.date), MONTH(t.date)
+  order by YEAR(t.date), MONTH(t.date)
+""")
+    List<com.example.welcome.dto.MonthlyTotalsTableThree> computeMonthlyTotals(
+            @Param("start") LocalDate start,
+            @Param("end") LocalDate end
+    );
 }
