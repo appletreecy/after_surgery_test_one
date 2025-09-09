@@ -121,15 +121,15 @@
         data: {
           labels: labels.map(m => m + '月'),
           datasets: [
-            { label: '关节不良数数',      data: totalNumOfJointComplicationCount,     borderColor: '#0d6efd', tension: 0.2, fill: false },
-            { label: '运动不良数数',      data: totalNumOfMotorDysfunctionCount,  borderColor: '#198754', tension: 0.2, fill: false },
-            { label: '创伤不良数数',      data: totalNumOfTraumaComplicationCount,    borderColor: '#ffc107', tension: 0.2, fill: false },
-            { label: '足踝不良数数',      data: totalNumOfAnkleComplicationCount,     borderColor: '#0d6efd', tension: 0.2, fill: false },
-            { label: '小儿不良数数',      data: totalNumOfPediatricAdverseEventCount,  borderColor: '#198754', tension: 0.2, fill: false },
-            { label: '脊柱不良数数',      data: totalNumOfSpinalComplicationCount,    borderColor: '#ffc107', tension: 0.2, fill: false },
-            { label: '手外不良数数',      data: totalNumOfHandSurgeryComplicationCount,  borderColor: '#198754', tension: 0.2, fill: false },
-            { label: '儿科不良数数',      data: totalNumOfObstetricAdverseEventCount,    borderColor: '#ffc107', tension: 0.2, fill: false },
-            { label: '妇科不良数数',      data: totalNumOfGynecologicalAdverseEventCount, borderColor: '#dc3545', tension: 0.2, fill: false }
+                { label: '关节不良数数', data: totalNumOfJointComplicationCount,     borderColor: '#0d6efd', tension: 0.2, fill: false },
+                { label: '运动不良数数', data: totalNumOfMotorDysfunctionCount,     borderColor: '#198754', tension: 0.2, fill: false },
+                { label: '创伤不良数数', data: totalNumOfTraumaComplicationCount,   borderColor: '#ffc107', tension: 0.2, fill: false },
+                { label: '足踝不良数数', data: totalNumOfAnkleComplicationCount,    borderColor: '#dc3545', tension: 0.2, fill: false },
+                { label: '小儿不良数数', data: totalNumOfPediatricAdverseEventCount, borderColor: '#6f42c1', tension: 0.2, fill: false },
+                { label: '脊柱不良数数', data: totalNumOfSpinalComplicationCount,    borderColor: '#fd7e14', tension: 0.2, fill: false },
+                { label: '手外不良数数', data: totalNumOfHandSurgeryComplicationCount, borderColor: '#20c997', tension: 0.2, fill: false },
+                { label: '儿科不良数数', data: totalNumOfObstetricAdverseEventCount, borderColor: '#6610f2', tension: 0.2, fill: false },
+                { label: '妇科不良数数', data: totalNumOfGynecologicalAdverseEventCount, borderColor: '#6c757d', tension: 0.2, fill: false }
           ]
         },
         options: {
@@ -151,16 +151,34 @@
         data: {
           labels: labels.map(m => m + '月'),
           datasets: [
-            { label: '关节不良数',      data: totalNumOfJointComplicationCount,     backgroundColor: 'rgba(13,110,253,0.35)',  borderColor: '#0d6efd',  borderWidth: 1 },
-            { label: '运动不良数',      data: totalNumOfMotorDysfunctionCount,  backgroundColor: 'rgba(25,135,84,0.35)',   borderColor: '#198754',  borderWidth: 1 },
-            { label: '创伤不良数',      data: totalNumOfTraumaComplicationCount,    backgroundColor: 'rgba(255,193,7,0.45)',   borderColor: '#ffc107',  borderWidth: 1 },
-            { label: '足踝不良数',      data: totalNumOfAnkleComplicationCount, backgroundColor: 'rgba(220,53,69,0.35)',   borderColor: '#dc3545',  borderWidth: 1 },
-            { label: '小儿不良数',      data: totalNumOfPediatricAdverseEventCount,     backgroundColor: 'rgba(13,110,253,0.35)',  borderColor: '#0d6efd',  borderWidth: 1 },
-            { label: '脊柱不良数',      data: totalNumOfSpinalComplicationCount,  backgroundColor: 'rgba(25,135,84,0.35)',   borderColor: '#198754',  borderWidth: 1 },
-            { label: '手外不良数',      data: totalNumOfHandSurgeryComplicationCount,    backgroundColor: 'rgba(255,193,7,0.45)',   borderColor: '#ffc107',  borderWidth: 1 },
-            { label: '儿科不良数',      data: totalNumOfObstetricAdverseEventCount, backgroundColor: 'rgba(220,53,69,0.35)',   borderColor: '#dc3545',  borderWidth: 1 },
-            { label: '妇科不良数',      data: totalNumOfGynecologicalAdverseEventCount,     backgroundColor: 'rgba(13,110,253,0.35)',  borderColor: '#0d6efd',  borderWidth: 1 }
+            { label: '关节不良数', data: totalNumOfJointComplicationCount,
+              backgroundColor: 'rgba(13,110,253,0.35)', borderColor: '#0d6efd', borderWidth: 1 },
+
+            { label: '运动不良数', data: totalNumOfMotorDysfunctionCount,
+              backgroundColor: 'rgba(25,135,84,0.35)', borderColor: '#198754', borderWidth: 1 },
+
+            { label: '创伤不良数', data: totalNumOfTraumaComplicationCount,
+              backgroundColor: 'rgba(255,193,7,0.45)', borderColor: '#ffc107', borderWidth: 1 },
+
+            { label: '足踝不良数', data: totalNumOfAnkleComplicationCount,
+              backgroundColor: 'rgba(220,53,69,0.35)', borderColor: '#dc3545', borderWidth: 1 },
+
+            { label: '小儿不良数', data: totalNumOfPediatricAdverseEventCount,
+              backgroundColor: 'rgba(111,66,193,0.35)', borderColor: '#6f42c1', borderWidth: 1 },
+
+            { label: '脊柱不良数', data: totalNumOfSpinalComplicationCount,
+              backgroundColor: 'rgba(253,126,20,0.35)', borderColor: '#fd7e14', borderWidth: 1 },
+
+            { label: '手外不良数', data: totalNumOfHandSurgeryComplicationCount,
+              backgroundColor: 'rgba(32,201,151,0.35)', borderColor: '#20c997', borderWidth: 1 },
+
+            { label: '儿科不良数', data: totalNumOfObstetricAdverseEventCount,
+              backgroundColor: 'rgba(102,16,242,0.35)', borderColor: '#6610f2', borderWidth: 1 },
+
+            { label: '妇科不良数', data: totalNumOfGynecologicalAdverseEventCount,
+              backgroundColor: 'rgba(108,117,125,0.35)', borderColor: '#6c757d', borderWidth: 1 }
           ]
+
         },
         options: {
           responsive: true,
