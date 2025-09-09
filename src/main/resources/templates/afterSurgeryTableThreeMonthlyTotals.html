@@ -1,0 +1,288 @@
+<!-- src/main/resources/templates/afterSurgeryTableOneMonthlyTotals.html -->
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="zh">
+<head>
+    <meta charset="UTF-8" />
+    <title th:text="${year} + ' 年（月度汇总）'">月度汇总</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" />
+</head>
+<body class="p-3">
+
+<div th:replace="fragments/navbar :: navbar"></div>
+
+<div class="container mt-4">
+
+    <!-- Year selector -->
+    <form class="row g-2 align-items-center mb-3" th:action="@{/afterSurgeryTableThree/monthly-totals}" method="get">
+        <div class="col-auto">
+            <label for="yearSelect" class="col-form-label">选择年份</label>
+        </div>
+        <div class="col-auto">
+            <select id="yearSelect" name="year" class="form-select" th:onchange="this.form.submit()">
+                <option th:each="y : ${years}"
+                        th:value="${y}"
+                        th:text="${y}"
+                        th:selected="${y} == ${year}">
+                </option>
+            </select>
+        </div>
+        <div class="col-auto d-none">
+            <button class="btn btn-primary" type="submit">查看</button>
+        </div>
+    </form>
+
+    <!-- Heading + Export buttons -->
+    <div class="d-flex justify-content-between align-items-center mb-2">
+        <h3 class="m-0" th:text="${year} + ' 年（月度汇总）'"></h3>
+        <div class="d-flex gap-2">
+            <button id="exportExcelBtn" type="button" class="btn btn-success me-2">导出 Excel</button>
+            <button id="exportCsvBtn"   type="button" class="btn btn-primary">导出 CSV</button>
+        </div>
+    </div>
+
+    <!-- Data table (what you see is what gets exported) -->
+    <table id="monthlyTable" class="table table-sm table-bordered align-middle">
+        <thead class="table-light">
+        <tr>
+            <th>月份</th>
+            <th>关节不良数数</th>
+            <th>运动不良数数</th>
+            <th>创伤不良数数</th>
+            <th>足踝不良数数</th>
+            <th>小儿不良数数</th>
+            <th>脊柱不良数数</th>
+            <th>手外不良数数</th>
+            <th>儿科不良数数</th>
+            <th>妇科不良数数</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="m : ${monthlyTotals}">
+            <td th:text="${#numbers.formatInteger(m.month(),2)}"></td>
+            <td th:text="${m.totalNumOfJointComplicationCount()}"></td>
+            <td th:text="${m.totalNumOfMotorDysfunctionCount()}"></td>
+            <td th:text="${m.totalNumOfTraumaComplicationCount()}"></td>
+            <td th:text="${m.totalNumOfAnkleComplicationCount()}"></td>
+            <td th:text="${m.totalNumOfPediatricAdverseEventCount()}"></td>
+            <td th:text="${m.totalNumOfSpinalComplicationCount()}"></td>
+            <td th:text="${m.totalNumOfHandSurgeryComplicationCount()}"></td>
+            <td th:text="${m.totalNumOfObstetricAdverseEventCount()}"></td>
+            <td th:text="${m.totalNumOfGynecologicalAdverseEventCount()}"></td>
+        </tr>
+        </tbody>
+    </table>
+
+    <!-- Charts -->
+    <hr class="my-4" />
+    <h5 class="mb-3">月度趋势图</h5>
+    <canvas id="monthlyChart" height="100"></canvas>
+
+    <h5 class="mt-5 mb-3">月度柱状图</h5>
+    <canvas id="monthlyBar" height="110"></canvas>
+</div>
+
+<!-- Chart.js -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+<!-- Build chart data from Thymeleaf variables -->
+<script th:inline="javascript">
+    /*<![CDATA[*/
+      const labels = [];
+      const totalNumOfJointComplicationCount = [];
+      const totalNumOfMotorDysfunctionCount = [];
+      const totalNumOfTraumaComplicationCount = [];
+      const totalNumOfAnkleComplicationCount = [];
+      const totalNumOfPediatricAdverseEventCount = [];
+      const totalNumOfSpinalComplicationCount = [];
+      const totalNumOfHandSurgeryComplicationCount = [];
+      const totalNumOfObstetricAdverseEventCount = [];
+      const totalNumOfGynecologicalAdverseEventCount = [];
+
+      /*[# th:each="m : ${monthlyTotals}"]*/
+      (function(){
+        const mm = /*[[${m.month}]]*/ 1;                 // Integer 1..12
+        labels.push(String(mm).padStart(2,'0'));          // '01'..'12'
+        totalNumOfJointComplicationCount.push(/*[[${m.totalNumOfJointComplicationCount}]]*/ 0);
+        totalNumOfMotorDysfunctionCount.push(/*[[${m.totalNumOfMotorDysfunctionCount}]]*/ 0);
+        totalNumOfTraumaComplicationCount.push(/*[[${m.totalNumOfTraumaComplicationCount}]]*/ 0);
+        totalNumOfAnkleComplicationCount.push(/*[[${m.totalNumOfAnkleComplicationCount}]]*/ 0);
+        totalNumOfPediatricAdverseEventCount.push(/*[[${m.totalNumOfPediatricAdverseEventCount}]]*/ 0);
+        totalNumOfSpinalComplicationCount.push(/*[[${m.totalNumOfSpinalComplicationCount}]]*/ 0);
+        totalNumOfHandSurgeryComplicationCount.push(/*[[${m.totalNumOfHandSurgeryComplicationCount}]]*/ 0);
+        totalNumOfObstetricAdverseEventCount.push(/*[[${m.totalNumOfObstetricAdverseEventCount}]]*/ 0);
+        totalNumOfGynecologicalAdverseEventCount.push(/*[[${m.totalNumOfGynecologicalAdverseEventCount}]]*/ 0);
+      })();
+      /*[/]*/
+
+      // Line chart
+      const ctx = document.getElementById('monthlyChart').getContext('2d');
+      new Chart(ctx, {
+        type: 'line',
+        data: {
+          labels: labels.map(m => m + '月'),
+          datasets: [
+                { label: '关节不良数数', data: totalNumOfJointComplicationCount,     borderColor: '#0d6efd', tension: 0.2, fill: false },
+                { label: '运动不良数数', data: totalNumOfMotorDysfunctionCount,     borderColor: '#198754', tension: 0.2, fill: false },
+                { label: '创伤不良数数', data: totalNumOfTraumaComplicationCount,   borderColor: '#ffc107', tension: 0.2, fill: false },
+                { label: '足踝不良数数', data: totalNumOfAnkleComplicationCount,    borderColor: '#dc3545', tension: 0.2, fill: false },
+                { label: '小儿不良数数', data: totalNumOfPediatricAdverseEventCount, borderColor: '#6f42c1', tension: 0.2, fill: false },
+                { label: '脊柱不良数数', data: totalNumOfSpinalComplicationCount,    borderColor: '#fd7e14', tension: 0.2, fill: false },
+                { label: '手外不良数数', data: totalNumOfHandSurgeryComplicationCount, borderColor: '#20c997', tension: 0.2, fill: false },
+                { label: '儿科不良数数', data: totalNumOfObstetricAdverseEventCount, borderColor: '#6610f2', tension: 0.2, fill: false },
+                { label: '妇科不良数数', data: totalNumOfGynecologicalAdverseEventCount, borderColor: '#6c757d', tension: 0.2, fill: false }
+          ]
+        },
+        options: {
+          responsive: true,
+          plugins: {
+            title: { display: false },
+            legend: { position: 'top' },
+            tooltip: { mode: 'index', intersect: false }
+          },
+          interaction: { mode: 'nearest', axis: 'x', intersect: false },
+          scales: { y: { beginAtZero: true, ticks: { precision: 0 } } }
+        }
+      });
+
+      // Bar chart
+      const barCtx = document.getElementById('monthlyBar').getContext('2d');
+      new Chart(barCtx, {
+        type: 'bar',
+        data: {
+          labels: labels.map(m => m + '月'),
+          datasets: [
+            { label: '关节不良数', data: totalNumOfJointComplicationCount,
+              backgroundColor: 'rgba(13,110,253,0.35)', borderColor: '#0d6efd', borderWidth: 1 },
+
+            { label: '运动不良数', data: totalNumOfMotorDysfunctionCount,
+              backgroundColor: 'rgba(25,135,84,0.35)', borderColor: '#198754', borderWidth: 1 },
+
+            { label: '创伤不良数', data: totalNumOfTraumaComplicationCount,
+              backgroundColor: 'rgba(255,193,7,0.45)', borderColor: '#ffc107', borderWidth: 1 },
+
+            { label: '足踝不良数', data: totalNumOfAnkleComplicationCount,
+              backgroundColor: 'rgba(220,53,69,0.35)', borderColor: '#dc3545', borderWidth: 1 },
+
+            { label: '小儿不良数', data: totalNumOfPediatricAdverseEventCount,
+              backgroundColor: 'rgba(111,66,193,0.35)', borderColor: '#6f42c1', borderWidth: 1 },
+
+            { label: '脊柱不良数', data: totalNumOfSpinalComplicationCount,
+              backgroundColor: 'rgba(253,126,20,0.35)', borderColor: '#fd7e14', borderWidth: 1 },
+
+            { label: '手外不良数', data: totalNumOfHandSurgeryComplicationCount,
+              backgroundColor: 'rgba(32,201,151,0.35)', borderColor: '#20c997', borderWidth: 1 },
+
+            { label: '儿科不良数', data: totalNumOfObstetricAdverseEventCount,
+              backgroundColor: 'rgba(102,16,242,0.35)', borderColor: '#6610f2', borderWidth: 1 },
+
+            { label: '妇科不良数', data: totalNumOfGynecologicalAdverseEventCount,
+              backgroundColor: 'rgba(108,117,125,0.35)', borderColor: '#6c757d', borderWidth: 1 }
+          ]
+
+        },
+        options: {
+          responsive: true,
+          plugins: {
+            legend: { position: 'top' },
+            tooltip: { mode: 'index', intersect: false }
+          },
+          interaction: { mode: 'nearest', axis: 'x', intersect: false },
+          scales: {
+            y: { beginAtZero: true, ticks: { precision: 0 } },
+            x: { stacked: false }
+          }
+        }
+      });
+    /*]]>*/
+</script>
+
+<!-- Robust SheetJS loader: primary jsDelivr, fallback unpkg -->
+<script>
+    (function loadSheetJS(){
+      if (window.XLSX) return;
+      var s = document.createElement('script');
+      s.src = "https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js";
+      s.onload = function(){ console.log("SheetJS loaded"); };
+      s.onerror = function(){
+        console.warn("jsDelivr failed, trying unpkg...");
+        var s2 = document.createElement('script');
+        s2.src = "https://unpkg.com/xlsx@0.18.5/dist/xlsx.full.min.js";
+        s2.onload = function(){ console.log("SheetJS loaded (fallback)"); };
+        s2.onerror = function(){ console.error("Failed to load SheetJS from both CDNs."); };
+        document.head.appendChild(s2);
+      };
+      document.head.appendChild(s);
+    })();
+</script>
+
+<!-- Export handlers: CSV (always available) + Excel (uses SheetJS if loaded) -->
+<script th:inline="javascript">
+    /*<![CDATA[*/
+      // Shared: build CSV string from the live table
+      function buildCSVFromTable(table) {
+        return Array.from(table.querySelectorAll('tr')).map(tr =>
+          Array.from(tr.querySelectorAll('th,td'))
+            .map(td => {
+              const t = td.innerText.replaceAll('"','""');
+              return (t.includes(',') || t.includes('"') || t.includes('\n')) ? `"${t}"` : t;
+            })
+            .join(',')
+        ).join('\n');
+      }
+
+      // CSV export (adds UTF-8 BOM so Excel opens Chinese correctly)
+      document.getElementById('exportCsvBtn')?.addEventListener('click', function () {
+        const table = document.getElementById('monthlyTable');
+        if (!table) return;
+
+        const year = /*[[${year}]]*/ 2025;
+        const csv = buildCSVFromTable(table);
+        const csvWithBom = '\uFEFF' + csv; // BOM
+
+        const blob = new Blob([csvWithBom], { type: 'text/csv;charset=utf-8;' });
+        const a = document.createElement('a');
+        a.href = URL.createObjectURL(blob);
+        a.download = `AfterSurgeryTableThree-月度汇总-${year}.csv`;
+        document.body.appendChild(a);
+        a.click();
+        a.remove();
+      });
+
+      // Excel export; falls back to CSV if SheetJS failed to load (CSP / network)
+      document.getElementById('exportExcelBtn')?.addEventListener('click', function () {
+        const table = document.getElementById('monthlyTable');
+        if (!table) return;
+
+        const year = /*[[${year}]]*/ 2025;
+
+        if (typeof XLSX === 'undefined') {
+          // Fallback to CSV automatically
+          const csv = buildCSVFromTable(table);
+          const csvWithBom = '\uFEFF' + csv;
+          const blob = new Blob([csvWithBom], { type: 'text/csv;charset=utf-8;' });
+          const a = document.createElement('a');
+          a.href = URL.createObjectURL(blob);
+          a.download = `AfterSurgeryTableThree-月度汇总-${year}.csv`;
+          document.body.appendChild(a);
+          a.click();
+          a.remove();
+          return;
+        }
+
+        // Use SheetJS to make .xlsx from the table
+        const wb = XLSX.utils.book_new();
+        const ws = XLSX.utils.table_to_sheet(table, { raw: true });
+        ws['!cols'] = [{ wch: 6 }, { wch: 14 }, { wch: 14 }, { wch: 14 }, { wch: 14 }];
+        XLSX.utils.book_append_sheet(wb, ws, '月度汇总');
+
+        XLSX.writeFile(wb, `AfterSurgeryTableThree-月度汇总-${year}.xlsx`);
+      });
+    /*]]>*/
+</script>
+
+<!-- (If your CSP blocks CDNs, host SheetJS locally and replace the loader above with:) -->
+<!-- <script th:src="@{/js/xlsx.full.min.js}"></script> -->
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
