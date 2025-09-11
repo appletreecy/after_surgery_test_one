@@ -59,6 +59,7 @@ public class AfterSurgeryJoinRepositoryImpl implements AfterSurgeryJoinRepositor
                         " t3.numOfHandSurgeryComplicationCount, " +
                         " t3.numOfObstetricAdverseEventCount, " +
                         " t3.numOfGynecologicalAdverseEventCount, " +
+                        " t3.numOfSurgicalTreatmentCount, " +
                         " t4.numOfFormulationOne, " +
                         " t4.numOfFormulationTwo, " +
                         " t4.numOfFormulationThree, " +
@@ -132,6 +133,7 @@ public class AfterSurgeryJoinRepositoryImpl implements AfterSurgeryJoinRepositor
             dto.setNumOfHandSurgeryComplicationCount(((Number) row[i++]).intValue());
             dto.setNumOfObstetricAdverseEventCount(((Number) row[i++]).intValue());
             dto.setNumOfGynecologicalAdverseEventCount(((Number) row[i++]).intValue());
+            dto.setNumOfSurgicalTreatmentCount(((Number) row[i++]).intValue());
             dto.setNumOfFormulationOne(((Number) row[i++]).intValue());
             dto.setNumOfFormulationTwo(((Number) row[i++]).intValue());
             dto.setNumOfFormulationThree(((Number) row[i++]).intValue());

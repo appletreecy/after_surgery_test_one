@@ -11,7 +11,8 @@ public record MonthlyTotalsTableThree(
         Long totalNumOfSpinalComplicationCount,
         Long totalNumOfHandSurgeryComplicationCount,
         Long totalNumOfObstetricAdverseEventCount,
-        Long totalNumOfGynecologicalAdverseEventCount
+        Long totalNumOfGynecologicalAdverseEventCount,
+        Long totalNumOfSurgicalTreatmentCount
 ) {
     public String yearMonth() {
         return String.format("%04d-%02d", year, month);

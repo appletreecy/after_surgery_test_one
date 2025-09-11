@@ -34,13 +34,18 @@ public interface AfterSurgeryTableThreeRepository extends JpaRepository<AfterSur
 
     @Query("""
       select new com.example.welcome.TableThreeTotals(
+        MIN(YEAR(t.date)),
+        MIN(MONTH(t.date)),
         coalesce(sum(t.numOfJointComplicationCount), 0L),
         coalesce(sum(t.numOfMotorDysfunctionCount), 0L),
         coalesce(sum(t.numOfTraumaComplicationCount), 0L),
         coalesce(sum(t.numOfAnkleComplicationCount), 0L),
         coalesce(sum(t.numOfPediatricAdverseEventCount), 0L),
         coalesce(sum(t.numOfSpinalComplicationCount), 0L),
-        coalesce(sum(t.numOfHandSurgeryComplicationCount), 0L)
+        coalesce(sum(t.numOfHandSurgeryComplicationCount), 0L),
+        coalesce(sum(t.numOfObstetricAdverseEventCount), 0L),
+        coalesce(sum(t.numOfGynecologicalAdverseEventCount), 0L),
+        coalesce(sum(t.numOfSurgicalTreatmentCount), 0L)
       )
       from AfterSurgeryTableThree t
       where t.date between :start and :end
@@ -59,7 +64,8 @@ public interface AfterSurgeryTableThreeRepository extends JpaRepository<AfterSur
     coalesce(sum(t.numOfSpinalComplicationCount), 0L),
     coalesce(sum(t.numOfHandSurgeryComplicationCount), 0L),
     coalesce(sum(t.numOfObstetricAdverseEventCount), 0L),
-    coalesce(sum(t.numOfGynecologicalAdverseEventCount), 0L)
+    coalesce(sum(t.numOfGynecologicalAdverseEventCount), 0L),
+    coalesce(sum(t.numOfSurgicalTreatmentCount), 0L)
   )
   from AfterSurgeryTableThree t
   where t.date between :start and :end

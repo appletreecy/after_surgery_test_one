@@ -54,6 +54,7 @@
             <th>手外不良数数</th>
             <th>儿科不良数数</th>
             <th>妇科不良数数</th>
+            <th>外科不良数数</th>
         </tr>
         </thead>
         <tbody>
@@ -68,6 +69,7 @@
             <td th:text="${m.totalNumOfHandSurgeryComplicationCount()}"></td>
             <td th:text="${m.totalNumOfObstetricAdverseEventCount()}"></td>
             <td th:text="${m.totalNumOfGynecologicalAdverseEventCount()}"></td>
+            <td th:text="${m.totalNumOfSurgicalTreatmentCount()}"></td>
         </tr>
         </tbody>
     </table>
@@ -97,6 +99,7 @@
       const totalNumOfHandSurgeryComplicationCount = [];
       const totalNumOfObstetricAdverseEventCount = [];
       const totalNumOfGynecologicalAdverseEventCount = [];
+      const totalNumOfSurgicalTreatmentCount = [];
 
       /*[# th:each="m : ${monthlyTotals}"]*/
       (function(){
@@ -111,6 +114,7 @@
         totalNumOfHandSurgeryComplicationCount.push(/*[[${m.totalNumOfHandSurgeryComplicationCount}]]*/ 0);
         totalNumOfObstetricAdverseEventCount.push(/*[[${m.totalNumOfObstetricAdverseEventCount}]]*/ 0);
         totalNumOfGynecologicalAdverseEventCount.push(/*[[${m.totalNumOfGynecologicalAdverseEventCount}]]*/ 0);
+        totalNumOfSurgicalTreatmentCount.push(/*[[${m.totalNumOfSurgicalTreatmentCount}]]*/ 0);
       })();
       /*[/]*/
 
@@ -129,7 +133,8 @@
                 { label: '脊柱不良数数', data: totalNumOfSpinalComplicationCount,    borderColor: '#fd7e14', tension: 0.2, fill: false },
                 { label: '手外不良数数', data: totalNumOfHandSurgeryComplicationCount, borderColor: '#20c997', tension: 0.2, fill: false },
                 { label: '儿科不良数数', data: totalNumOfObstetricAdverseEventCount, borderColor: '#6610f2', tension: 0.2, fill: false },
-                { label: '妇科不良数数', data: totalNumOfGynecologicalAdverseEventCount, borderColor: '#6c757d', tension: 0.2, fill: false }
+                { label: '妇科不良数数', data: totalNumOfGynecologicalAdverseEventCount, borderColor: '#6c757d', tension: 0.2, fill: false },
+                { label: '妇科不良数数', data: totalNumOfSurgicalTreatmentCount, borderColor: '#6c757d', tension: 0.2, fill: false }
           ]
         },
         options: {
@@ -176,6 +181,9 @@
               backgroundColor: 'rgba(102,16,242,0.35)', borderColor: '#6610f2', borderWidth: 1 },
 
             { label: '妇科不良数', data: totalNumOfGynecologicalAdverseEventCount,
+              backgroundColor: 'rgba(108,117,125,0.35)', borderColor: '#6c757d', borderWidth: 1 },
+
+            { label: '外科不良数', data: totalNumOfSurgicalTreatmentCount,
               backgroundColor: 'rgba(108,117,125,0.35)', borderColor: '#6c757d', borderWidth: 1 }
           ]
 

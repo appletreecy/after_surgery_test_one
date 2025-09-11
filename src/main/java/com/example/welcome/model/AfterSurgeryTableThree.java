@@ -26,6 +26,7 @@ public class AfterSurgeryTableThree {
     private Integer numOfHandSurgeryComplicationCount;
     private Integer numOfObstetricAdverseEventCount;
     private Integer numOfGynecologicalAdverseEventCount;
+    private Integer numOfSurgicalTreatmentCount;
 
     public Long getId() {
         return id;
@@ -113,5 +114,13 @@ public class AfterSurgeryTableThree {
 
     public void setNumOfGynecologicalAdverseEventCount(Integer numOfGynecologicalAdverseEventCount) {
         this.numOfGynecologicalAdverseEventCount = numOfGynecologicalAdverseEventCount;
+    }
+
+    public Integer getNumOfSurgicalTreatmentCount() {
+        return numOfSurgicalTreatmentCount;
+    }
+
+    public void setNumOfSurgicalTreatmentCount(Integer numOfSurgicalTreatmentCount) {
+        this.numOfSurgicalTreatmentCount = numOfSurgicalTreatmentCount;
     }
 }
