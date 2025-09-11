@@ -38,6 +38,7 @@ public class AfterSurgeryJoinDto {
     private Integer numOfHandSurgeryComplicationCount;
     private Integer numOfObstetricAdverseEventCount;
     private Integer numOfGynecologicalAdverseEventCount;
+    private Integer numOfSurgicalTreatmentCount;
 
     // TableFour
     private Integer numOfFormulationOne;
@@ -183,6 +184,14 @@ public class AfterSurgeryJoinDto {
 
     public void setNumOfGynecologicalAdverseEventCount(Integer numOfGynecologicalAdverseEventCount) {
         this.numOfGynecologicalAdverseEventCount = numOfGynecologicalAdverseEventCount;
+    }
+
+    public Integer getNumOfSurgicalTreatmentCount() {
+        return numOfSurgicalTreatmentCount;
+    }
+
+    public void setNumOfSurgicalTreatmentCount(Integer numOfSurgicalTreatmentCount) {
+        this.numOfSurgicalTreatmentCount = numOfSurgicalTreatmentCount;
     }
 
     public Integer getNumOfFormulationOne() {

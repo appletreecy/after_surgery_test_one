@@ -231,7 +231,7 @@ public class AfterSurgeryTableThreeController {
                 if (lineNo == 1 && trimmed.toLowerCase().startsWith("date,")) continue;
 
                 String[] f = trimmed.split(",", -1);
-                if (f.length != 10) {
+                if (f.length != 11) {
                     badColumnLines.add(lineNo);
                     continue;
                 }
@@ -252,6 +252,7 @@ public class AfterSurgeryTableThreeController {
                 r.setNumOfHandSurgeryComplicationCount(Integer.parseInt(f[7].trim()));
                 r.setNumOfObstetricAdverseEventCount(Integer.parseInt(f[8].trim()));
                 r.setNumOfGynecologicalAdverseEventCount(Integer.parseInt(f[9].trim()));
+                r.setNumOfSurgicalTreatmentCount(Integer.parseInt(f[10].trim()));
 
                 rows.add(r);
             }
@@ -312,7 +313,7 @@ public class AfterSurgeryTableThreeController {
             // Header row
             String[] headers = {"ID", "日期", "关节不良数", "运动不良数", "创伤不良数", "足踝不良数",
                     "小儿不良数", "脊柱不良数", "手外不良数", "儿科不良数",
-                    "妇科不良数"};
+                    "妇科不良数", "外科数"};
             Row header = sheet.createRow(0);
             for (int i = 0; i < headers.length; i++) {
                 header.createCell(i).setCellValue(headers[i]);
@@ -354,7 +355,7 @@ public class AfterSurgeryTableThreeController {
         // Write CSV to response
         try (var writer = new java.io.PrintWriter(response.getOutputStream())) {
             // CSV Header
-            writer.println("ID,日期,关节不良数,运动不良数,创伤不良数,足踝不良数,小儿不良数,脊柱不良数,手外不良数,儿科不良数,妇科不良数");
+            writer.println("ID,日期,关节不良数,运动不良数,创伤不良数,足踝不良数,小儿不良数,脊柱不良数,手外不良数,儿科不良数,妇科不良数,外科数");
 
             // CSV Rows
             for (AfterSurgeryTableThree record : records) {
@@ -370,7 +371,8 @@ public class AfterSurgeryTableThreeController {
                         record.getNumOfSpinalComplicationCount() == null ? "" : record.getNumOfSpinalComplicationCount(),
                         record.getNumOfHandSurgeryComplicationCount() == null ? "" : record.getNumOfHandSurgeryComplicationCount(),
                         record.getNumOfObstetricAdverseEventCount() == null ? "" : record.getNumOfObstetricAdverseEventCount(),
-                        record.getNumOfGynecologicalAdverseEventCount() == null ? "" : record.getNumOfGynecologicalAdverseEventCount()
+                        record.getNumOfGynecologicalAdverseEventCount() == null ? "" : record.getNumOfGynecologicalAdverseEventCount(),
+                        record.getNumOfSurgicalTreatmentCount() == null ? "" : record.getNumOfSurgicalTreatmentCount()
                 );
             }
             writer.flush();
@@ -419,7 +421,7 @@ public class AfterSurgeryTableThreeController {
         while (!cursor.isAfter(last)) {
             MonthlyTotalsTableThree mt = byYm.getOrDefault(
                     cursor,
-                    new MonthlyTotalsTableThree(cursor.getYear(), cursor.getMonthValue(), 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L)
+                    new MonthlyTotalsTableThree(cursor.getYear(), cursor.getMonthValue(), 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L,0L)
             );
             series.add(mt);
             cursor = cursor.plusMonths(1);

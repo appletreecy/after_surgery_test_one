@@ -231,6 +231,7 @@
                 <th>手外不良数占比</th>
                 <th>儿科不良数占比</th>
                 <th>妇科不良数占比</th>
+                <th>外科数</th>
             </tr>
             </thead>
             <tbody>
@@ -246,6 +247,7 @@
                 <td th:text="${r.numOfHandSurgeryComplicationCount}">0</td>
                 <td th:text="${r.numOfObstetricAdverseEventCount}">0</td>
                 <td th:text="${r.numOfGynecologicalAdverseEventCount}">0</td>
+                <td th:text="${r.numOfSurgicalTreatmentCount}">0</td>
             </tr>
             <tr th:if="${#lists.isEmpty(content)}">
                 <td colspan="6" class="text-muted">No records for the selected dates.</td>
