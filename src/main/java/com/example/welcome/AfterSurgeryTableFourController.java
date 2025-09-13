@@ -1,4 +1,6 @@
 package com.example.welcome;
+import com.example.welcome.dto.MonthlyTotalsTableFour;
+import com.example.welcome.dto.MonthlyTotalsTableThree;
 import com.example.welcome.model.AfterSurgeryTableFour;
 import com.example.welcome.model.AfterSurgeryTableThree;
 import com.example.welcome.repository.AfterSurgeryTableFourRepository;
@@ -24,11 +26,18 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.time.LocalDate;
+import java.time.YearMonth;
 import java.util.*;
+import java.util.function.Function;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
 @Controller
 @RequestMapping("afterSurgeryTableFour")
 public class AfterSurgeryTableFourController {
+
+    private static final int MIN_YEAR = 2015;
+    private static final int MAX_YEAR = 2035;
 
     @Autowired
     private AfterSurgeryTableFourRepository afterSurgeryTableFourRepository;
@@ -36,83 +45,6 @@ public class AfterSurgeryTableFourController {
     @Autowired
     private AfterSurgeryTableOneRepository afterSurgeryTableOneRepository;
 
-//    @GetMapping({"/", ""})
-//    public String showTableOne(Model model) {
-//        List<AfterSurgeryTableFour> tableFourRecords = afterSurgeryTableFourRepository.findAll();
-//
-//        int totalNumOfFormulationOne = tableFourRecords.stream()
-//                .filter(r -> r.getNumOfFormulationOne() != null)
-//                .mapToInt(AfterSurgeryTableFour::getNumOfFormulationOne)
-//                .sum();
-//
-//        int totalNumOfFormulationTwo = tableFourRecords.stream()
-//                .filter(r -> r.getNumOfFormulationTwo() != null)
-//                .mapToInt(AfterSurgeryTableFour::getNumOfFormulationTwo)
-//                .sum();
-//
-//        int totalNumOfFormulationThree = tableFourRecords.stream()
-//                .filter(r -> r.getNumOfFormulationThree() != null)
-//                .mapToInt(AfterSurgeryTableFour::getNumOfFormulationThree)
-//                .sum();
-//
-//        int totalNumOfFormulationFour = tableFourRecords.stream()
-//                .filter(r -> r.getNumOfFormulationFour() != null)
-//                .mapToInt(AfterSurgeryTableFour::getNumOfFormulationFour)
-//                .sum();
-//
-//        int totalNumOfFormulationFive = tableFourRecords.stream()
-//                .filter(r -> r.getNumOfFormulationFive() != null)
-//                .mapToInt(AfterSurgeryTableFour::getNumOfFormulationFive)
-//                .sum();
-//
-//        int totalNumOfFormulationSix = tableFourRecords.stream()
-//                .filter(r -> r.getNumOfFormulationSix() != null)
-//                .mapToInt(AfterSurgeryTableFour::getNumOfFormulationSix)
-//                .sum();
-//
-//
-//
-//        // TableOne
-//        List<AfterSurgeryTableOne> tableOneRecords = afterSurgeryRepositoryTableOne.findAll();
-//
-//        int totalAdverseReactions = tableOneRecords.stream()
-//                .filter(r -> r.getNumOfAdverseReactionCases() != null)
-//                .mapToInt(AfterSurgeryTableOne::getNumOfAdverseReactionCases)
-//                .sum();
-//
-//        // Proportion
-//
-//        float proportionOfFormulationOne = (float) totalNumOfFormulationOne / totalAdverseReactions;
-//
-//        float proportionOfFormulationTwo = (float) totalNumOfFormulationTwo / totalAdverseReactions;
-//
-//        float proportionOfFormulationThree = (float) totalNumOfFormulationThree / totalAdverseReactions;
-//
-//        float proportionOfFormulationFour = (float) totalNumOfFormulationFour / totalAdverseReactions;
-//
-//        float proportionOfFormulationFive = (float) totalNumOfFormulationFive / totalAdverseReactions;
-//
-//        float proportionOfFormulationSix = (float) totalNumOfFormulationSix / totalAdverseReactions;
-//
-//        model.addAttribute("tableFourRecords", tableFourRecords);
-//
-//        model.addAttribute("totalNumOfFormulationOne", totalNumOfFormulationOne);
-//        model.addAttribute("totalNumOfFormulationTwo", totalNumOfFormulationTwo);
-//        model.addAttribute("totalNumOfFormulationThree", totalNumOfFormulationThree);
-//        model.addAttribute("totalNumOfFormulationFour", totalNumOfFormulationFour);
-//        model.addAttribute("totalNumOfFormulationFive", totalNumOfFormulationFive);
-//        model.addAttribute("totalNumOfFormulationSix", totalNumOfFormulationSix);
-//
-//        model.addAttribute("proportionOfFormulationOne", proportionOfFormulationOne);
-//        model.addAttribute("proportionOfFormulationTwo", proportionOfFormulationTwo);
-//        model.addAttribute("proportionOfFormulationThree", proportionOfFormulationThree);
-//        model.addAttribute("proportionOfFormulationFour", proportionOfFormulationFour);
-//        model.addAttribute("proportionOfFormulationFive", proportionOfFormulationFive);
-//        model.addAttribute("proportionOfFormulationSix", proportionOfFormulationSix);
-//
-//
-//        return "afterSurgeryTableFour";
-//    }
 
     @GetMapping({"", "/"})
     public String showTableOne(
@@ -418,6 +350,65 @@ public class AfterSurgeryTableFourController {
             }
             writer.flush();
         }
+    }
+
+    @GetMapping("/monthly-totals")
+    public String monthlyTotals(
+            @RequestParam(required = false) Integer year,
+            Model model
+    ) {
+        LocalDate today = LocalDate.now();
+        int currentYear = today.getYear();
+
+        // Pick the selected year (default = current year) and clamp to [2015..2035]
+        int selectedYear = (year == null) ? currentYear : year;
+        if (selectedYear < MIN_YEAR) selectedYear = MIN_YEAR;
+        if (selectedYear > MAX_YEAR) selectedYear = MAX_YEAR;
+
+        // Build start/end for the query:
+        // - If selected year is current year, end at "today" (YTD)
+        // - Otherwise, show the whole year (Jan..Dec)
+        LocalDate start = LocalDate.of(selectedYear, 1, 1);
+        LocalDate end   = (selectedYear == currentYear)
+                ? today
+                : LocalDate.of(selectedYear, 12, 31);
+
+        // Raw aggregated rows from DB (might skip months with no data)
+        List<MonthlyTotalsTableFour> raw = afterSurgeryTableFourRepository.computeMonthlyTotals(start, end);
+
+        // Index by YearMonth for easy fill
+        Map<YearMonth, MonthlyTotalsTableFour> byYm = raw.stream().collect(Collectors.toMap(
+                mt -> YearMonth.of(mt.year(), mt.month()),
+                Function.identity()
+        ));
+
+        // Build complete series:
+        // - If selected year is current year: Jan..current month
+        // - Else: Jan..Dec of that year
+        List<MonthlyTotalsTableFour> series = new ArrayList<>();
+        YearMonth cursor = YearMonth.of(selectedYear, 1);
+        YearMonth last   = (selectedYear == currentYear)
+                ? YearMonth.from(today)
+                : YearMonth.of(selectedYear, 12);
+
+        while (!cursor.isAfter(last)) {
+            MonthlyTotalsTableFour mt = byYm.getOrDefault(
+                    cursor,
+                    new MonthlyTotalsTableFour(cursor.getYear(), cursor.getMonthValue(), 0L, 0L, 0L, 0L, 0L, 0L)
+            );
+            series.add(mt);
+            cursor = cursor.plusMonths(1);
+        }
+
+        // Years dropdown data
+        List<Integer> years = IntStream.rangeClosed(MIN_YEAR, MAX_YEAR)
+                .boxed()
+                .collect(Collectors.toList());
+
+        model.addAttribute("monthlyTotals", series);
+        model.addAttribute("year", selectedYear);   // used in title & selecting the dropdown
+        model.addAttribute("years", years);         // for the <select> options
+        return "afterSurgeryTableFourMonthlyTotals";
     }
 
     // Helper: Write a string value into a cell safely

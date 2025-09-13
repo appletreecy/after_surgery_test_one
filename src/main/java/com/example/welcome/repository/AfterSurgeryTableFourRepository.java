@@ -46,4 +46,25 @@ public interface AfterSurgeryTableFourRepository extends JpaRepository<AfterSurg
       where t.date between :start and :end
     """)
     TableFourTotals computeTotalsInRange(@Param("start") LocalDate start, @Param("end") LocalDate end);
+
+    @Query("""
+  select new com.example.welcome.dto.MonthlyTotalsTableFour(
+    YEAR(t.date),
+    MONTH(t.date),
+    coalesce(sum(t.numOfFormulationOne), 0L),
+    coalesce(sum(t.numOfFormulationTwo), 0L),
+    coalesce(sum(t.numOfFormulationThree), 0L),
+    coalesce(sum(t.numOfFormulationFour), 0L),
+    coalesce(sum(t.numOfFormulationFive), 0L),
+    coalesce(sum(t.numOfFormulationSix), 0L)
+  )
+  from AfterSurgeryTableFour t
+  where t.date between :start and :end
+  group by YEAR(t.date), MONTH(t.date)
+  order by YEAR(t.date), MONTH(t.date)
+""")
+    List<com.example.welcome.dto.MonthlyTotalsTableFour> computeMonthlyTotals(
+            @Param("start") LocalDate start,
+            @Param("end") LocalDate end
+    );
 }
