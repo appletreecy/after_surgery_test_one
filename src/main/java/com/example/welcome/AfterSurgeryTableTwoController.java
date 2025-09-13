@@ -1,4 +1,6 @@
 package com.example.welcome;
+import com.example.welcome.dto.MonthlyTotalsTableThree;
+import com.example.welcome.dto.MonthlyTotalsTableTwo;
 import com.example.welcome.model.AfterSurgeryTableThree;
 import com.example.welcome.model.AfterSurgeryTableTwo;
 import com.example.welcome.repository.AfterSurgeryTableTwoRepository;
@@ -18,6 +20,7 @@ import org.springframework.web.bind.annotation.*;
 import com.example.welcome.model.AfterSurgeryTableOne;
 import com.example.welcome.repository.AfterSurgeryTableOneRepository;
 
+import java.time.YearMonth;
 import java.util.List;
 
 import org.springframework.web.multipart.MultipartFile;
@@ -27,12 +30,19 @@ import java.io.IOException;
 import java.time.DateTimeException;
 import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.Map;
+import java.util.function.Function;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
 import static java.lang.Integer.parseInt;
 
 @Controller
 @RequestMapping("afterSurgeryTableTwo")
 public class AfterSurgeryTableTwoController {
+
+    private static final int MIN_YEAR = 2015;
+    private static final int MAX_YEAR = 2035;
 
     @Autowired
     private AfterSurgeryTableTwoRepository afterSurgeryTableTwoRepository;
@@ -497,6 +507,65 @@ public class AfterSurgeryTableTwoController {
             }
             writer.flush();
         }
+    }
+
+    @GetMapping("/monthly-totals")
+    public String monthlyTotals(
+            @RequestParam(required = false) Integer year,
+            Model model
+    ) {
+        LocalDate today = LocalDate.now();
+        int currentYear = today.getYear();
+
+        // Pick the selected year (default = current year) and clamp to [2015..2035]
+        int selectedYear = (year == null) ? currentYear : year;
+        if (selectedYear < MIN_YEAR) selectedYear = MIN_YEAR;
+        if (selectedYear > MAX_YEAR) selectedYear = MAX_YEAR;
+
+        // Build start/end for the query:
+        // - If selected year is current year, end at "today" (YTD)
+        // - Otherwise, show the whole year (Jan..Dec)
+        LocalDate start = LocalDate.of(selectedYear, 1, 1);
+        LocalDate end   = (selectedYear == currentYear)
+                ? today
+                : LocalDate.of(selectedYear, 12, 31);
+
+        // Raw aggregated rows from DB (might skip months with no data)
+        List<MonthlyTotalsTableTwo> raw = afterSurgeryTableTwoRepository.computeMonthlyTotals(start, end);
+
+        // Index by YearMonth for easy fill
+        Map<YearMonth, MonthlyTotalsTableTwo> byYm = raw.stream().collect(Collectors.toMap(
+                mt -> YearMonth.of(mt.year(), mt.month()),
+                Function.identity()
+        ));
+
+        // Build complete series:
+        // - If selected year is current year: Jan..current month
+        // - Else: Jan..Dec of that year
+        List<MonthlyTotalsTableTwo> series = new ArrayList<>();
+        YearMonth cursor = YearMonth.of(selectedYear, 1);
+        YearMonth last   = (selectedYear == currentYear)
+                ? YearMonth.from(today)
+                : YearMonth.of(selectedYear, 12);
+
+        while (!cursor.isAfter(last)) {
+            MonthlyTotalsTableTwo mt = byYm.getOrDefault(
+                    cursor,
+                    new MonthlyTotalsTableTwo(cursor.getYear(), cursor.getMonthValue(), 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L,0L, 0L, 0L, 0L, 0L)
+            );
+            series.add(mt);
+            cursor = cursor.plusMonths(1);
+        }
+
+        // Years dropdown data
+        List<Integer> years = IntStream.rangeClosed(MIN_YEAR, MAX_YEAR)
+                .boxed()
+                .collect(Collectors.toList());
+
+        model.addAttribute("monthlyTotals", series);
+        model.addAttribute("year", selectedYear);   // used in title & selecting the dropdown
+        model.addAttribute("years", years);         // for the <select> options
+        return "afterSurgeryTableTwoMonthlyTotals";
     }
 
     // Helper: Write a string value into a cell safely
