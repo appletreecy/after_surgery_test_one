@@ -26,7 +26,7 @@ public interface AfterSurgeryTableFourRepository extends JpaRepository<AfterSurg
     @Query("select a.date from AfterSurgeryTableFour a where a.date in :dates")
     Set<LocalDate> findExistingDates(@Param("dates") Collection<LocalDate> dates);
 
-    Optional<AfterSurgeryTableThree> findByDate(LocalDate date);
+    Optional<AfterSurgeryTableFour> findByDate(LocalDate date);
 
     List<AfterSurgeryTableFour> findByDateBetween(LocalDate start, LocalDate end);
 
@@ -64,6 +64,28 @@ public interface AfterSurgeryTableFourRepository extends JpaRepository<AfterSurg
   order by YEAR(t.date), MONTH(t.date)
 """)
     List<com.example.welcome.dto.MonthlyTotalsTableFour> computeMonthlyTotals(
+            @Param("start") LocalDate start,
+            @Param("end") LocalDate end
+    );
+
+    // ⬇️ quarterly
+    @Query("""
+  select new com.example.welcome.dto.QuarterlyTotalsTableFour(
+    YEAR(t.date),
+    ((MONTH(t.date) - 1) / 3) + 1,
+    coalesce(sum(t.numOfFormulationOne), 0L),
+    coalesce(sum(t.numOfFormulationTwo), 0L),
+    coalesce(sum(t.numOfFormulationThree), 0L),
+    coalesce(sum(t.numOfFormulationFour), 0L),
+    coalesce(sum(t.numOfFormulationFive), 0L),
+    coalesce(sum(t.numOfFormulationSix), 0L)
+  )
+  from AfterSurgeryTableFour t
+  where t.date between :start and :end
+  group by YEAR(t.date), ((MONTH(t.date) - 1) / 3) + 1
+  order by YEAR(t.date), ((MONTH(t.date) - 1) / 3) + 1
+""")
+    List<com.example.welcome.dto.QuarterlyTotalsTableFour> computeQuarterlyTotals(
             @Param("start") LocalDate start,
             @Param("end") LocalDate end
     );

@@ -52,5 +52,25 @@ public interface AfterSurgeryTableOneRepository extends JpaRepository<AfterSurge
             @Param("start") LocalDate start,
             @Param("end") LocalDate end
     );
+
+    // ⬇️ quarterly
+    @Query("""
+  select new com.example.welcome.dto.QuarterlyTotalsTableOne(
+    YEAR(t.date),
+    ((MONTH(t.date) - 1) / 3) + 1,
+    coalesce(sum(t.numOfPostoperativeVisits), 0L),
+    coalesce(sum(t.numOfPostoperativeAnalgesiaCases), 0L),
+    coalesce(sum(t.numOfAdverseReactionCases), 0L),
+    coalesce(sum(t.numOfInadequateAnalgesia), 0L)
+  )
+  from AfterSurgeryTableOne t
+  where t.date between :start and :end
+  group by YEAR(t.date), ((MONTH(t.date) - 1) / 3) + 1
+  order by YEAR(t.date), ((MONTH(t.date) - 1) / 3) + 1
+""")
+    List<com.example.welcome.dto.QuarterlyTotalsTableOne> computeQuarterlyTotals(
+            @Param("start") LocalDate start,
+            @Param("end") LocalDate end
+    );
 }
 
