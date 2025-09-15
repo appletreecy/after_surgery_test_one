@@ -1,5 +1,7 @@
 package com.example.welcome;
 import com.example.welcome.dto.MonthlyTotals;
+import com.example.welcome.dto.QuarterlyTotalsTableFour;
+import com.example.welcome.dto.QuarterlyTotalsTableThree;
 import com.example.welcome.model.AfterSurgeryTableThree;
 import com.example.welcome.repository.AfterSurgeryTableThreeRepository;
 import jakarta.servlet.http.HttpServletResponse;
@@ -436,6 +438,75 @@ public class AfterSurgeryTableThreeController {
         model.addAttribute("year", selectedYear);   // used in title & selecting the dropdown
         model.addAttribute("years", years);         // for the <select> options
         return "afterSurgeryTableThreeMonthlyTotals";
+    }
+
+    @GetMapping("/quarterly-totals")
+    public String quarterlyTotals(
+            @RequestParam(required = false) Integer year,
+            Model model
+    ) {
+        LocalDate today = LocalDate.now();
+        int currentYear = today.getYear();
+
+        // Pick selected year (default = current) and clamp
+        int selectedYear = (year == null) ? currentYear : year;
+        if (selectedYear < MIN_YEAR) selectedYear = MIN_YEAR;
+        if (selectedYear > MAX_YEAR) selectedYear = MAX_YEAR;
+
+        // Query window: full year, or YTD for current year
+        LocalDate start = LocalDate.of(selectedYear, 1, 1);
+        LocalDate end   = (selectedYear == currentYear) ? today : LocalDate.of(selectedYear, 12, 31);
+
+        // Fetch aggregated rows (may skip quarters with no data)
+        List<QuarterlyTotalsTableThree> raw =
+                afterSurgeryTableThreeRepository.computeQuarterlyTotals(start, end);
+
+        // Build map keyed by quarter number with a MERGE function (guards duplicates)
+        Map<Integer, QuarterlyTotalsTableThree> byQ = raw.stream().collect(
+                Collectors.toMap(
+                        QuarterlyTotalsTableThree::quarter,
+                        Function.identity(),
+                        (a, b) -> new QuarterlyTotalsTableThree(
+                                a.year(), a.quarter(),
+                                a.totalNumOfJointComplicationCount() + b.totalNumOfJointComplicationCount(),
+                                a.totalNumOfMotorDysfunctionCount()  + b.totalNumOfMotorDysfunctionCount(),
+                                a.totalNumOfTraumaComplicationCount()+ b.totalNumOfTraumaComplicationCount(),
+                                a.totalNumOfAnkleComplicationCount() + b.totalNumOfAnkleComplicationCount(),
+                                a.totalNumOfPediatricAdverseEventCount() + b.totalNumOfPediatricAdverseEventCount(),
+                                a.totalNumOfSpinalComplicationCount()  + b.totalNumOfSpinalComplicationCount(),
+                                a.totalNumOfHandSurgeryComplicationCount()+ b.totalNumOfHandSurgeryComplicationCount(),
+                                a.totalNumOfObstetricAdverseEventCount() + b.totalNumOfObstetricAdverseEventCount(),
+                                a.totalNumOfGynecologicalAdverseEventCount() + b.totalNumOfGynecologicalAdverseEventCount(),
+                                a.totalNumOfSurgicalTreatmentCount()  + b.totalNumOfSurgicalTreatmentCount()
+                        )
+                )
+        );
+
+        // Last quarter to display
+        int lastQuarter = (selectedYear == currentYear)
+                ? ((today.getMonthValue() - 1) / 3) + 1
+                : 4;
+
+        // Fill Q1..lastQuarter, defaulting missing quarters to zeros
+        List<QuarterlyTotalsTableThree> series = new ArrayList<>();
+        for (int q = 1; q <= lastQuarter; q++) {
+            QuarterlyTotalsTableThree qt = byQ.getOrDefault(
+                    q,
+                    new QuarterlyTotalsTableThree(selectedYear, q, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0l)
+            );
+            series.add(qt);
+        }
+
+        // Years dropdown
+        List<Integer> years = IntStream.rangeClosed(MIN_YEAR, MAX_YEAR)
+                .boxed()
+                .collect(Collectors.toList());
+
+        model.addAttribute("quarterlyTotals", series);
+        model.addAttribute("year", selectedYear);
+        model.addAttribute("years", years);
+
+        return "afterSurgeryTableThreeQuarterlyTotals";
     }
 
     // Helper: Write a string value into a cell safely
