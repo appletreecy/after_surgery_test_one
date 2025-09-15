@@ -1,0 +1,234 @@
+<!-- src/main/resources/templates/afterSurgeryTableFourQuarterlyTotals.html -->
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="zh">
+<head>
+    <meta charset="UTF-8" />
+    <title th:text="${year} + ' 年（季度汇总）'">季度汇总</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" />
+</head>
+<body class="p-3">
+<div th:replace="fragments/navbar :: navbar"></div>
+
+<div class="container mt-4">
+    <!-- Year selector -->
+    <form class="row g-2 align-items-center mb-3" th:action="@{/afterSurgeryTableThree/quarterly-totals}" method="get">
+        <div class="col-auto">
+            <label for="yearSelect" class="col-form-label">选择年份</label>
+        </div>
+        <div class="col-auto">
+            <select id="yearSelect" name="year" class="form-select" th:onchange="this.form.submit()">
+                <option th:each="y : ${years}" th:value="${y}" th:text="${y}" th:selected="${y} == ${year}"></option>
+            </select>
+        </div>
+        <div class="col-auto d-none">
+            <button class="btn btn-primary" type="submit">查看</button>
+        </div>
+    </form>
+
+    <!-- Heading + Export buttons -->
+    <div class="d-flex justify-content-between align-items-center mb-2">
+        <h3 class="m-0" th:text="${year} + ' 年（季度汇总）'"></h3>
+        <div class="d-flex gap-2">
+            <button id="exportExcelBtn" type="button" class="btn btn-success me-2">导出 Excel</button>
+            <button id="exportCsvBtn"   type="button" class="btn btn-primary">导出 CSV</button>
+        </div>
+    </div>
+
+    <!-- Data table -->
+    <table id="quarterlyTable" class="table table-sm table-bordered align-middle">
+        <thead class="table-light">
+        <tr>
+            <th>季度</th>
+            <th>关节不良数数</th>
+            <th>运动不良数数</th>
+            <th>创伤不良数数</th>
+            <th>足踝不良数数</th>
+            <th>小儿不良数数</th>
+            <th>脊柱不良数数</th>
+            <th>手外不良数数</th>
+            <th>儿科不良数数</th>
+            <th>妇科不良数数</th>
+            <th>外科不良数数</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="q : ${quarterlyTotals}">
+            <td th:text="${'Q' + q.quarter()}"></td>
+            <td th:text="${q.totalNumOfJointComplicationCount()}"></td>
+            <td th:text="${q.totalNumOfMotorDysfunctionCount()}"></td>
+            <td th:text="${q.totalNumOfTraumaComplicationCount()}"></td>
+            <td th:text="${q.totalNumOfAnkleComplicationCount()}"></td>
+            <td th:text="${q.totalNumOfPediatricAdverseEventCount()}"></td>
+            <td th:text="${q.totalNumOfSpinalComplicationCount()}"></td>
+            <td th:text="${q.totalNumOfHandSurgeryComplicationCount()}"></td>
+            <td th:text="${q.totalNumOfObstetricAdverseEventCount()}"></td>
+            <td th:text="${q.totalNumOfGynecologicalAdverseEventCount()}"></td>
+            <td th:text="${q.totalNumOfSurgicalTreatmentCount()}"></td>
+        </tr>
+        </tbody>
+    </table>
+
+    <!-- Charts -->
+    <hr class="my-4" />
+    <h5 class="mb-3">季度趋势图</h5>
+    <canvas id="quarterlyLine" height="100"></canvas>
+
+    <h5 class="mt-5 mb-3">季度柱状图</h5>
+    <canvas id="quarterlyBar" height="110"></canvas>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+<script th:inline="javascript">
+    /*<![CDATA[*/
+      const qLabels = [];
+      const qForm1 = [], qForm2 = [], qForm3 = [], qForm4 = [], qForm5 = [], qForm6 = [], qForm7 = [], qForm8 = [], qForm9 = [], qForm10 = [];
+
+      /*[# th:each="q : ${quarterlyTotals}"]*/
+      (function(){
+        const qn = /*[[${q.quarter}]]*/ 1;
+        qLabels.push('Q' + qn);
+        qForm1.push(/*[[${q.totalNumOfJointComplicationCount}]]*/ 0);
+        qForm2.push(/*[[${q.totalNumOfMotorDysfunctionCount}]]*/ 0);
+        qForm3.push(/*[[${q.totalNumOfTraumaComplicationCount}]]*/ 0);
+        qForm4.push(/*[[${q.totalNumOfAnkleComplicationCount}]]*/ 0);
+        qForm5.push(/*[[${q.totalNumOfPediatricAdverseEventCount}]]*/ 0);
+        qForm6.push(/*[[${q.totalNumOfSpinalComplicationCount}]]*/ 0);
+        qForm7.push(/*[[${q.totalNumOfHandSurgeryComplicationCount}]]*/ 0);
+        qForm8.push(/*[[${q.totalNumOfObstetricAdverseEventCount}]]*/ 0);
+        qForm9.push(/*[[${q.totalNumOfGynecologicalAdverseEventCount}]]*/ 0);
+        qForm10.push(/*[[${q.totalNumOfSurgicalTreatmentCount}]]*/ 0);
+      })();
+      /*[/]*/
+
+      // Line chart
+      const qLineCtx = document.getElementById('quarterlyLine').getContext('2d');
+      new Chart(qLineCtx, {
+        type: 'line',
+        data: {
+          labels: qLabels,
+          datasets: [
+              { label: '关节不良数', data: qForm1, borderColor: '#0d6efd', tension: 0.2, fill: false },   // Blue
+              { label: '运动不良数', data: qForm2, borderColor: '#198754', tension: 0.2, fill: false },   // Green
+              { label: '创伤不良数', data: qForm3, borderColor: '#ffc107', tension: 0.2, fill: false },   // Yellow
+              { label: '足踝不良数', data: qForm4, borderColor: '#dc3545', tension: 0.2, fill: false },   // Red
+              { label: '小儿不良数', data: qForm5, borderColor: '#6f42c1', tension: 0.2, fill: false },   // Purple
+              { label: '脊柱不良数', data: qForm6, borderColor: '#fd7e14', tension: 0.2, fill: false },   // Orange
+              { label: '手外不良数', data: qForm7, borderColor: '#20c997', tension: 0.2, fill: false },   // Teal
+              { label: '儿科不良数', data: qForm8, borderColor: '#0dcaf0', tension: 0.2, fill: false },   // Cyan
+              { label: '妇科不良数', data: qForm9, borderColor: '#6610f2', tension: 0.2, fill: false },   // Indigo
+              { label: '外科不良数', data: qForm10, borderColor: '#e83e8c', tension: 0.2, fill: false }   // Pink
+          ]
+        },
+        options: {
+          responsive: true,
+          plugins: { legend: { position: 'top' }, tooltip: { mode: 'index', intersect: false } },
+          interaction: { mode: 'nearest', axis: 'x', intersect: false },
+          scales: { y: { beginAtZero: true, ticks: { precision: 0 } } }
+        }
+      });
+
+      // Bar chart
+      const qBarCtx = document.getElementById('quarterlyBar').getContext('2d');
+      new Chart(qBarCtx, {
+        type: 'bar',
+        data: {
+          labels: qLabels,
+          datasets: [
+              { label: '关节不良数', data: qForm1, backgroundColor: 'rgba(13,110,253,0.35)',  borderColor: '#0d6efd',  borderWidth: 1 },  // Blue
+              { label: '运动不良数', data: qForm2, backgroundColor: 'rgba(25,135,84,0.35)',  borderColor: '#198754',  borderWidth: 1 },  // Green
+              { label: '创伤不良数', data: qForm3, backgroundColor: 'rgba(255,193,7,0.45)',  borderColor: '#ffc107',  borderWidth: 1 },  // Yellow
+              { label: '足踝不良数', data: qForm4, backgroundColor: 'rgba(220,53,69,0.35)',  borderColor: '#dc3545',  borderWidth: 1 },  // Red
+              { label: '小儿不良数', data: qForm5, backgroundColor: 'rgba(111,66,193,0.35)', borderColor: '#6f42c1',  borderWidth: 1 },  // Purple
+              { label: '脊柱不良数', data: qForm6, backgroundColor: 'rgba(253,126,20,0.35)', borderColor: '#fd7e14',  borderWidth: 1 },  // Orange
+              { label: '手外不良数', data: qForm7, backgroundColor: 'rgba(32,201,151,0.35)', borderColor: '#20c997',  borderWidth: 1 },  // Teal
+              { label: '儿科不良数', data: qForm8, backgroundColor: 'rgba(13,202,240,0.35)', borderColor: '#0dcaf0',  borderWidth: 1 },  // Cyan
+              { label: '妇科不良数', data: qForm9, backgroundColor: 'rgba(102,16,242,0.35)', borderColor: '#6610f2',  borderWidth: 1 },  // Indigo
+              { label: '外科不良数', data: qForm10, backgroundColor: 'rgba(232,62,140,0.35)', borderColor: '#e83e8c', borderWidth: 1 }   // Pink
+          ]
+        },
+        options: {
+          responsive: true,
+          plugins: { legend: { position: 'top' }, tooltip: { mode: 'index', intersect: false } },
+          interaction: { mode: 'nearest', axis: 'x', intersect: false },
+          scales: { y: { beginAtZero: true, ticks: { precision: 0 } } }
+        }
+      });
+    /*]]>*/
+</script>
+
+<!-- SheetJS loader (same as monthly) -->
+<script>
+    (function loadSheetJS(){
+      if (window.XLSX) return;
+      var s = document.createElement('script');
+      s.src = "https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js";
+      s.onload = function(){ console.log("SheetJS loaded"); };
+      s.onerror = function(){
+        console.warn("jsDelivr failed, trying unpkg...");
+        var s2 = document.createElement('script');
+        s2.src = "https://unpkg.com/xlsx@0.18.5/dist/xlsx.full.min.js";
+        s2.onload = function(){ console.log("SheetJS loaded (fallback)"); };
+        s2.onerror = function(){ console.error("Failed to load SheetJS from both CDNs."); };
+        document.head.appendChild(s2);
+      };
+      document.head.appendChild(s);
+    })();
+</script>
+
+<script th:inline="javascript">
+    /*<![CDATA[*/
+      function buildCSVFromTable(table) {
+        return Array.from(table.querySelectorAll('tr')).map(tr =>
+          Array.from(tr.querySelectorAll('th,td'))
+            .map(td => {
+              const t = td.innerText.replaceAll('"','""');
+              return (t.includes(',') || t.includes('"') || t.includes('\n')) ? `"${t}"` : t;
+            })
+            .join(',')
+        ).join('\n');
+      }
+
+      document.getElementById('exportCsvBtn')?.addEventListener('click', function () {
+        const table = document.getElementById('quarterlyTable');
+        if (!table) return;
+        const year = /*[[${year}]]*/ 2025;
+        const csv = '\uFEFF' + buildCSVFromTable(table);
+        const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+        const a = document.createElement('a');
+        a.href = URL.createObjectURL(blob);
+        a.download = `AfterSurgeryTableThree-季度汇总-${year}.csv`;
+        document.body.appendChild(a);
+        a.click();
+        a.remove();
+      });
+
+      document.getElementById('exportExcelBtn')?.addEventListener('click', function () {
+        const table = document.getElementById('quarterlyTable');
+        if (!table) return;
+        const year = /*[[${year}]]*/ 2025;
+
+        if (typeof XLSX === 'undefined') {
+          const csv = '\uFEFF' + buildCSVFromTable(table);
+          const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+          const a = document.createElement('a');
+          a.href = URL.createObjectURL(blob);
+          a.download = `AfterSurgeryTableThree-季度汇总-${year}.csv`;
+          document.body.appendChild(a);
+          a.click();
+          a.remove();
+          return;
+        }
+
+        const wb = XLSX.utils.book_new();
+        const ws = XLSX.utils.table_to_sheet(table, { raw: true });
+        ws['!cols'] = [{ wch: 6 }, { wch: 14 }, { wch: 14 }, { wch: 14 }, { wch: 14 }];
+        XLSX.utils.book_append_sheet(wb, ws, '季度汇总');
+        XLSX.writeFile(wb, `AfterSurgeryTableThree-季度汇总-${year}.xlsx`);
+      });
+    /*]]>*/
+</script>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
