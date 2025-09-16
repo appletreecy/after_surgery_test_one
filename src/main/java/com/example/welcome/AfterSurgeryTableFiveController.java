@@ -94,6 +94,10 @@ public class AfterSurgeryTableFiveController {
         long totalNumberOfCirticalRescueCases = totals.totalNumberOfCirticalRescueCases();
         long totalNumberOfDeaths = totals.totalNumberOfDeaths();
 
+        float proportionOfStableWithoutComplications = (totalNumberOfFollowUpsForCriticallyIllPatients == 0) ? 0f : (float) (totalNumberOfFollowUpsForCriticallyIllPatients - totalNumberOfCirticalRescueCases - totalNumberOfDeaths) / totalNumberOfFollowUpsForCriticallyIllPatients;
+        float proportionOfCriticalRescueCases = (totalNumberOfFollowUpsForCriticallyIllPatients == 0) ? 0f : (float) (totalNumberOfCirticalRescueCases) / totalNumberOfFollowUpsForCriticallyIllPatients;
+        float proportionOfDeaths = (totalNumberOfFollowUpsForCriticallyIllPatients == 0) ? 0f : (float) (totalNumberOfDeaths) / totalNumberOfFollowUpsForCriticallyIllPatients;
+
         model.addAttribute("page", pageData);
         model.addAttribute("content", pageData.getContent());
         model.addAttribute("currentPage", pageData.getNumber());
@@ -109,6 +113,9 @@ public class AfterSurgeryTableFiveController {
         model.addAttribute("totalNumberOfCirticalRescueCases", totalNumberOfCirticalRescueCases);
         model.addAttribute("totalNumberOfDeaths", totalNumberOfDeaths);
 
+        model.addAttribute("proportionOfStableWithoutComplications", proportionOfStableWithoutComplications);
+        model.addAttribute("proportionOfCriticalRescueCases", proportionOfCriticalRescueCases);
+        model.addAttribute("proportionOfDeaths", proportionOfDeaths);
 
         return "afterSurgeryTableFive";
     }
@@ -204,7 +211,7 @@ public class AfterSurgeryTableFiveController {
                 AfterSurgeryTableFive r = new AfterSurgeryTableFive();
                 r.setDate(date);
                 r.setNumberOfFollowUpsForCriticallyIllPatients(Integer.parseInt(f[1].trim()));
-                r.setNumberOfCirticalRescueCases(Integer.parseInt(f[2].trim()));
+                r.setNumberOfCriticalRescueCases(Integer.parseInt(f[2].trim()));
                 r.setNumberOfDeaths(Integer.parseInt(f[3].trim()));
 
                 rows.add(r);
@@ -278,7 +285,7 @@ public class AfterSurgeryTableFiveController {
                 setString(row, 0, r.getId() == null ? "" : r.getId().toString());
                 setString(row, 1, r.getDate() == null ? "" : r.getDate().toString());
                 setNumber(row, 2, r.getNumberOfFollowUpsForCriticallyIllPatients());
-                setNumber(row, 3, r.getNumberOfCirticalRescueCases());
+                setNumber(row, 3, r.getNumberOfCriticalRescueCases());
                 setNumber(row, 4, r.getNumberOfDeaths());
             }
 
@@ -319,7 +326,7 @@ public class AfterSurgeryTableFiveController {
                         record.getId() == null ? "" : record.getId(),
                         record.getDate() == null ? "" : record.getDate(),
                         record.getNumberOfFollowUpsForCriticallyIllPatients() == null ? "" : record.getNumberOfFollowUpsForCriticallyIllPatients(),
-                        record.getNumberOfCirticalRescueCases() == null ? "" : record.getNumberOfCirticalRescueCases(),
+                        record.getNumberOfCriticalRescueCases() == null ? "" : record.getNumberOfCriticalRescueCases(),
                         record.getNumberOfDeaths() == null ? "" : record.getNumberOfDeaths()
                 );
             }

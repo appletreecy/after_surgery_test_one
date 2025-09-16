@@ -62,6 +62,10 @@
                 <div class="card-body">
                     <div class="text-muted">危重病人追访数</div>
                     <div class="h4 stat" th:text="${totalNumberOfFollowUpsForCriticallyIllPatients}">0</div>
+                    <div class="small text-muted">
+                        占比:
+                        <span th:text="${#numbers.formatPercent(proportionOfStableWithoutComplications, 1, 2)}">0%</span>
+                    </div>
                 </div>
             </div>
         </div>
@@ -70,6 +74,10 @@
                 <div class="card-body">
                     <div class="text-muted">转危重抢救例数</div>
                     <div class="h4 stat" th:text="${totalNumberOfCirticalRescueCases}">0</div>
+                    <div class="small text-muted">
+                        占比:
+                        <span th:text="${#numbers.formatPercent(proportionOfCriticalRescueCases, 1, 2)}">0%</span>
+                    </div>
                 </div>
             </div>
         </div>
@@ -78,6 +86,10 @@
                 <div class="card-body">
                     <div class="text-muted">死亡例数</div>
                     <div class="h4 stat" th:text="${totalNumberOfDeaths}">0</div>
+                    <div class="small text-muted">
+                        占比:
+                        <span th:text="${#numbers.formatPercent(proportionOfDeaths, 1, 2)}">0%</span>
+                    </div>
                 </div>
             </div>
         </div>
@@ -107,7 +119,9 @@
                         日期
                     </a>
                 </th>
+                <th>危重病人姓名</th>
                 <th>危重病人追访数</th>
+                <th>危重病人访视结果</th>
                 <th>转危重抢救例数</th>
                 <th>死亡例数</th>
             </tr>
@@ -116,8 +130,10 @@
             <tr th:each="r : ${content}">
                 <td th:text="${r.id}">1</td>
                 <td th:text="${r.date}">2025-01-01</td>
+                <td th:text="${r.criticalPatientsName}">0</td>
                 <td th:text="${r.numberOfFollowUpsForCriticallyIllPatients}">0</td>
-                <td th:text="${r.numberOfCirticalRescueCases}">0</td>
+                <td th:text="${r.visitFindingsForCriticalPatient}">0</td>
+                <td th:text="${r.numberOfCriticalRescueCases}">0</td>
                 <td th:text="${r.numberOfDeaths}">0</td>
             </tr>
             <tr th:if="${#lists.isEmpty(content)}">

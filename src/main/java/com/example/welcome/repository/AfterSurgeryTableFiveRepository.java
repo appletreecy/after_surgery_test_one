@@ -1,7 +1,6 @@
 package com.example.welcome.repository;
 
 import com.example.welcome.TableFiveTotals;
-import com.example.welcome.dto.MonthlyTotals;
 import com.example.welcome.model.AfterSurgeryTableFive;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
@@ -30,7 +29,7 @@ public interface AfterSurgeryTableFiveRepository extends JpaRepository<AfterSurg
     @Query("""
       select new com.example.welcome.TableFiveTotals(
         coalesce(sum(t.numberOfFollowUpsForCriticallyIllPatients), 0L),
-        coalesce(sum(t.numberOfCirticalRescueCases), 0L),
+        coalesce(sum(t.numberOfCriticalRescueCases), 0L),
         coalesce(sum(t.numberOfDeaths), 0L)
       )
       from AfterSurgeryTableFive t
