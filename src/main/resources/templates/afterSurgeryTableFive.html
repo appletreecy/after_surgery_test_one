@@ -183,107 +183,107 @@
         </table>
     </div>
 
-<!--    <div>-->
-<!--        <table id="afterSurgeryTableOneSummaryProportion" class="table table-bordered table-striped table-hover text-center align-middle">-->
-<!--            <thead class="table-light">-->
-<!--            <tr>-->
-<!--                <th>术后镇痛总数占比</th>-->
-<!--                <th>不良反应总数占比</th>-->
-<!--                <th>术后镇痛差总数占比</th>-->
-<!--            </tr>-->
-<!--            </thead>-->
-<!--            <tbody>-->
-<!--            <tr>-->
-<!--                <td id="proportionOfTotalPostoperativeAnalgesiaCases" th:text="${proportionOfTotalPostoperativeAnalgesiaCases != null ? #numbers.formatDecimal(proportionOfTotalPostoperativeAnalgesiaCases * 100, 1, 2) + '%' : 'N/A'}">0</td>-->
-<!--                <td id="proportionOfTotalAdverseReactions" th:text="${proportionOfTotalAdverseReactions != null ? #numbers.formatDecimal(proportionOfTotalAdverseReactions * 100, 1, 2) + '%' : 'N/A'}">0</td>-->
-<!--                <td id="proportionOfTotalInadequateAnalgesia" th:text="${proportionOfTotalInadequateAnalgesia != null ? #numbers.formatDecimal(proportionOfTotalInadequateAnalgesia * 100, 1, 2) + '%' : 'N/A'}">0</td>-->
-<!--            </tr>-->
-<!--            </tbody>-->
-<!--        </table>-->
-<!--    </div>-->
+    <div>
+        <table id="afterSurgeryTableOneSummaryProportion" class="table table-bordered table-striped table-hover text-center align-middle">
+            <thead class="table-light">
+            <tr>
+                <th>危重病人追访数占比</th>
+                <th>转危重抢救例数占比</th>
+                <th>死亡例数占比</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr>
+                <td id="proportionOfStableWithoutComplications" th:text="${proportionOfStableWithoutComplications != null ? #numbers.formatDecimal(proportionOfStableWithoutComplications * 100, 1, 2) + '%' : 'N/A'}">0</td>
+                <td id="proportionOfCriticalRescueCases" th:text="${proportionOfCriticalRescueCases != null ? #numbers.formatDecimal(proportionOfCriticalRescueCases * 100, 1, 2) + '%' : 'N/A'}">0</td>
+                <td id="proportionOfDeaths" th:text="${proportionOfDeaths != null ? #numbers.formatDecimal(proportionOfDeaths * 100, 1, 2) + '%' : 'N/A'}">0</td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
 
-<!--    <div class="container-fluid mb-4">-->
-<!--        <div class="row g-3">-->
-<!--            <div class="col-12 col-md-4">-->
-<!--                <div class="card h-100">-->
-<!--                    <div class="card-body d-flex flex-column align-items-center">-->
-<!--                        <h6 class="card-title">术后镇痛总数占比</h6>-->
-<!--                        <div style="width:220px;height:220px"><canvas id="pieAnalgesia"></canvas></div>-->
-<!--                        <div class="mt-2 small text-muted" id="pieAnalgesiaText"></div>-->
-<!--                    </div>-->
-<!--                </div>-->
-<!--            </div>-->
-<!--            <div class="col-12 col-md-4">-->
-<!--                <div class="card h-100">-->
-<!--                    <div class="card-body d-flex flex-column align-items-center">-->
-<!--                        <h6 class="card-title">不良反应总数占比</h6>-->
-<!--                        <div style="width:220px;height:220px"><canvas id="pieAdverse"></canvas></div>-->
-<!--                        <div class="mt-2 small text-muted" id="pieAdverseText"></div>-->
-<!--                    </div>-->
-<!--                </div>-->
-<!--            </div>-->
-<!--            <div class="col-12 col-md-4">-->
-<!--                <div class="card h-100">-->
-<!--                    <div class="card-body d-flex flex-column align-items-center">-->
-<!--                        <h6 class="card-title">术后镇痛差总数占比</h6>-->
-<!--                        <div style="width:220px;height:220px"><canvas id="pieInadequate"></canvas></div>-->
-<!--                        <div class="mt-2 small text-muted" id="pieInadequateText"></div>-->
-<!--                    </div>-->
-<!--                </div>-->
-<!--            </div>-->
-<!--        </div>-->
-<!--    </div>-->
-<!--</div>-->
+    <div class="container-fluid mb-4">
+        <div class="row g-3">
+            <div class="col-12 col-md-4">
+                <div class="card h-100">
+                    <div class="card-body d-flex flex-column align-items-center">
+                        <h6 class="card-title">危重病人追访数占比</h6>
+                        <div style="width:220px;height:220px"><canvas id="pieStableWithoutComplications"></canvas></div>
+                        <div class="mt-2 small text-muted" id="pieStableWithoutComplicationsText"></div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-12 col-md-4">
+                <div class="card h-100">
+                    <div class="card-body d-flex flex-column align-items-center">
+                        <h6 class="card-title">转危重抢救例数占比</h6>
+                        <div style="width:220px;height:220px"><canvas id="pieCriticalRescueCases"></canvas></div>
+                        <div class="mt-2 small text-muted" id="pieCriticalRescueCasesText"></div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-12 col-md-4">
+                <div class="card h-100">
+                    <div class="card-body d-flex flex-column align-items-center">
+                        <h6 class="card-title">死亡例数占比</h6>
+                        <div style="width:220px;height:220px"><canvas id="pieDeaths"></canvas></div>
+                        <div class="mt-2 small text-muted" id="pieDeathsText"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 
-<!--<script th:inline="javascript">-->
-<!--    // proportions from the server (fractions 0..1)-->
-<!--    const pAnalgesiaRaw = /*[[${proportionOfTotalPostoperativeAnalgesiaCases}]]*/ null;-->
-<!--    const pAdverseRaw    = /*[[${proportionOfTotalAdverseReactions}]]*/ null;-->
-<!--    const pInadRaw       = /*[[${proportionOfTotalInadequateAnalgesia}]]*/ null;-->
-<!--  -->
-<!--    const toNum = v => (v == null || v === '' || isNaN(v)) ? 0 : Number(v);-->
-<!--    const clamp01 = n => Math.min(Math.max(n, 0), 1);-->
-<!--    const fracToPct = f => Math.round(clamp01(toNum(f)) * 10000) / 100; // 2dp-->
-<!--  -->
-<!--    function makePie(canvasId, labelId, pct, colors) {-->
-<!--      const ctx = document.getElementById(canvasId);-->
-<!--      if (!ctx) return;-->
-<!--  -->
-<!--      const value = pct;                   // 0..100-->
-<!--      const remainder = Math.max(0, 100 - value);-->
-<!--  -->
-<!--      new Chart(ctx, {-->
-<!--        type: 'pie',-->
-<!--        data: {-->
-<!--          labels: ['占比', '其余'],-->
-<!--          datasets: [{-->
-<!--            data: [value, remainder],-->
-<!--            backgroundColor: colors || ['#4e79a7', '#e0e0e0'],-->
-<!--            borderWidth: 0-->
-<!--          }]-->
-<!--        },-->
-<!--        options: {-->
-<!--          responsive: true,-->
-<!--          maintainAspectRatio: false,-->
-<!--          plugins: {-->
-<!--            legend: { position: 'bottom' },-->
-<!--            tooltip: {-->
-<!--              callbacks: { label: (c) => `${c.label}: ${c.parsed}%` }-->
-<!--            }-->
-<!--          }-->
-<!--        }-->
-<!--      });-->
-<!--  -->
-<!--      const lbl = document.getElementById(labelId);-->
-<!--      if (lbl) lbl.textContent = `占比：${value.toFixed(2)}%`;-->
-<!--    }-->
-<!--  -->
-<!--    makePie('pieAnalgesia', 'pieAnalgesiaText', fracToPct(pAnalgesiaRaw), ['#4e79a7', '#e0e0e0']);-->
-<!--    makePie('pieAdverse',   'pieAdverseText',   fracToPct(pAdverseRaw),    ['#f28e2b', '#e0e0e0']);-->
-<!--    makePie('pieInadequate','pieInadequateText',fracToPct(pInadRaw),       ['#59a14f', '#e0e0e0']);-->
-<!--</script>-->
+<script th:inline="javascript">
+    // proportions from the server (fractions 0..1)
+    const pStableWithoutComplicationsRaw = /*[[${proportionOfStableWithoutComplications}]]*/ null;
+    const pCriticalRescueCasesRaw    = /*[[${proportionOfCriticalRescueCases}]]*/ null;
+    const pDeathsRaw       = /*[[${proportionOfDeaths}]]*/ null;
+
+    const toNum = v => (v == null || v === '' || isNaN(v)) ? 0 : Number(v);
+    const clamp01 = n => Math.min(Math.max(n, 0), 1);
+    const fracToPct = f => Math.round(clamp01(toNum(f)) * 10000) / 100; // 2dp
+
+    function makePie(canvasId, labelId, pct, colors) {
+      const ctx = document.getElementById(canvasId);
+      if (!ctx) return;
+
+      const value = pct;                   // 0..100
+      const remainder = Math.max(0, 100 - value);
+
+      new Chart(ctx, {
+        type: 'pie',
+        data: {
+          labels: ['占比', '其余'],
+          datasets: [{
+            data: [value, remainder],
+            backgroundColor: colors || ['#4e79a7', '#e0e0e0'],
+            borderWidth: 0
+          }]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: {
+            legend: { position: 'bottom' },
+            tooltip: {
+              callbacks: { label: (c) => `${c.label}: ${c.parsed}%` }
+            }
+          }
+        }
+      });
+
+      const lbl = document.getElementById(labelId);
+      if (lbl) lbl.textContent = `占比：${value.toFixed(2)}%`;
+    }
+
+    makePie('pieStableWithoutComplications', 'pieStableWithoutComplicationsText', fracToPct(pStableWithoutComplicationsRaw), ['#4e79a7', '#e0e0e0']);
+    makePie('pieCriticalRescueCases',   'pieCriticalRescueCasesText',   fracToPct(pCriticalRescueCasesRaw),    ['#f28e2b', '#e0e0e0']);
+    makePie('pieDeaths','pieDeathsText',fracToPct(pDeathsRaw),       ['#59a14f', '#e0e0e0']);
+</script>
 
     </div>
 </body>

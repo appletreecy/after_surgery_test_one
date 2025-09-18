@@ -198,7 +198,7 @@ public class AfterSurgeryTableFiveController {
                 if (lineNo == 1 && trimmed.toLowerCase().startsWith("date,")) continue;
 
                 String[] f = trimmed.split(",", -1);
-                if (f.length != 4) {
+                if (f.length !=6) {
                     badColumnLines.add(lineNo);
                     continue;
                 }
@@ -210,9 +210,11 @@ public class AfterSurgeryTableFiveController {
 
                 AfterSurgeryTableFive r = new AfterSurgeryTableFive();
                 r.setDate(date);
-                r.setNumberOfFollowUpsForCriticallyIllPatients(Integer.parseInt(f[1].trim()));
-                r.setNumberOfCriticalRescueCases(Integer.parseInt(f[2].trim()));
-                r.setNumberOfDeaths(Integer.parseInt(f[3].trim()));
+                r.setCriticalPatientsName(f[1].trim());
+                r.setNumberOfFollowUpsForCriticallyIllPatients(Integer.parseInt(f[2].trim()));
+                r.setVisitFindingsForCriticalPatient(f[3].trim());
+                r.setNumberOfCriticalRescueCases(Integer.parseInt(f[4].trim()));
+                r.setNumberOfDeaths(Integer.parseInt(f[5].trim()));
 
                 rows.add(r);
             }
@@ -224,7 +226,7 @@ public class AfterSurgeryTableFiveController {
         // Column count errors
         if (!badColumnLines.isEmpty()) {
             model.addAttribute("message",
-                    "Error: some lines are missing columns (need 7). Problem lines: " + badColumnLines);
+                    "Error: some lines are missing columns (need 6). Problem lines: " + badColumnLines);
             return "uploadAfterSurgeryTableFive";
         }
 
@@ -272,7 +274,7 @@ public class AfterSurgeryTableFiveController {
             Sheet sheet = workbook.createSheet("术后表五");
 
             // Header row
-            String[] headers = {"ID", "日期", "危重病人追访数", "转危重抢救例数", "死亡例数"};
+            String[] headers = {"ID", "日期", "危重病人姓名", "危重病人追访数", "危重病人访视结果", "转危重抢救例数", "死亡例数"};
             Row header = sheet.createRow(0);
             for (int i = 0; i < headers.length; i++) {
                 header.createCell(i).setCellValue(headers[i]);
@@ -284,9 +286,11 @@ public class AfterSurgeryTableFiveController {
                 Row row = sheet.createRow(rowIdx++);
                 setString(row, 0, r.getId() == null ? "" : r.getId().toString());
                 setString(row, 1, r.getDate() == null ? "" : r.getDate().toString());
-                setNumber(row, 2, r.getNumberOfFollowUpsForCriticallyIllPatients());
-                setNumber(row, 3, r.getNumberOfCriticalRescueCases());
-                setNumber(row, 4, r.getNumberOfDeaths());
+                setString(row, 2, r.getCriticalPatientsName());
+                setNumber(row, 3, r.getNumberOfFollowUpsForCriticallyIllPatients());
+                setString(row, 4, r.getVisitFindingsForCriticalPatient());
+                setNumber(row, 5, r.getNumberOfCriticalRescueCases());
+                setNumber(row, 6, r.getNumberOfDeaths());
             }
 
             // Auto-size
@@ -317,7 +321,7 @@ public class AfterSurgeryTableFiveController {
         // Write CSV to response
         try (var writer = new java.io.PrintWriter(response.getOutputStream())) {
             // CSV Header
-            writer.println("ID,日期,危重病人追访数,转危重抢救例数,死亡例数");
+            writer.println("ID,日期,危重病人姓名,危重病人追访数,危重病人访视结果,转危重抢救例数,死亡例数");
 
             // CSV Rows
             for (AfterSurgeryTableFive record : records) {
@@ -325,7 +329,9 @@ public class AfterSurgeryTableFiveController {
                         "%s,%s,%s,%s,%s%n",
                         record.getId() == null ? "" : record.getId(),
                         record.getDate() == null ? "" : record.getDate(),
+                        record.getCriticalPatientsName() == null ? "" : record.getCriticalPatientsName(),
                         record.getNumberOfFollowUpsForCriticallyIllPatients() == null ? "" : record.getNumberOfFollowUpsForCriticallyIllPatients(),
+                        record.getVisitFindingsForCriticalPatient() == null ? "" : record.getVisitFindingsForCriticalPatient(),
                         record.getNumberOfCriticalRescueCases() == null ? "" : record.getNumberOfCriticalRescueCases(),
                         record.getNumberOfDeaths() == null ? "" : record.getNumberOfDeaths()
                 );
