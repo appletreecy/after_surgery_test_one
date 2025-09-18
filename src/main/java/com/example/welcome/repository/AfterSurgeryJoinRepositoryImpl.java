@@ -67,7 +67,7 @@ public class AfterSurgeryJoinRepositoryImpl implements AfterSurgeryJoinRepositor
                         " t4.numOfFormulationFive, " +
                         " t4.numOfFormulationSix, " +
                         " t5.numberOfFollowUpsForCriticallyIllPatients, " +
-                        " t5.numberOfCirticalRescueCases, " +
+                        " t5.numberOfCriticalRescueCases, " +
                         " t5.numberOfDeaths " +
                         "FROM afterSurgeryTableOne t1 " +
                         "JOIN afterSurgeryTableTwo t2 ON t1.date = t2.date " +
