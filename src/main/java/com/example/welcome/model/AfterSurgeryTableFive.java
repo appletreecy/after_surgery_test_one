@@ -17,8 +17,11 @@ public class AfterSurgeryTableFive {
     private Long id;
 
     private LocalDate date;
+
+    private String criticalPatientsName;
     private Integer numberOfFollowUpsForCriticallyIllPatients;
-    private Integer numberOfCirticalRescueCases;
+    private String visitFindingsForCriticalPatient;
+    private Integer numberOfCriticalRescueCases;
     private Integer numberOfDeaths;
 
 
@@ -48,12 +51,12 @@ public class AfterSurgeryTableFive {
         this.numberOfFollowUpsForCriticallyIllPatients = numberOfFollowUpsForCriticallyIllPatients;
     }
 
-    public Integer getNumberOfCirticalRescueCases() {
-        return numberOfCirticalRescueCases;
+    public Integer getNumberOfCriticalRescueCases() {
+        return numberOfCriticalRescueCases;
     }
 
-    public void setNumberOfCirticalRescueCases(Integer numberOfCirticalRescueCases) {
-        this.numberOfCirticalRescueCases = numberOfCirticalRescueCases;
+    public void setNumberOfCriticalRescueCases(Integer numberOfCriticalRescueCases) {
+        this.numberOfCriticalRescueCases = numberOfCriticalRescueCases;
     }
 
     public Integer getNumberOfDeaths() {
@@ -62,6 +65,22 @@ public class AfterSurgeryTableFive {
 
     public void setNumberOfDeaths(Integer numberOfDeaths) {
         this.numberOfDeaths = numberOfDeaths;
+    }
+
+    public String getCriticalPatientsName() {
+        return criticalPatientsName;
+    }
+
+    public void setCriticalPatientsName(String criticalPatientsName) {
+        this.criticalPatientsName = criticalPatientsName;
+    }
+
+    public String getVisitFindingsForCriticalPatient() {
+        return visitFindingsForCriticalPatient;
+    }
+
+    public void setVisitFindingsForCriticalPatient(String visitFindingsForCriticalPatient) {
+        this.visitFindingsForCriticalPatient = visitFindingsForCriticalPatient;
     }
 }
 

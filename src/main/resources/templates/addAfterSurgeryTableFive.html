@@ -38,12 +38,20 @@
         <!-- Post-op and Reaction Data -->
         <h4 class="text-secondary mt-4">表五</h4>
         <div class="col-md-2">
+            <label class="form-label">危重病人姓名</label>
+            <input type="text" th:field="*{criticalPatientsName}" class="form-control" />
+        </div>
+        <div class="col-md-2">
             <label class="form-label">危重病人追访数</label>
             <input type="number" th:field="*{numberOfFollowUpsForCriticallyIllPatients}" class="form-control" />
         </div>
         <div class="col-md-2">
+            <label class="form-label">危重病人访视结果</label>
+            <input type="text" th:field="*{visitFindingsForCriticalPatient}" class="form-control" />
+        </div>
+        <div class="col-md-2">
             <label class="form-label">转危重抢救例数</label>
-            <input type="number" th:field="*{numberOfCirticalRescueCases}" class="form-control" />
+            <input type="number" th:field="*{numberOfCriticalRescueCases}" class="form-control" />
         </div>
         <div class="col-md-2">
             <label class="form-label">死亡例数</label>
