@@ -1,4 +1,6 @@
 package com.example.welcome;
+import com.example.welcome.dto.MonthlyTotalsTableFive;
+import com.example.welcome.dto.MonthlyTotalsTableFour;
 import com.example.welcome.model.AfterSurgery;
 import com.example.welcome.model.AfterSurgeryTableFive;
 import com.example.welcome.model.AfterSurgeryTableFour;
@@ -339,6 +341,67 @@ public class AfterSurgeryTableFiveController {
             writer.flush();
         }
     }
+
+    @GetMapping("/monthly-totals")
+    public String monthlyTotals(
+            @RequestParam(required = false) Integer year,
+            Model model
+    ) {
+        LocalDate today = LocalDate.now();
+        int currentYear = today.getYear();
+
+        // Pick the selected year (default = current year) and clamp to [2015..2035]
+        int selectedYear = (year == null) ? currentYear : year;
+        if (selectedYear < MIN_YEAR) selectedYear = MIN_YEAR;
+        if (selectedYear > MAX_YEAR) selectedYear = MAX_YEAR;
+
+        // Build start/end for the query:
+        // - If selected year is current year, end at "today" (YTD)
+        // - Otherwise, show the whole year (Jan..Dec)
+        LocalDate start = LocalDate.of(selectedYear, 1, 1);
+        LocalDate end   = (selectedYear == currentYear)
+                ? today
+                : LocalDate.of(selectedYear, 12, 31);
+
+        // Raw aggregated rows from DB (might skip months with no data)
+        List<MonthlyTotalsTableFive> raw = afterSurgeryTableFiveRepository.computeMonthlyTotals(start, end);
+
+        // Index by YearMonth for easy fill
+        Map<YearMonth, MonthlyTotalsTableFive> byYm = raw.stream().collect(Collectors.toMap(
+                mt -> YearMonth.of(mt.year(), mt.month()),
+                Function.identity()
+        ));
+
+        // Build complete series:
+        // - If selected year is current year: Jan..current month
+        // - Else: Jan..Dec of that year
+        List<MonthlyTotalsTableFive> series = new ArrayList<>();
+        YearMonth cursor = YearMonth.of(selectedYear, 1);
+        YearMonth last   = (selectedYear == currentYear)
+                ? YearMonth.from(today)
+                : YearMonth.of(selectedYear, 12);
+
+        while (!cursor.isAfter(last)) {
+            MonthlyTotalsTableFive mt = byYm.getOrDefault(
+                    cursor,
+                    new MonthlyTotalsTableFive(cursor.getYear(), cursor.getMonthValue(), 0L, 0L, 0L)
+            );
+            series.add(mt);
+            cursor = cursor.plusMonths(1);
+        }
+
+        // Years dropdown data
+        List<Integer> years = IntStream.rangeClosed(MIN_YEAR, MAX_YEAR)
+                .boxed()
+                .collect(Collectors.toList());
+
+        model.addAttribute("monthlyTotals", series);
+        model.addAttribute("year", selectedYear);   // used in title & selecting the dropdown
+        model.addAttribute("years", years);         // for the <select> options
+        return "afterSurgeryTableFiveMonthlyTotals";
+    }
+
+
 
 
     // Helper: Write a string value into a cell safely

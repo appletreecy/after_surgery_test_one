@@ -37,24 +37,23 @@ public interface AfterSurgeryTableFiveRepository extends JpaRepository<AfterSurg
     """)
     TableFiveTotals computeTotalsInRange(@Param("start") LocalDate start, @Param("end") LocalDate end);
 
-//    @Query("""
-//  select new com.example.welcome.dto.MonthlyTotals(
-//    YEAR(t.date),
-//    MONTH(t.date),
-//    coalesce(sum(t.numOfPostoperativeVisits), 0L),
-//    coalesce(sum(t.numOfPostoperativeAnalgesiaCases), 0L),
-//    coalesce(sum(t.numOfAdverseReactionCases), 0L),
-//    coalesce(sum(t.numOfInadequateAnalgesia), 0L)
-//  )
-//  from AfterSurgeryTableOne t
-//  where t.date between :start and :end
-//  group by YEAR(t.date), MONTH(t.date)
-//  order by YEAR(t.date), MONTH(t.date)
-//""")
-//    List<com.example.welcome.dto.MonthlyTotals> computeMonthlyTotals(
-//            @Param("start") LocalDate start,
-//            @Param("end") LocalDate end
-//    );
+    @Query("""
+  select new com.example.welcome.dto.MonthlyTotalsTableFive(
+    YEAR(t.date),
+    MONTH(t.date),
+    coalesce(sum(t.numberOfFollowUpsForCriticallyIllPatients), 0L),
+    coalesce(sum(t.numberOfCriticalRescueCases), 0L),
+    coalesce(sum(t.numberOfDeaths), 0L)
+  )
+  from AfterSurgeryTableFive t
+  where t.date between :start and :end
+  group by YEAR(t.date), MONTH(t.date)
+  order by YEAR(t.date), MONTH(t.date)
+""")
+    List<com.example.welcome.dto.MonthlyTotalsTableFive> computeMonthlyTotals(
+            @Param("start") LocalDate start,
+            @Param("end") LocalDate end
+    );
 }
 
 
