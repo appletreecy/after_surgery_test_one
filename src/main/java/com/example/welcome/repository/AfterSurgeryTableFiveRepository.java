@@ -54,6 +54,25 @@ public interface AfterSurgeryTableFiveRepository extends JpaRepository<AfterSurg
             @Param("start") LocalDate start,
             @Param("end") LocalDate end
     );
+
+    // ⬇️ quarterly
+    @Query("""
+  select new com.example.welcome.dto.QuarterlyTotalsTableFive(
+    YEAR(t.date),
+    ((MONTH(t.date) - 1) / 3) + 1,
+    coalesce(sum(t.numberOfFollowUpsForCriticallyIllPatients), 0L),
+    coalesce(sum(t.numberOfCriticalRescueCases), 0L),
+    coalesce(sum(t.numberOfDeaths), 0L)
+  )
+  from AfterSurgeryTableFive t
+  where t.date between :start and :end
+  group by YEAR(t.date), ((MONTH(t.date) - 1) / 3) + 1
+  order by YEAR(t.date), ((MONTH(t.date) - 1) / 3) + 1
+""")
+    List<com.example.welcome.dto.QuarterlyTotalsTableFive> computeQuarterlyTotals(
+            @Param("start") LocalDate start,
+            @Param("end") LocalDate end
+    );
 }
 
 
