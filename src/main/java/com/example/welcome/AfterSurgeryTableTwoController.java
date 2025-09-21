@@ -1,6 +1,8 @@
 package com.example.welcome;
 import com.example.welcome.dto.MonthlyTotalsTableThree;
 import com.example.welcome.dto.MonthlyTotalsTableTwo;
+import com.example.welcome.dto.QuarterlyTotalsTableThree;
+import com.example.welcome.dto.QuarterlyTotalsTableTwo;
 import com.example.welcome.model.AfterSurgeryTableThree;
 import com.example.welcome.model.AfterSurgeryTableTwo;
 import com.example.welcome.repository.AfterSurgeryTableTwoRepository;
@@ -438,6 +440,79 @@ public class AfterSurgeryTableTwoController {
         model.addAttribute("year", selectedYear);   // used in title & selecting the dropdown
         model.addAttribute("years", years);         // for the <select> options
         return "afterSurgeryTableTwoMonthlyTotals";
+    }
+
+    @GetMapping("/quarterly-totals")
+    public String quarterlyTotals(
+            @RequestParam(required = false) Integer year,
+            Model model
+    ) {
+        LocalDate today = LocalDate.now();
+        int currentYear = today.getYear();
+
+        // Pick selected year (default = current) and clamp
+        int selectedYear = (year == null) ? currentYear : year;
+        if (selectedYear < MIN_YEAR) selectedYear = MIN_YEAR;
+        if (selectedYear > MAX_YEAR) selectedYear = MAX_YEAR;
+
+        // Query window: full year, or YTD for current year
+        LocalDate start = LocalDate.of(selectedYear, 1, 1);
+        LocalDate end   = (selectedYear == currentYear) ? today : LocalDate.of(selectedYear, 12, 31);
+
+        // Fetch aggregated rows (may skip quarters with no data)
+        List<QuarterlyTotalsTableTwo> raw =
+                afterSurgeryTableTwoRepository.computeQuarterlyTotals(start, end);
+
+        // Build map keyed by quarter number with a MERGE function (guards duplicates)
+        Map<Integer, QuarterlyTotalsTableTwo> byQ = raw.stream().collect(
+                Collectors.toMap(
+                        QuarterlyTotalsTableTwo::quarter,
+                        Function.identity(),
+                        (a, b) -> new QuarterlyTotalsTableTwo(
+                                a.year(), a.quarter(),
+                                a.totalNumOfNauseaAndVomiting() + b.totalNumOfNauseaAndVomiting(),
+                                a.totalNumOfDizziness()  + b.totalNumOfDizziness(),
+                                a.totalNumOfNauseaAndVomitingAndDizziness()+ b.totalNumOfNauseaAndVomitingAndDizziness(),
+                                a.totalNumOfItching() + b.totalNumOfItching(),
+                                a.totalNumOfAllergicRash() + b.totalNumOfAllergicRash(),
+                                a.totalNumOfProlongedAnestheticRecovery()  + b.totalNumOfProlongedAnestheticRecovery(),
+                                a.totalNumOfPunctureSiteAbnormality()+ b.totalNumOfPunctureSiteAbnormality(),
+                                a.totalNumOfAbdominalDistension() + b.totalNumOfAbdominalDistension(),
+                                a.totalNumOfEndotrachealIntubationDiscomfort() + b.totalNumOfEndotrachealIntubationDiscomfort(),
+                                a.totalNumOfEpigastricPain()  + b.totalNumOfEpigastricPain(),
+                                a.totalNumOfDelirium()+ b.totalNumOfDelirium(),
+                                a.totalNumOfChestDiscomfort() + b.totalNumOfChestDiscomfort(),
+                                a.totalNumOfTourniquetReaction() + b.totalNumOfTourniquetReaction(),
+                                a.totalNumOfOther()  + b.totalNumOfOther()
+                        )
+                )
+        );
+
+        // Last quarter to display
+        int lastQuarter = (selectedYear == currentYear)
+                ? ((today.getMonthValue() - 1) / 3) + 1
+                : 4;
+
+        // Fill Q1..lastQuarter, defaulting missing quarters to zeros
+        List<QuarterlyTotalsTableTwo> series = new ArrayList<>();
+        for (int q = 1; q <= lastQuarter; q++) {
+            QuarterlyTotalsTableTwo qt = byQ.getOrDefault(
+                    q,
+                    new QuarterlyTotalsTableTwo(selectedYear, q, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0l, 0L, 0L, 0L, 0L)
+            );
+            series.add(qt);
+        }
+
+        // Years dropdown
+        List<Integer> years = IntStream.rangeClosed(MIN_YEAR, MAX_YEAR)
+                .boxed()
+                .collect(Collectors.toList());
+
+        model.addAttribute("quarterlyTotals", series);
+        model.addAttribute("year", selectedYear);
+        model.addAttribute("years", years);
+
+        return "afterSurgeryTableTwoQuarterlyTotals";
     }
 
     // Helper: Write a string value into a cell safely
