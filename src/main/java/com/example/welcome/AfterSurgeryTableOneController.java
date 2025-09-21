@@ -141,7 +141,7 @@ public class AfterSurgeryTableOneController {
 
         float proportionAnalgesia = (totalVisits == 0) ? 0f : (float) totalAnalgesia / totalVisits;
         float proportionAdverse = (totalAnalgesia == 0) ? 0f : (float) totalAdverse / totalAnalgesia;
-        float proportionInadequate = (totalAnalgesia == 0) ? 0f : 1 - ((float) totalInadequate / totalAnalgesia);
+        float proportionInadequate = (totalAnalgesia == 0) ? 0f : (float) totalInadequate / totalAnalgesia;
 
         model.addAttribute("page", pageData);
         model.addAttribute("content", pageData.getContent());
