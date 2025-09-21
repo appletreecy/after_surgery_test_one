@@ -36,6 +36,7 @@ import java.util.Map;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
+import java.util.stream.LongStream;
 
 import static java.lang.Integer.parseInt;
 
@@ -81,7 +82,7 @@ public class AfterSurgeryTableTwoController {
         TableOneTotals totalsTableOne =
                 afterSurgeryTableOneRepository.computeTotalsInRange(startDate, endDate);
 
-        // TableThree
+        // TableTwo
         Page<AfterSurgeryTableTwo> pageDataTableTwo =
                 afterSurgeryTableTwoRepository.findByDateBetween(startDate, endDate, pr);
 
@@ -106,20 +107,36 @@ public class AfterSurgeryTableTwoController {
         long totalNumOfTourniquetReactionnumOfTourniquetReaction = totalsTableTwo.totalNumOfTourniquetReactionnumOfTourniquetReaction();
         long totalNumOfOther = totalsTableTwo.totalNumOfOther();
 
+        long totalCasesTableTwo = LongStream.of(
+                totalNumOfNauseaAndVomiting,
+                totalNumOfDizziness,
+                totalNumOfNauseaAndVomitingAndDizziness,
+                totalNumOfAllergicRash,
+                totalNumOfProlongedAnestheticRecovery,
+                totalNumOfPunctureSiteAbnormality,
+                totalNumOfAbdominalDistension,
+                totalNumOfEndotrachealIntubationDiscomfort,
+                totalNumOfEpigastricPain,
+                totalNumOfDelirium,
+                totalNumOfChestDiscomfort,
+                totalNumOfTourniquetReactionnumOfTourniquetReaction,
+                totalNumOfOther
+        ).sum();
 
-        float proportionOfNauseaAndVomiting = (totalAdverse == 0) ? 0f : (float) totalNumOfNauseaAndVomiting / totalAdverse;
-        float proportionOfDizziness = (totalAdverse == 0) ? 0f : (float) totalNumOfDizziness / totalAdverse;
-        float proportionOfNauseaAndVomitingAndDizziness = (totalAdverse == 0) ? 0f : ((float) totalNumOfNauseaAndVomitingAndDizziness / totalAdverse);
-        float proportionOfAllergicRash = (totalAdverse == 0) ? 0f : (float) totalNumOfAllergicRash / totalAdverse;
-        float proportionOfProlongedAnestheticRecovery = (totalAdverse == 0) ? 0f : (float) totalNumOfProlongedAnestheticRecovery / totalAdverse;
-        float proportionOfPunctureSiteAbnormality = (totalAdverse == 0) ? 0f : ((float) totalNumOfPunctureSiteAbnormality / totalAdverse);
-        float proportionOfAbdominalDistension = (totalAdverse == 0) ? 0f : ((float) totalNumOfAbdominalDistension / totalAdverse);
-        float proportionOfEndotrachealIntubationDiscomfort = (totalAdverse == 0) ? 0f : (float) totalNumOfEndotrachealIntubationDiscomfort / totalAdverse;
-        float proportionOfEpigastricPain = (totalAdverse == 0) ? 0f : (float) totalNumOfEpigastricPain / totalAdverse;
-        float proportionOfDelirium = (totalAdverse == 0) ? 0f : ((float) totalNumOfDelirium / totalAdverse);
-        float proportionOfChestDiscomfort = (totalAdverse == 0) ? 0f : (float) totalNumOfChestDiscomfort / totalAdverse;
-        float proportionOfTourniquetReaction = (totalAdverse == 0) ? 0f : (float) totalNumOfTourniquetReactionnumOfTourniquetReaction / totalAdverse;
-        float proportionOfOther = (totalAdverse == 0) ? 0f : ((float) totalNumOfOther / totalAdverse);
+
+        float proportionOfNauseaAndVomiting = (totalAdverse == 0) ? 0f : (float) totalNumOfNauseaAndVomiting / totalCasesTableTwo;
+        float proportionOfDizziness = (totalAdverse == 0) ? 0f : (float) totalNumOfDizziness / totalCasesTableTwo;
+        float proportionOfNauseaAndVomitingAndDizziness = (totalAdverse == 0) ? 0f : ((float) totalNumOfNauseaAndVomitingAndDizziness / totalCasesTableTwo);
+        float proportionOfAllergicRash = (totalAdverse == 0) ? 0f : (float) totalNumOfAllergicRash / totalCasesTableTwo;
+        float proportionOfProlongedAnestheticRecovery = (totalAdverse == 0) ? 0f : (float) totalNumOfProlongedAnestheticRecovery / totalCasesTableTwo;
+        float proportionOfPunctureSiteAbnormality = (totalAdverse == 0) ? 0f : ((float) totalNumOfPunctureSiteAbnormality / totalCasesTableTwo);
+        float proportionOfAbdominalDistension = (totalAdverse == 0) ? 0f : ((float) totalNumOfAbdominalDistension / totalCasesTableTwo);
+        float proportionOfEndotrachealIntubationDiscomfort = (totalAdverse == 0) ? 0f : (float) totalNumOfEndotrachealIntubationDiscomfort / totalCasesTableTwo;
+        float proportionOfEpigastricPain = (totalAdverse == 0) ? 0f : (float) totalNumOfEpigastricPain / totalCasesTableTwo;
+        float proportionOfDelirium = (totalAdverse == 0) ? 0f : ((float) totalNumOfDelirium / totalCasesTableTwo);
+        float proportionOfChestDiscomfort = (totalAdverse == 0) ? 0f : (float) totalNumOfChestDiscomfort / totalCasesTableTwo;
+        float proportionOfTourniquetReaction = (totalAdverse == 0) ? 0f : (float) totalNumOfTourniquetReactionnumOfTourniquetReaction / totalCasesTableTwo;
+        float proportionOfOther = (totalAdverse == 0) ? 0f : ((float) totalNumOfOther / totalCasesTableTwo);
 
 
 
@@ -134,7 +151,7 @@ public class AfterSurgeryTableTwoController {
         model.addAttribute("startDate", startDate);
         model.addAttribute("endDate", endDate);
 
-        model.addAttribute("totalAdverse", totalAdverse);
+        model.addAttribute("totalCasesTableTwo", totalCasesTableTwo);
 
         model.addAttribute("totalNumOfNauseaAndVomiting", totalNumOfNauseaAndVomiting);
         model.addAttribute("totalNumOfDizziness", totalNumOfDizziness);

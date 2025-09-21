@@ -32,6 +32,7 @@ import java.util.*;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
+import java.util.stream.LongStream;
 
 @Controller
 @RequestMapping("afterSurgeryTableFour")
@@ -92,14 +93,22 @@ public class AfterSurgeryTableFourController {
         long totalNumOfFormulationFive = totalsTableFour.totalNumOfFormulationFive();
         long totalNumOfFormulationSix = totalsTableFour.totalNumOfFormulationSix();
 
+        long totalCasesTableFour = LongStream.of(
+                totalNumOfFormulationOne,
+                totalNumOfFormulationTwo,
+                totalNumOfFormulationThree,
+                totalNumOfFormulationFour,
+                totalNumOfFormulationFive,
+                totalNumOfFormulationSix
+        ).sum();
 
 
-        float proportionOfFormulationOne = (totalAdverse == 0) ? 0f : (float) totalNumOfFormulationOne / totalAdverse;
-        float proportionOfFormulationTwo = (totalAdverse == 0) ? 0f : (float) totalNumOfFormulationTwo / totalAdverse;
-        float proportionOfFormulationThree = (totalAdverse == 0) ? 0f : ((float) totalNumOfFormulationThree / totalAdverse);
-        float proportionOfFormulationFour = (totalAdverse == 0) ? 0f : (float) totalNumOfFormulationFour / totalAdverse;
-        float proportionOfFormulationFive = (totalAdverse == 0) ? 0f : (float) totalNumOfFormulationFive / totalAdverse;
-        float proportionOfFormulationSix = (totalAdverse == 0) ? 0f : ((float) totalNumOfFormulationSix / totalAdverse);
+        float proportionOfFormulationOne = (totalAdverse == 0) ? 0f : (float) totalNumOfFormulationOne / totalCasesTableFour;
+        float proportionOfFormulationTwo = (totalAdverse == 0) ? 0f : (float) totalNumOfFormulationTwo / totalCasesTableFour;
+        float proportionOfFormulationThree = (totalAdverse == 0) ? 0f : ((float) totalNumOfFormulationThree / totalCasesTableFour);
+        float proportionOfFormulationFour = (totalAdverse == 0) ? 0f : (float) totalNumOfFormulationFour / totalCasesTableFour;
+        float proportionOfFormulationFive = (totalAdverse == 0) ? 0f : (float) totalNumOfFormulationFive / totalCasesTableFour;
+        float proportionOfFormulationSix = (totalAdverse == 0) ? 0f : ((float) totalNumOfFormulationSix / totalCasesTableFour);
 
 
         model.addAttribute("page", pageDataTableThree);
@@ -113,7 +122,7 @@ public class AfterSurgeryTableFourController {
         model.addAttribute("startDate", startDate);
         model.addAttribute("endDate", endDate);
 
-        model.addAttribute("totalAdverse", totalAdverse);
+        model.addAttribute("totalCasesTableFour", totalCasesTableFour);
 
         model.addAttribute("totalNumOfFormulationOne", totalNumOfFormulationOne);
         model.addAttribute("totalNumOfFormulationTwo", totalNumOfFormulationTwo);

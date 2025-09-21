@@ -216,11 +216,11 @@
         <div class="col-md-3">
             <div class="card shadow-sm">
                 <div class="card-body">
-                    <div class="text-muted">恶心呕吐占比</div>
-                    <div class="h4 stat" th:text="${totalNumOfNauseaAndVomiting}">0</div>
+                    <div class="text-muted">胃脘痛占比</div>
+                    <div class="h4 stat" th:text="${totalNumOfEpigastricPain}">0</div>
                     <div class="small text-muted">
                         占比:
-                        <span th:text="${#numbers.formatPercent(proportionOfNauseaAndVomiting, 1, 2)}">0%</span>
+                        <span th:text="${#numbers.formatPercent(proportionOfEpigastricPain, 1, 2)}">0%</span>
                     </div>
                 </div>
             </div>
@@ -281,7 +281,7 @@
             <div class="card shadow-sm">
                 <div class="card-body">
                     <div class="text-muted">不良反应例数</div>
-                    <div class="h4 stat" th:text="${totalAdverse}">0</div>
+                    <div class="h4 stat" th:text="${totalCasesTableTwo}">0</div>
                     <div style="height: 22px;"></div>
                 </div>
             </div>
