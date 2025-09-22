@@ -95,7 +95,7 @@ public class AfterSurgeryTableFiveController {
         long totalNumberOfCirticalRescueCases = totals.totalNumberOfCirticalRescueCases();
         long totalNumberOfDeaths = totals.totalNumberOfDeaths();
 
-        float proportionOfStableWithoutComplications = (totalNumberOfFollowUpsForCriticallyIllPatients == 0) ? 0f : (float) (totalNumberOfFollowUpsForCriticallyIllPatients - totalNumberOfCirticalRescueCases - totalNumberOfDeaths) / totalNumberOfFollowUpsForCriticallyIllPatients;
+        float proportionOfStableWithoutComplications = (totalNumberOfFollowUpsForCriticallyIllPatients == 0) ? 0f : (float) totalNumberOfFollowUpsForCriticallyIllPatients / totalNumberOfFollowUpsForCriticallyIllPatients;
         float proportionOfCriticalRescueCases = (totalNumberOfFollowUpsForCriticallyIllPatients == 0) ? 0f : (float) (totalNumberOfCirticalRescueCases) / totalNumberOfFollowUpsForCriticallyIllPatients;
         float proportionOfDeaths = (totalNumberOfFollowUpsForCriticallyIllPatients == 0) ? 0f : (float) (totalNumberOfDeaths) / totalNumberOfFollowUpsForCriticallyIllPatients;
 
