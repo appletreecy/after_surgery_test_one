@@ -2,6 +2,7 @@ package com.example.welcome;
 import com.example.welcome.dto.MonthlyTotals;
 import com.example.welcome.dto.QuarterlyTotalsTableFour;
 import com.example.welcome.dto.QuarterlyTotalsTableThree;
+import com.example.welcome.model.AfterSurgeryTableFour;
 import com.example.welcome.model.AfterSurgeryTableThree;
 import com.example.welcome.repository.AfterSurgeryTableThreeRepository;
 import jakarta.servlet.http.HttpServletResponse;
@@ -26,21 +27,19 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.time.DateTimeException;
 import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 
 import org.springframework.transaction.annotation.Transactional;  // For @Transactional
-import java.util.HashSet;          // For HashSet
-import java.util.LinkedHashSet;    // For LinkedHashSet
+
 import java.util.stream.LongStream;
 
 import com.example.welcome.dto.MonthlyTotalsTableThree;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+
 import java.time.YearMonth;
 import java.util.function.Function;
 import java.util.stream.Collectors;
-import java.util.Map;
 
 import java.util.stream.IntStream;
 
@@ -163,8 +162,48 @@ public class AfterSurgeryTableThreeController {
     }
 
     @PostMapping("/add")
-    public String submitForm(@ModelAttribute AfterSurgeryTableThree afterSurgeryTableThree){
+    public String submitForm(@ModelAttribute AfterSurgeryTableThree afterSurgeryTableThree, RedirectAttributes redirectAttributes){
+
+        if (afterSurgeryTableThree.getNumOfJointComplicationCount() == null) {
+            afterSurgeryTableThree.setNumOfJointComplicationCount(0);
+        }
+        if (afterSurgeryTableThree.getNumOfMotorDysfunctionCount() == null) {
+            afterSurgeryTableThree.setNumOfMotorDysfunctionCount(0);
+        }
+        if (afterSurgeryTableThree.getNumOfTraumaComplicationCount() == null) {
+            afterSurgeryTableThree.setNumOfTraumaComplicationCount(0);
+        }
+        if (afterSurgeryTableThree.getNumOfAnkleComplicationCount() == null) {
+            afterSurgeryTableThree.setNumOfAnkleComplicationCount(0);
+        }
+        if (afterSurgeryTableThree.getNumOfPediatricAdverseEventCount() == null) {
+            afterSurgeryTableThree.setNumOfPediatricAdverseEventCount(0);
+        }
+        if (afterSurgeryTableThree.getNumOfSpinalComplicationCount() == null) {
+            afterSurgeryTableThree.setNumOfSpinalComplicationCount(0);
+        }
+        if (afterSurgeryTableThree.getNumOfHandSurgeryComplicationCount() == null) {
+            afterSurgeryTableThree.setNumOfHandSurgeryComplicationCount(0);
+        }
+        if (afterSurgeryTableThree.getNumOfObstetricAdverseEventCount() == null) {
+            afterSurgeryTableThree.setNumOfObstetricAdverseEventCount(0);
+        }
+        if (afterSurgeryTableThree.getNumOfGynecologicalAdverseEventCount() == null) {
+            afterSurgeryTableThree.setNumOfGynecologicalAdverseEventCount(0);
+        }
+        if (afterSurgeryTableThree.getNumOfSurgicalTreatmentCount() == null) {
+            afterSurgeryTableThree.setNumOfSurgicalTreatmentCount(0);
+        }
+
+        Optional<AfterSurgeryTableThree> existing = afterSurgeryTableThreeRepository.findByDate(afterSurgeryTableThree.getDate());
+
+        if (existing.isPresent()){
+            redirectAttributes.addFlashAttribute("error", "cannot add data with same date.");
+            return "redirect:/afterSurgeryTableFour/add";
+        }
+
         afterSurgeryTableThreeRepository.save(afterSurgeryTableThree);
+        redirectAttributes.addFlashAttribute("success", "added record successfully!");
         return "redirect:/afterSurgeryTableThree";
     }
 

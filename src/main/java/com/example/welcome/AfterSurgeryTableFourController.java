@@ -2,6 +2,7 @@ package com.example.welcome;
 import com.example.welcome.dto.MonthlyTotalsTableFour;
 import com.example.welcome.dto.MonthlyTotalsTableThree;
 import com.example.welcome.dto.QuarterlyTotalsTableFour;
+import com.example.welcome.model.AfterSurgeryTableFive;
 import com.example.welcome.model.AfterSurgeryTableFour;
 import com.example.welcome.model.AfterSurgeryTableThree;
 import com.example.welcome.repository.AfterSurgeryTableFourRepository;
@@ -22,6 +23,7 @@ import org.springframework.web.bind.annotation.*;
 import com.example.welcome.model.AfterSurgeryTableOne;
 import com.example.welcome.repository.AfterSurgeryTableOneRepository;
 import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -149,8 +151,36 @@ public class AfterSurgeryTableFourController {
     }
 
     @PostMapping("/add")
-    public String submitForm(@ModelAttribute AfterSurgeryTableFour afterSurgeryTableFour){
+    public String submitForm(@ModelAttribute AfterSurgeryTableFour afterSurgeryTableFour, RedirectAttributes redirectAttributes){
+
+        if (afterSurgeryTableFour.getNumOfFormulationOne() == null) {
+            afterSurgeryTableFour.setNumOfFormulationOne(0);
+        }
+        if (afterSurgeryTableFour.getNumOfFormulationTwo() == null) {
+            afterSurgeryTableFour.setNumOfFormulationTwo(0);
+        }
+        if (afterSurgeryTableFour.getNumOfFormulationThree() == null) {
+            afterSurgeryTableFour.setNumOfFormulationThree(0);
+        }
+        if (afterSurgeryTableFour.getNumOfFormulationFour() == null) {
+            afterSurgeryTableFour.setNumOfFormulationFour(0);
+        }
+        if (afterSurgeryTableFour.getNumOfFormulationFive() == null) {
+            afterSurgeryTableFour.setNumOfFormulationFive(0);
+        }
+        if (afterSurgeryTableFour.getNumOfFormulationSix() == null) {
+            afterSurgeryTableFour.setNumOfFormulationSix(0);
+        }
+
+        Optional<AfterSurgeryTableFour> existing = afterSurgeryTableFourRepository.findByDate(afterSurgeryTableFour.getDate());
+
+        if (existing.isPresent()){
+            redirectAttributes.addFlashAttribute("error", "cannot add data with same date.");
+            return "redirect:/afterSurgeryTableFour/add";
+        }
+
         afterSurgeryTableFourRepository.save(afterSurgeryTableFour);
+        redirectAttributes.addFlashAttribute("success", "added record successfully!");
         return "redirect:/afterSurgeryTableFour";
     }
 
