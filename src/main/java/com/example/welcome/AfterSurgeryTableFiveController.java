@@ -92,11 +92,13 @@ public class AfterSurgeryTableFiveController {
                 afterSurgeryTableFiveRepository.computeTotalsInRange(startDate, endDate);
 
         long totalNumberOfFollowUpsForCriticallyIllPatients = totals.totalNumberOfFollowUpsForCriticallyIllPatients();
-        long totalNumberOfCirticalRescueCases = totals.totalNumberOfCirticalRescueCases();
+        long totalNumberOfCriticalRescueCases = totals.totalNumberOfCirticalRescueCases();
+        long totalNumberOfStableRescueCases = totals.totalNumberOfFollowUpsForCriticallyIllPatients() - totals.totalNumberOfCirticalRescueCases();
         long totalNumberOfDeaths = totals.totalNumberOfDeaths();
 
-        float proportionOfStableWithoutComplications = (totalNumberOfFollowUpsForCriticallyIllPatients == 0) ? 0f : (float) (totalNumberOfFollowUpsForCriticallyIllPatients - totalNumberOfCirticalRescueCases - totalNumberOfDeaths) / totalNumberOfFollowUpsForCriticallyIllPatients;
-        float proportionOfCriticalRescueCases = (totalNumberOfFollowUpsForCriticallyIllPatients == 0) ? 0f : (float) (totalNumberOfCirticalRescueCases) / totalNumberOfFollowUpsForCriticallyIllPatients;
+        float proportionOfStableWithoutComplications = (totalNumberOfFollowUpsForCriticallyIllPatients == 0) ? 0f : (float) totalNumberOfFollowUpsForCriticallyIllPatients / totalNumberOfFollowUpsForCriticallyIllPatients;
+        float proportionOfCriticalRescueCases = (totalNumberOfFollowUpsForCriticallyIllPatients == 0) ? 0f : (float) (totalNumberOfCriticalRescueCases) / totalNumberOfFollowUpsForCriticallyIllPatients;
+        float proportionOfStableRescueCases = (totalNumberOfFollowUpsForCriticallyIllPatients == 0) ? 0f : (float) 1 - ((float) (totalNumberOfCriticalRescueCases) / totalNumberOfFollowUpsForCriticallyIllPatients);
         float proportionOfDeaths = (totalNumberOfFollowUpsForCriticallyIllPatients == 0) ? 0f : (float) (totalNumberOfDeaths) / totalNumberOfFollowUpsForCriticallyIllPatients;
 
         model.addAttribute("page", pageData);
@@ -111,11 +113,13 @@ public class AfterSurgeryTableFiveController {
         model.addAttribute("endDate", endDate);
 
         model.addAttribute("totalNumberOfFollowUpsForCriticallyIllPatients", totalNumberOfFollowUpsForCriticallyIllPatients);
-        model.addAttribute("totalNumberOfCirticalRescueCases", totalNumberOfCirticalRescueCases);
+        model.addAttribute("totalNumberOfCriticalRescueCases", totalNumberOfCriticalRescueCases);
+        model.addAttribute("totalNumberOfStableRescueCases", totalNumberOfStableRescueCases);
         model.addAttribute("totalNumberOfDeaths", totalNumberOfDeaths);
 
         model.addAttribute("proportionOfStableWithoutComplications", proportionOfStableWithoutComplications);
         model.addAttribute("proportionOfCriticalRescueCases", proportionOfCriticalRescueCases);
+        model.addAttribute("proportionOfStableRescueCases", proportionOfStableRescueCases);
         model.addAttribute("proportionOfDeaths", proportionOfDeaths);
 
         return "afterSurgeryTableFive";

@@ -170,13 +170,15 @@
             <tr>
                 <th>危重病人追访数</th>
                 <th>转危重抢救例数</th>
+                <th>平稳抢救例数</th>
                 <th>死亡例数</th>
             </tr>
             </thead>
             <tbody>
             <tr>
                 <td id="totalNumberOfFollowUpsForCriticallyIllPatients" th:text="${totalNumberOfFollowUpsForCriticallyIllPatients}">0</td>
-                <td id="totalNumberOfCirticalRescueCases" th:text="${totalNumberOfCirticalRescueCases}">0</td>
+                <td id="totalNumberOfCriticalRescueCases" th:text="${totalNumberOfCriticalRescueCases}">0</td>
+                <td id="totalNumberOfStableRescueCases" th:text="${totalNumberOfStableRescueCases}">0</td>
                 <td id="totalNumberOfDeaths" th:text="${totalNumberOfDeaths}">0</td>
             </tr>
             </tbody>
@@ -189,6 +191,7 @@
             <tr>
                 <th>危重病人追访数占比</th>
                 <th>转危重抢救例数占比</th>
+                <th>平稳抢救例数占比</th>
                 <th>死亡例数占比</th>
             </tr>
             </thead>
@@ -196,6 +199,7 @@
             <tr>
                 <td id="proportionOfStableWithoutComplications" th:text="${proportionOfStableWithoutComplications != null ? #numbers.formatDecimal(proportionOfStableWithoutComplications * 100, 1, 2) + '%' : 'N/A'}">0</td>
                 <td id="proportionOfCriticalRescueCases" th:text="${proportionOfCriticalRescueCases != null ? #numbers.formatDecimal(proportionOfCriticalRescueCases * 100, 1, 2) + '%' : 'N/A'}">0</td>
+                <td id="proportionOfStableRescueCases" th:text="${proportionOfStableRescueCases != null ? #numbers.formatDecimal(proportionOfStableRescueCases * 100, 1, 2) + '%' : 'N/A'}">0</td>
                 <td id="proportionOfDeaths" th:text="${proportionOfDeaths != null ? #numbers.formatDecimal(proportionOfDeaths * 100, 1, 2) + '%' : 'N/A'}">0</td>
             </tr>
             </tbody>
@@ -225,6 +229,15 @@
             <div class="col-12 col-md-4">
                 <div class="card h-100">
                     <div class="card-body d-flex flex-column align-items-center">
+                        <h6 class="card-title">平稳抢救例数占比</h6>
+                        <div style="width:220px;height:220px"><canvas id="pieStableRescueCases"></canvas></div>
+                        <div class="mt-2 small text-muted" id="pieStableRescueCasesText"></div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-12 col-md-4">
+                <div class="card h-100">
+                    <div class="card-body d-flex flex-column align-items-center">
                         <h6 class="card-title">死亡例数占比</h6>
                         <div style="width:220px;height:220px"><canvas id="pieDeaths"></canvas></div>
                         <div class="mt-2 small text-muted" id="pieDeathsText"></div>
@@ -241,6 +254,7 @@
     // proportions from the server (fractions 0..1)
     const pStableWithoutComplicationsRaw = /*[[${proportionOfStableWithoutComplications}]]*/ null;
     const pCriticalRescueCasesRaw    = /*[[${proportionOfCriticalRescueCases}]]*/ null;
+    const pStableRescueCasesRaw    = /*[[${proportionOfStableRescueCases}]]*/ null;
     const pDeathsRaw       = /*[[${proportionOfDeaths}]]*/ null;
 
     const toNum = v => (v == null || v === '' || isNaN(v)) ? 0 : Number(v);
@@ -282,6 +296,7 @@
 
     makePie('pieStableWithoutComplications', 'pieStableWithoutComplicationsText', fracToPct(pStableWithoutComplicationsRaw), ['#4e79a7', '#e0e0e0']);
     makePie('pieCriticalRescueCases',   'pieCriticalRescueCasesText',   fracToPct(pCriticalRescueCasesRaw),    ['#f28e2b', '#e0e0e0']);
+    makePie('pieStableRescueCases',   'pieStableRescueCasesText',   fracToPct(pStableRescueCasesRaw),    ['#87CEEB', '#e0e0e0']);
     makePie('pieDeaths','pieDeathsText',fracToPct(pDeathsRaw),       ['#59a14f', '#e0e0e0']);
 </script>
 
