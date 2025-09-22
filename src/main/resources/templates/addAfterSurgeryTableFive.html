@@ -22,6 +22,18 @@
 
     <h2 class="mb-4 text-center text-primary">添加表五内容</h2>
 
+    <!-- 🔥 Added alert messages -->
+    <div th:if="${error}" class="alert alert-danger alert-dismissible fade show" role="alert">
+        <span th:text="${error}"></span>
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+
+    <div th:if="${success}" class="alert alert-success alert-dismissible fade show" role="alert">
+        <span th:text="${success}"></span>
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+    <!-- 🔥 End added -->
+
     <form method="post" th:action="@{/afterSurgeryTableFive/add}" th:object="${afterSurgeryTableFive}" class="row g-3 bg-white p-4 shadow rounded">
 
         <!-- General Info -->

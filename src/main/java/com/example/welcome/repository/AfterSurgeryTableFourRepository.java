@@ -2,6 +2,7 @@ package com.example.welcome.repository;
 
 import com.example.welcome.TableFourTotals;
 import com.example.welcome.TableThreeTotals;
+import com.example.welcome.model.AfterSurgeryTableFive;
 import com.example.welcome.model.AfterSurgeryTableFour;
 import com.example.welcome.model.AfterSurgeryTableOne;
 import com.example.welcome.model.AfterSurgeryTableThree;
@@ -89,4 +90,5 @@ public interface AfterSurgeryTableFourRepository extends JpaRepository<AfterSurg
             @Param("start") LocalDate start,
             @Param("end") LocalDate end
     );
+
 }

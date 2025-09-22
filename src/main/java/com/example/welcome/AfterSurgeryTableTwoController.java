@@ -26,6 +26,8 @@ import java.time.YearMonth;
 import java.util.List;
 
 import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.io.IOException;
@@ -33,6 +35,7 @@ import java.time.DateTimeException;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Map;
+import java.util.Optional;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
@@ -192,8 +195,63 @@ public class AfterSurgeryTableTwoController {
     }
 
     @PostMapping("/add")
-    public String submitForm(@ModelAttribute AfterSurgeryTableTwo afterSurgeryTableTwo){
+    public String submitForm(@ModelAttribute AfterSurgeryTableTwo afterSurgeryTableTwo, RedirectAttributes redirectAttributes){
+
+        if (afterSurgeryTableTwo.getNumOfNauseaAndVomiting() == null) {
+            afterSurgeryTableTwo.setNumOfNauseaAndVomiting(0);
+        }
+        if (afterSurgeryTableTwo.getNumOfDizziness() == null) {
+            afterSurgeryTableTwo.setNumOfDizziness(0);
+        }
+        if (afterSurgeryTableTwo.getNumOfNauseaAndVomitingAndDizziness() == null) {
+            afterSurgeryTableTwo.setNumOfNauseaAndVomitingAndDizziness(0);
+        }
+        if (afterSurgeryTableTwo.getNumOfItching() == null) {
+            afterSurgeryTableTwo.setNumOfItching(0);
+        }
+        if (afterSurgeryTableTwo.getNumOfAllergicRash() == null) {
+            afterSurgeryTableTwo.setNumOfAllergicRash(0);
+        }
+        if (afterSurgeryTableTwo.getNumOfProlongedAnestheticRecovery() == null) {
+            afterSurgeryTableTwo.setNumOfProlongedAnestheticRecovery(0);
+        }
+        if (afterSurgeryTableTwo.getNumOfPunctureSiteAbnormality() == null) {
+            afterSurgeryTableTwo.setNumOfPunctureSiteAbnormality(0);
+        }
+        if (afterSurgeryTableTwo.getNumOfAbdominalDistension() == null) {
+            afterSurgeryTableTwo.setNumOfAbdominalDistension(0);
+        }
+        if (afterSurgeryTableTwo.getNumOfEndotrachealIntubationDiscomfort() == null) {
+            afterSurgeryTableTwo.setNumOfEndotrachealIntubationDiscomfort(0);
+        }
+        if (afterSurgeryTableTwo.getNumOfEpigastricPain() == null) {
+            afterSurgeryTableTwo.setNumOfEpigastricPain(0);
+        }
+        if (afterSurgeryTableTwo.getNumOfDelirium() == null) {
+            afterSurgeryTableTwo.setNumOfDelirium(0);
+        }
+        if (afterSurgeryTableTwo.getNumOfChestDiscomfort() == null) {
+            afterSurgeryTableTwo.setNumOfChestDiscomfort(0);
+        }
+        if (afterSurgeryTableTwo.getNumOfTourniquetReaction() == null) {
+            afterSurgeryTableTwo.setNumOfTourniquetReaction(0);
+        }
+        if (afterSurgeryTableTwo.getNumOfOther() == null) {
+            afterSurgeryTableTwo.setNumOfOther(0);
+        }
+        if (afterSurgeryTableTwo.getOtherComments() == null || afterSurgeryTableTwo.getOtherComments().trim().isEmpty()) {
+            afterSurgeryTableTwo.setOtherComments("无");
+        }
+
+        Optional<AfterSurgeryTableTwo> existing = afterSurgeryTableTwoRepository.findByDate(afterSurgeryTableTwo.getDate());
+
+        if (existing.isPresent()){
+            redirectAttributes.addFlashAttribute("error", "cannot add data with same date.");
+            return "redirect:/afterSurgeryTableTwo/add";
+        }
+
         afterSurgeryTableTwoRepository.save(afterSurgeryTableTwo);
+        redirectAttributes.addFlashAttribute("success", "added record successfully!");
         return "redirect:/afterSurgeryTableTwo";
     }
 

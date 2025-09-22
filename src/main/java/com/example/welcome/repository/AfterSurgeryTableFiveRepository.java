@@ -12,6 +12,7 @@ import org.springframework.data.repository.query.Param;
 import java.time.LocalDate;
 import java.util.Collection;
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 
 @Repository
@@ -73,6 +74,8 @@ public interface AfterSurgeryTableFiveRepository extends JpaRepository<AfterSurg
             @Param("start") LocalDate start,
             @Param("end") LocalDate end
     );
+
+    Optional<AfterSurgeryTableFive> findByDate(LocalDate date);
 }
 
 

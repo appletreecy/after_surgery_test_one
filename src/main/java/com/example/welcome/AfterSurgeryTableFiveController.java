@@ -34,6 +34,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.time.LocalDate;
 
@@ -127,8 +128,35 @@ public class AfterSurgeryTableFiveController {
     }
 
     @PostMapping("/add")
-    public String submitForm(@ModelAttribute AfterSurgeryTableFive afterSurgeryTableFive) {
+    public String submitForm(@ModelAttribute AfterSurgeryTableFive afterSurgeryTableFive, RedirectAttributes redirectAttributes) {
+
+        // 🔥 Set defaults if null or empty
+        if (afterSurgeryTableFive.getCriticalPatientsName() == null || afterSurgeryTableFive.getCriticalPatientsName().trim().isEmpty()) {
+            afterSurgeryTableFive.setCriticalPatientsName("无");
+        }
+        if (afterSurgeryTableFive.getVisitFindingsForCriticalPatient() == null || afterSurgeryTableFive.getVisitFindingsForCriticalPatient().trim().isEmpty()) {
+            afterSurgeryTableFive.setVisitFindingsForCriticalPatient("无");
+        }
+
+        if (afterSurgeryTableFive.getNumberOfFollowUpsForCriticallyIllPatients() == null) {
+            afterSurgeryTableFive.setNumberOfFollowUpsForCriticallyIllPatients(0);
+        }
+        if (afterSurgeryTableFive.getNumberOfCriticalRescueCases() == null) {
+            afterSurgeryTableFive.setNumberOfCriticalRescueCases(0);
+        }
+        if (afterSurgeryTableFive.getNumberOfDeaths() == null) {
+            afterSurgeryTableFive.setNumberOfDeaths(0);
+        }
+
+        Optional<AfterSurgeryTableFive> existing = afterSurgeryTableFiveRepository.findByDate(afterSurgeryTableFive.getDate());
+
+        if (existing.isPresent()){
+            redirectAttributes.addFlashAttribute("error", "cannot add data with same date.");
+            return "redirect:/afterSurgeryTableFive/add";
+        }
+
         afterSurgeryTableFiveRepository.save(afterSurgeryTableFive);
+        redirectAttributes.addFlashAttribute("success", "added record successfully!");
         return "redirect:/afterSurgeryTableFive";
     }
 

@@ -14,6 +14,7 @@ import org.springframework.stereotype.Repository;
 
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Optional;
 
 @Repository
 public interface AfterSurgeryTableTwoRepository extends JpaRepository<AfterSurgeryTableTwo, Long> {
@@ -102,6 +103,8 @@ public interface AfterSurgeryTableTwoRepository extends JpaRepository<AfterSurge
             @Param("start") LocalDate start,
             @Param("end") LocalDate end
     );
+
+    Optional<AfterSurgeryTableTwo> findByDate(LocalDate date);
 }
 
 

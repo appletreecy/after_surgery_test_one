@@ -3,6 +3,7 @@ import com.example.welcome.dto.QuarterlyTotalsTableFour;
 import com.example.welcome.dto.QuarterlyTotalsTableOne;
 import com.example.welcome.model.AfterSurgery;
 import com.example.welcome.model.AfterSurgeryTableOne;
+import com.example.welcome.model.AfterSurgeryTableTwo;
 import com.example.welcome.repository.AfterSurgeryTableOneRepository;
 import jakarta.servlet.http.HttpServletResponse;
 import org.apache.poi.ss.usermodel.Cell;
@@ -36,7 +37,10 @@ import org.springframework.web.bind.annotation.*;
 import java.time.LocalDate;
 
 import com.example.welcome.dto.MonthlyTotals;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+
 import java.time.YearMonth;
+import java.util.Optional;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.Map;
@@ -175,8 +179,30 @@ public class AfterSurgeryTableOneController {
     }
 
     @PostMapping("/add")
-    public String submitForm(@ModelAttribute AfterSurgeryTableOne afterSurgeryTableOne) {
+    public String submitForm(@ModelAttribute AfterSurgeryTableOne afterSurgeryTableOne, RedirectAttributes redirectAttributes) {
+
+        if (afterSurgeryTableOne.getNumOfPostoperativeVisits() == null) {
+            afterSurgeryTableOne.setNumOfPostoperativeVisits(0);
+        }
+        if (afterSurgeryTableOne.getNumOfPostoperativeAnalgesiaCases() == null) {
+            afterSurgeryTableOne.setNumOfPostoperativeAnalgesiaCases(0);
+        }
+        if (afterSurgeryTableOne.getNumOfAdverseReactionCases() == null) {
+            afterSurgeryTableOne.setNumOfAdverseReactionCases(0);
+        }
+        if (afterSurgeryTableOne.getNumOfInadequateAnalgesia() == null) {
+            afterSurgeryTableOne.setNumOfInadequateAnalgesia(0);
+        }
+
+        Optional<AfterSurgeryTableOne> existing = afterSurgeryTableOneRepository.findByDate(afterSurgeryTableOne.getDate());
+
+        if (existing.isPresent()){
+            redirectAttributes.addFlashAttribute("error", "cannot add data with same date.");
+            return "redirect:/afterSurgeryTableOne/add";
+        }
+
         afterSurgeryTableOneRepository.save(afterSurgeryTableOne);
+        redirectAttributes.addFlashAttribute("success", "added record successfully!");
         return "redirect:/afterSurgeryTableOne";
     }
 
