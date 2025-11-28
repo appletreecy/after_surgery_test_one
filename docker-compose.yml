@@ -4,7 +4,7 @@ services:
   mysql:
     image: mysql:8.1
     platform: linux/amd64   # <- force x86_64 (use linux/arm64 if you’re on ARM)
-    container_name: mysql-db
+    container_name: mysql-db-java
     restart: always
     ports:
       - "3306:3306"
